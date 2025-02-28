@@ -8,11 +8,12 @@ import {
   SignUp /* Step1_SelectType, Step2_Inputs, Step3_Results */,
 } from "./pages";
 
-// import { DesignLayout } from "./components";
+import { Header /* DesignLayout */ } from "./components";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
         {/* General Pages */}
         <Route path="/" element={<Home />} />
