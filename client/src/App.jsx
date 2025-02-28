@@ -1,15 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Help from "./pages/Help";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-// import Step1_SelectType from "./pages/Step1_SelectType";
-// import Step2_Inputs from "./pages/Step2_Inputs";
-// import Step3_Results from "./pages/Step3_Results";
+import {
+  Home,
+  About,
+  Help,
+  SignIn,
+  SignUp /* Step1_SelectType, Step2_Inputs, Step3_Results */,
+} from "./pages";
 
-// import DesignLayout from "./components/DesignLayout";
+// import { DesignLayout } from "./components";
 
 export default function App() {
   return (
