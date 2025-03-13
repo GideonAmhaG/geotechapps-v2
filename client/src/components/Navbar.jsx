@@ -25,11 +25,9 @@ const Navbar = () => {
           onClick={() => window.scrollTo(0, 0)}
         >
           <img src={logo} alt="logo" className="w-10 h-10 object-contain" />{" "}
-          {/* Increased logo size */}
-          <p className="text-gray-900 text-[20px] font-bold cursor-pointer flex">
+          <p className="text-gray-900 text-[30px] font-bold cursor-pointer flex">
             {" "}
-            {/* Increased font size of 'geotechapps' */}
-            geotechapps
+            GeotechApps
           </p>
         </NavLink>
 
