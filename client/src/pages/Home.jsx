@@ -1,6 +1,13 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import { styles } from "../styles";
 import { heroPic } from "../assets";
+import {
+  FaDraftingCompass,
+  FaRobot,
+  FaClipboardList,
+  FaCloud,
+} from "react-icons/fa";
+import { FeatureCard } from "../components";
 
 export default function Home() {
   return (
@@ -18,9 +25,12 @@ export default function Home() {
               tools for precise design and analysis. Accessible anytime,
               anywhere.
             </p>
-            <button className="bg-[#145da0] text-white px-8 py-3 rounded-lg hover:bg-[#104f85] transition duration-300 mt-8">
+            <Link
+              to="/design"
+              className="bg-[#145da0] text-white px-8 py-3 rounded-lg hover:bg-[#104f85] transition duration-300 mt-8 inline-block"
+            >
               START DESIGNING FOUNDATIONS
-            </button>
+            </Link>
           </div>
 
           {/* Image Section */}
@@ -35,38 +45,30 @@ export default function Home() {
       </div>
 
       {/* Why Choose Us */}
-      <div className="bg-white py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-black">
-            Why Choose Us?
-          </h2>
-          <p className="text-gray-700 mt-4 text-lg md:text-xl">
-            Empowering geotechnical professionals with innovative, precise, and
-            user-focused solutions tailored to their needs.
+      <div className={`${styles.padding} bg-white`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={styles.sectionHeadText}>Why Choose Us?</h2>
+          <p className={styles.sectionSubText}>
+            Transforming geotechnical engineering with innovative solutions
+            crafted for precision, reliability, and efficiency.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+          <div className={styles.sectionGridThree}>
             <div>
-              <h3 className="text-xl font-semibold text-black">
-                Innovative Tools
-              </h3>
-              <p className="text-gray-700">
+              <h3 className={styles.sectionTitleText}>Innovative Tools</h3>
+              <p className={styles.sectionBodyText}>
                 Cutting-edge features that make your work easier and more
                 efficient.
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-black">
-                Precision Focus
-              </h3>
-              <p className="text-gray-700">
+              <h3 className={styles.sectionTitleText}>Precision Focus</h3>
+              <p className={styles.sectionBodyText}>
                 Engineered for accurate and reliable geotechnical designs.
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-black">
-                User-Centric Design
-              </h3>
-              <p className="text-gray-700">
+              <h3 className={styles.sectionTitleText}>User-Centric Design</h3>
+              <p className={styles.sectionBodyText}>
                 Designed to simplify workflows while keeping engineers' needs at
                 the forefront.
               </p>
@@ -74,57 +76,75 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       {/* Software Features Section */}
-      <div className={`${styles.padding} bg-gray-100 text-center`}>
-        <h2 className={`${styles.sectionHeadText} text-black`}>Our Platform</h2>
-        <p className={`${styles.sectionSubText} text-gray-700`}>
-          Streamline your geotechnical design with advanced, user-friendly tools
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-          {/* Site Analysis */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">Site Analysis</h3>
-            <ul className="text-gray-700">
-              <li>Soil Profile Evaluation</li>
-              <li>Soil Stability Assessment</li>
-              <li>Geotechnical Parameter Estimation</li>
-              <li>Data Visualization</li>
-            </ul>
+      <div className={`${styles.padding} bg-gray-100`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={styles.sectionHeadText}>Our Platform</h2>
+          <p className={styles.sectionSubText}>
+            Streamline your geotechnical design with advanced, user-friendly
+            tools
+          </p>
+          <div className={styles.sectionGridFour}>
+            <FeatureCard
+              icon={FaDraftingCompass}
+              title="Foundation Design"
+              bgColor="bg-green-100"
+              iconColor="text-green-600"
+              features={[
+                "Pile Capacity Analysis",
+                "Shallow Foundation Checks",
+                "Retaining Wall Design",
+                "Slope Stability Analysis",
+                "Bearing Capacity Calculations",
+              ]}
+            />
+            <FeatureCard
+              icon={FaRobot}
+              title="Smart Automation"
+              bgColor="bg-blue-100"
+              iconColor="text-blue-600"
+              features={[
+                "Streamlined Calculations",
+                "Auto Parameter Estimation",
+                "Real-Time Analysis",
+                "Workflow Integration",
+                "Automated Design Adjustments",
+              ]}
+            />
+            <FeatureCard
+              icon={FaClipboardList}
+              title="Detailed Reports"
+              bgColor="bg-yellow-100"
+              iconColor="text-yellow-600"
+              features={[
+                "Customizable Reports",
+                "Data Visualization",
+                "Standards Compliance",
+                "Design Insights",
+                "Downloadable Summaries",
+              ]}
+            />
+            <FeatureCard
+              icon={FaCloud}
+              title="Cloud Accessibility"
+              bgColor="bg-purple-100"
+              iconColor="text-purple-600"
+              features={[
+                "100% Web-Based",
+                "Secure Data Backup",
+                "Multi-Device Access",
+                "No Installation",
+                "Scalable Storage",
+              ]}
+            />
           </div>
-
-          {/* Foundation Design */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">Foundation Design</h3>
-            <ul className="text-gray-700">
-              <li>Pile Capacity Analysis</li>
-              <li>Shallow Foundation Checks</li>
-              <li>Retaining Wall Design</li>
-              <li>Advanced Slope Stability</li>
-            </ul>
-          </div>
-
-          {/* Reports and Automation */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">Reports & Automation</h3>
-            <ul className="text-gray-700">
-              <li>Customizable Reports</li>
-              <li>Automated Calculations</li>
-              <li>Compliance with Standards</li>
-              <li>Efficient Workflow Integration</li>
-            </ul>
-          </div>
-
-          {/* Cloud Accessibility */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">Cloud Accessibility</h3>
-            <ul className="text-gray-700">
-              <li>100% Cloud-Based</li>
-              <li>Secure Data Storage</li>
-              <li>Multi-Device Access</li>
-              <li>No Installation Needed</li>
-            </ul>
+          <div className="flex justify-center mt-16">
+            <Link
+              to="/design"
+              className="text-[#145da0] sm:text-[14px] text-[12px] leading-relaxed hover:text-[#000000] uppercase transition-colors duration-200"
+            >
+              Explore Our Platform →
+            </Link>
           </div>
         </div>
       </div>
@@ -137,7 +157,6 @@ export default function Home() {
         <p className={`${styles.sectionSubText} text-gray-700`}>
           Revolutionizing geotechnical design with cutting-edge technology
         </p>
-
         <div className="mt-8">
           <h3 className="text-xl font-semibold mb-4">Streamlined Workflow</h3>
           <p className="text-gray-700">
