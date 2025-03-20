@@ -12,8 +12,14 @@ import {
   FaRobot,
   FaClipboardList,
   FaCloud,
+  FaAward,
 } from "react-icons/fa";
-import { FeatureCard, WhyChooseCard, AdvantageCard } from "../components";
+import {
+  FeatureCard,
+  WhyChooseCard,
+  AdvantageCard,
+  ComplianceItem,
+} from "../components";
 
 export default function Home() {
   return (
@@ -198,13 +204,35 @@ export default function Home() {
       </div>
 
       {/* Standards Compliance Section */}
-      <div className={`${styles.padding} bg-gray-100 text-center`}>
-        <h2 className={`${styles.sectionHeadText} text-black`}>
-          Standards Compliance
-        </h2>
-        <p className={`${styles.sectionSubText} text-gray-700`}>
-          Align with international geotechnical standards effortlessly
-        </p>
+      <div className={`${styles.padding} bg-gray-100`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={`${styles.sectionHeadText}`}>Standards Compliance</h2>
+          <p className={`${styles.sectionSubText}`}>
+            Effortlessly align with international geotechnical standards
+          </p>
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-y-6 items-start">
+            <div className="space-y-6">
+              <ComplianceItem
+                icon={FaAward}
+                text="Fully compliant with Eurocode standards for geotechnical design."
+              />
+              <ComplianceItem
+                icon={FaAward}
+                text="Streamlines calculations to meet Eurocode requirements."
+              />
+            </div>
+            <div className="space-y-6 md:ml-auto">
+              <ComplianceItem
+                icon={FaAward}
+                text="Ensures safety, reliability, and adherence to engineering norms."
+              />
+              <ComplianceItem
+                icon={FaAward}
+                text="Adapts to evolving global standards for accurate assessments."
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Customer Support Section */}
