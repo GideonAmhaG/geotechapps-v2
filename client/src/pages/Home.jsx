@@ -1,13 +1,19 @@
 import { Link } from "react-router-dom";
 import { styles } from "../styles";
-import { heroPic } from "../assets";
+import {
+  heroPic,
+  comprehensive,
+  enhanced,
+  innovative,
+  streamlined,
+} from "../assets";
 import {
   FaDraftingCompass,
   FaRobot,
   FaClipboardList,
   FaCloud,
 } from "react-icons/fa";
-import { FeatureCard } from "../components";
+import { FeatureCard, WhyChooseCard, AdvantageCard } from "../components";
 
 export default function Home() {
   return (
@@ -47,35 +53,31 @@ export default function Home() {
       {/* Why Choose Us */}
       <div className={`${styles.padding} bg-white`}>
         <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionHeadText}>Why Choose Us?</h2>
-          <p className={styles.sectionSubText}>
+          <h2 className={`${styles.sectionHeadText} mb-6`}>Why Choose Us?</h2>
+          <p className={`${styles.sectionSubText} mb-12`}>
             Transforming geotechnical engineering with innovative solutions
             crafted for precision, reliability, and efficiency.
           </p>
           <div className={styles.sectionGridThree}>
-            <div>
-              <h3 className={styles.sectionTitleText}>Innovative Tools</h3>
-              <p className={styles.sectionBodyText}>
-                Cutting-edge features that make your work easier and more
-                efficient.
-              </p>
-            </div>
-            <div>
-              <h3 className={styles.sectionTitleText}>Precision Focus</h3>
-              <p className={styles.sectionBodyText}>
-                Engineered for accurate and reliable geotechnical designs.
-              </p>
-            </div>
-            <div>
-              <h3 className={styles.sectionTitleText}>User-Centric Design</h3>
-              <p className={styles.sectionBodyText}>
-                Designed to simplify workflows while keeping engineers' needs at
-                the forefront.
-              </p>
-            </div>
+            <WhyChooseCard
+              number="1"
+              title="Innovative Tools"
+              description="Cutting-edge features that make your work easier and more efficient."
+            />
+            <WhyChooseCard
+              number="2"
+              title="Precision Focus"
+              description="Engineered for accurate and reliable geotechnical designs."
+            />
+            <WhyChooseCard
+              number="3"
+              title="User-Centric Design"
+              description="Designed to simplify workflows while keeping engineers' needs at the forefront."
+            />
           </div>
         </div>
       </div>
+
       {/* Software Features Section */}
       <div className={`${styles.padding} bg-gray-100`}>
         <div className={styles.sectionContainer}>
@@ -150,19 +152,48 @@ export default function Home() {
       </div>
 
       {/* The Geotech Advantage Section */}
-      <div className={`${styles.padding} bg-white text-center`}>
-        <h2 className={`${styles.sectionHeadText} text-black`}>
-          The Geotech Advantage
-        </h2>
-        <p className={`${styles.sectionSubText} text-gray-700`}>
-          Revolutionizing geotechnical design with cutting-edge technology
-        </p>
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4">Streamlined Workflow</h3>
-          <p className="text-gray-700">
-            Our intuitive interface and automated features ensure faster and
-            more accurate design, reducing manual effort and errors.
+      <div className={`${styles.padding} bg-white`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={`${styles.sectionHeadText}`}>The Geotech Advantage</h2>
+          <p className={`${styles.sectionSubText}`}>
+            Revolutionizing geotechnical design with cutting-edge technology
           </p>
+          <div className="mt-12 space-y-20">
+            <AdvantageCard
+              title="Streamlined Workflow"
+              description1="Our intuitive platform is meticulously designed to enhance every phase of the engineering process. By automating repetitive tasks and optimizing complex workflows, it provides professionals with the tools they need to achieve exceptional accuracy and speed in their projects."
+              description2="The platform minimizes manual effort, ensuring that errors are drastically reduced and time is used efficiently. Additionally, its user-friendly interface empowers engineers to focus on innovative solutions rather than tedious tasks. Whether working on small projects or large-scale developments, the platform adapts to deliver a seamless and efficient design experience tailored to your needs."
+              image={streamlined}
+              reverse={false}
+            />
+            <AdvantageCard
+              title="Comprehensive Design Tools"
+              description1="Equipped with a comprehensive suite of powerful tools, our platform enables engineers to tackle even the most intricate calculations with confidence. Designed to adhere to rigorous safety standards, it ensures that every project is both reliable and compliant with modern engineering requirements."
+              description2="The tools are intuitive yet highly capable, bridging traditional methods with cutting-edge advancements. With its versatility and robust functionality, this platform caters to a wide range of engineering challenges. Whether it's structural analysis or design optimization, engineers have everything they need to innovate and succeed at their fingertips."
+              image={comprehensive}
+              reverse={true}
+            />
+            <AdvantageCard
+              title="Enhanced Collaboration"
+              description1="Our platform integrates seamless collaboration features, enabling teams to stay connected and aligned at every stage of a project. Real-time communication tools allow for instant updates, while task assignment and progress tracking ensure that all stakeholders remain informed."
+              description2="These features foster transparency and build trust among team members, driving efficiency and accountability. By breaking down silos and promoting a unified approach, the platform enhances teamwork in complex projects. Engineers and managers can share insights and resources effortlessly, creating an environment where collaboration leads to success."
+              image={enhanced}
+              reverse={false}
+            />
+            <AdvantageCard
+              title="Innovative Technology Integration"
+              description1="Our platform leverages the latest advancements in technology to redefine the engineering landscape. From advanced analytics to adaptive design solutions, it simplifies complex tasks and fosters innovation. These features empower engineers to navigate evolving challenges with confidence and precision."
+              description2="By seamlessly integrating state-of-the-art technologies, the platform supports scalable solutions tailored to individual project needs. It encourages creative problem-solving while maintaining reliability and efficiency, setting a new standard for modern engineering practices."
+              image={innovative}
+              reverse={true}
+            />
+          </div>
+          <Link
+            to="/design"
+            className="bg-[#145da0] text-white px-8 py-3 rounded-lg hover:bg-[#104f85] transition duration-300 mt-16 inline-block"
+          >
+            START DESIGNING FOUNDATIONS
+          </Link>
         </div>
       </div>
 

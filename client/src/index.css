@@ -19,3 +19,17 @@
 background-color: #666e75;
 border-radius: 5px;
 }
+
+@layer utilities {
+  .shadow-strong {
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.2); 
+  }
+  
+  .shadow-card {
+    box-shadow: 0 0 1px 0 rgba(189,192,207,0.06), 0 10px 16px -1px rgba(189,192,207,0.2);
+  }
+  
+  .shadow-cardhover {
+    box-shadow: 0 0 1px 0 rgba(189,192,207,0.06), 0 10px 16px -1px rgba(189,192,207,0.4);
+  }
+}

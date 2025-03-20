@@ -26,6 +26,8 @@ const styles = {
     "max-w-7xl mx-auto text-center",
   sectionCard:
     "bg-white p-6 rounded-lg shadow-md",
+  sectionNumberBadge:
+    "w-10 h-10 text-md sm:w-12 sm:h-12 sm:text-lg bg-[#145da0] text-white rounded-full mx-auto flex items-center justify-center font-bold mb-4",
 };
 
 export { styles };
