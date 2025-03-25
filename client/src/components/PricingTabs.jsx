@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { heroPic } from "../assets";
 import {
   FaCheck,
   FaCube,
@@ -51,6 +52,30 @@ const PricingTabs = () => {
       name: "Load Generator",
       icon: <FaWeightHanging className="text-[#145da0] text-xs" />,
     },
+    {
+      name: "SkyCiv Mobile",
+      icon: <FaMobile className="text-[#145da0] text-xs" />,
+    },
+    {
+      name: "Base Plate Design",
+      icon: <FaAnchor className="text-[#145da0] text-xs" />,
+    },
+    {
+      name: "Member Design",
+      icon: <FaProjectDiagram className="text-[#145da0] text-xs" />,
+    },
+    {
+      name: "RC Member Design",
+      icon: <FaBuilding className="text-[#145da0] text-xs" />,
+    },
+    {
+      name: "Connection Design",
+      icon: <FaUserCog className="text-[#145da0] text-xs" />,
+    },
+    {
+      name: "Foundation Design",
+      icon: <FaUsers className="text-[#145da0] text-xs" />,
+    },
   ];
 
   const contentContainerStyle = { minHeight: "380px" };
@@ -62,7 +87,7 @@ const PricingTabs = () => {
         {options.map((option, index) => (
           <button
             key={index}
-            className={`w-full text-left px-6 py-3 transition-all rounded-xl flex items-center ${
+            className={`w-full text-left px-6 py-3 transition-all rounded-xl flex items-center cursor-pointer ${
               activeOption === index ? "bg-blue-50" : "hover:bg-gray-50"
             }`}
             onClick={() => setActiveOption(index)}
@@ -95,26 +120,30 @@ const PricingTabs = () => {
         {/* Exceptional Value Content - Tools List */}
         {activeOption === 0 && (
           <div className="h-full flex" style={contentContainerStyle}>
-            <div className="w-3/4 pr-6">
-              <div className="bg-gray-100 rounded-xl h-full flex items-center justify-center">
-                <span className="text-gray-400">[Software Preview Image]</span>
-              </div>
+            <div className="w-[70%] pr-6 flex items-center justify-center">
+              <img
+                src={heroPic}
+                alt="Software Preview"
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
-            <div className="w-1/4">
+            <div className="w-[30%]">
               <div className="bg-gray-50 rounded-xl p-2 h-full overflow-y-auto">
                 <div className="space-y-1">
                   {tools.map((tool, i) => (
                     <div
                       key={i}
-                      className="flex items-center p-1 hover:bg-gray-100 rounded"
+                      className={`flex items-center p-1 hover:bg-gray-100 rounded ${
+                        i === 0 ? "mt-4" : ""
+                      }`}
                     >
-                      <div className="mr-1">{tool.icon}</div>
+                      <div className="ml-3 mr-2">{tool.icon}</div>
                       <span className="text-[10px] leading-tight">
                         {tool.name}
                       </span>
                     </div>
                   ))}
-                  <div className="pt-1 text-center">
+                  <div className="pt-1 pl-18">
                     <p className="text-[10px] text-gray-500">...and more!</p>
                   </div>
                 </div>
@@ -133,54 +162,94 @@ const PricingTabs = () => {
               {[
                 {
                   type: "Flexible",
-                  description: "Monthly payments, cancel anytime.",
+                  description:
+                    "Automatic monthly payments, cancel anytime without fees.",
                   plans: [
-                    { name: "Business", price: "$499", note: "month" },
-                    { name: "Professional", price: "$249", note: "month" },
-                    { name: "Basic", price: "$49", note: "month" },
+                    {
+                      name: "Business Subscription",
+                      price: "$699",
+                      note: "USD, billed monthly",
+                    },
+                    {
+                      name: "Professional Subscription",
+                      price: "$249",
+                      note: "USD, billed monthly",
+                    },
+                    {
+                      name: "Basic Subscription",
+                      price: "$89",
+                      note: "USD, billed monthly",
+                    },
                   ],
                 },
                 {
                   type: "Contract",
-                  description: "12 month minimum term.",
+                  description:
+                    "Automatic monthly payments, 12 month minimum term.",
                   plans: [
-                    { name: "Business", price: "$499", note: "month" },
-                    { name: "Professional", price: "$329", note: "month" },
-                    { name: "Basic", price: "$79", note: "month" },
+                    {
+                      name: "Business Subscription",
+                      price: "$499",
+                      note: "USD, billed monthly",
+                    },
+                    {
+                      name: "Professional Subscription",
+                      price: "$139",
+                      note: "USD, billed monthly",
+                    },
+                    {
+                      name: "Basic Subscription",
+                      price: "$79",
+                      note: "USD, billed monthly",
+                    },
                   ],
-                  discount: "Save 17%",
+                  discount: "Save 17%!",
                 },
                 {
                   type: "Annual",
-                  description: "Pay annually and save.",
+                  description: "Save up to 17% when you pay annually!",
                   plans: [
-                    { name: "Business", price: "$4,999", note: "year" },
-                    { name: "Professional", price: "$3,290", note: "year" },
-                    { name: "Basic", price: "$790", note: "year" },
+                    {
+                      name: "Business Subscription",
+                      price: "$4,990",
+                      note: "USD, billed annually",
+                    },
+                    {
+                      name: "Professional Subscription",
+                      price: "$1,390",
+                      note: "USD, billed annually",
+                    },
+                    {
+                      name: "Basic Subscription",
+                      price: "$790",
+                      note: "USD, billed annually",
+                    },
                   ],
                 },
               ].map((option, i) => (
-                <div key={i} className="border border-gray-200 rounded-xl p-3">
-                  <div className="flex justify-between items-center mb-1">
-                    <h4 className="font-medium text-xs">{option.type}</h4>
+                <div key={i} className="border border-gray-200 rounded-xl p-4">
+                  <div className="flex justify-between items-left mb-2">
+                    <h4 className="font-medium text-sm">{option.type}</h4>
                     {option.discount && (
-                      <span className="bg-green-100 text-green-800 px-1 py-0.5 rounded text-[10px]">
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
                         {option.discount}
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-600 text-[10px] mb-2">
+                  <p className="text-gray-600 text-xs mb-3">
                     {option.description}
                   </p>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {option.plans.map((plan, j) => (
                       <div key={j} className="flex items-start">
-                        <FaCheck className="text-green-500 text-[10px] mt-[3px] mr-1 flex-shrink-0" />
+                        <FaCheck className="text-green-500 text-xs mt-0.5 mr-2 flex-shrink-0" />
                         <div>
-                          <p className="font-medium text-[10px]">{plan.name}</p>
-                          <p className="text-gray-700 text-[10px]">
+                          <p className="font-medium text-xs">{plan.name}</p>
+                          <p className="text-gray-700 text-xs">
                             {plan.price}{" "}
-                            <span className="text-gray-500">/{plan.note}</span>
+                            <span className="text-gray-500 text-xs">
+                              {plan.note}
+                            </span>
                           </p>
                         </div>
                       </div>
