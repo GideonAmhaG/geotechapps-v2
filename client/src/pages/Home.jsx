@@ -13,12 +13,16 @@ import {
   FaClipboardList,
   FaCloud,
   FaAward,
+  FaUsers,
+  FaTools,
+  FaBolt,
 } from "react-icons/fa";
 import {
   FeatureCard,
   WhyChooseCard,
   AdvantageCard,
   ComplianceItem,
+  PricingTabs,
 } from "../components";
 
 export default function Home() {
@@ -235,57 +239,46 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Customer Support Section */}
-      <div className={`${styles.padding} bg-white text-center`}>
-        <h2 className={`${styles.sectionHeadText} text-black`}>
-          Comprehensive Support
-        </h2>
-        <p className={`${styles.sectionSubText} text-gray-700`}>
-          Expert assistance to ensure your success, 24/7
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-          <div>
-            <h3 className="text-xl font-semibold mb-4">📞 10k+</h3>
-            <p className="text-gray-700">Projects Supported</p>
+      {/* Metrics Section */}
+      <div className={`${styles.padding} bg-white`}>
+        <div className={styles.sectionContainer}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                Icon: FaUsers,
+                value: "300+",
+                text: "Engineers Using the App",
+              },
+              {
+                Icon: FaTools,
+                value: "3",
+                text: "Geotechnical Tools Available",
+              },
+              {
+                Icon: FaBolt,
+                value: "5 sec",
+                text: "Real-Time Results",
+              },
+            ].map(({ Icon, value, text }, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center text-center w-full py-0"
+              >
+                <div className="flex flex-row items-center space-x-4">
+                  <div className="w-16 h-16 flex items-center justify-center bg-[#145da0] rounded-full">
+                    <Icon className="text-white text-3xl" />
+                  </div>
+                  <h3 className="text-[#145da0] text-4xl font-bold">{value}</h3>
+                </div>
+                <p className="text-black text-lg mt-2">{text}</p>
+              </div>
+            ))}
           </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-4">🌍 120+</h3>
-            <p className="text-gray-700">Countries Using Geotech Apps</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-4">⏱️ 30 min</h3>
-            <p className="text-gray-700">Average Response Time</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Value Section */}
-      <div className={`${styles.padding} bg-gray-100 text-center`}>
-        <h2 className={`${styles.sectionHeadText} text-black`}>
-          Maximizing Value for Engineers
-        </h2>
-        <p className={`${styles.sectionSubText} text-gray-700`}>
-          Delivering exceptional tools and cost-effective solutions
-        </p>
-
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4">Affordable Plans</h3>
-          <p className="text-gray-700">
-            Flexible subscriptions that cater to individual engineers and large
-            teams alike.
-          </p>
-
-          <h3 className="text-xl font-semibold mb-4 mt-8">
-            Scalable Solutions
-          </h3>
-          <p className="text-gray-700">
-            Expand as your team grows with multi-user and enterprise plans.
-          </p>
         </div>
       </div>
 
       {/* New White Section */}
-      <div className={`${styles.padding} text-center`}>
+      <div className={`${styles.padding} text-center bg-gray-100`}>
         <h2 className={`${styles.sectionHeadText} text-black`}>
           Trusted by Industry Leaders
         </h2>
@@ -323,6 +316,29 @@ export default function Home() {
             <p className="text-gray-700 mt-4">
               "Reliable and intuitive solutions."
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing Section */}
+      <div className={`${styles.padding} bg-white`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={`${styles.sectionHeadText}`}>
+            More Functionality, Better Value
+          </h2>
+          <p className={`${styles.sectionSubText} mb-12`}>
+            Get more from your structural engineering software
+          </p>
+
+          <PricingTabs />
+
+          <div className="mt-12 text-center">
+            <Link
+              to="/pricing"
+              className="text-[#145da0] font-medium hover:text-[#104f85] transition duration-300 inline-flex items-center"
+            >
+              VIEW PRICING <span className="ml-2">→</span>
+            </Link>
           </div>
         </div>
       </div>
