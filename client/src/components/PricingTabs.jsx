@@ -12,7 +12,9 @@ import {
   FaBuilding,
   FaProjectDiagram,
   FaAnchor,
+  FaUserFriends,
 } from "react-icons/fa";
+import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 
 const PricingTabs = () => {
   const [activeOption, setActiveOption] = useState(0);
@@ -79,6 +81,7 @@ const PricingTabs = () => {
   ];
 
   const contentContainerStyle = { minHeight: "380px" };
+  const iconSize = "text-xl";
 
   return (
     <div className="flex flex-col md:flex-row gap-0 pt-0 h-full">
@@ -154,7 +157,7 @@ const PricingTabs = () => {
 
         {/* Flexible Subscription Options Content - Horizontal Cards */}
         {activeOption === 1 && (
-          <div className="h-full flex flex-col" style={contentContainerStyle}>
+          <div className="h-full flex flex-col" style={{ minHeight: "300px" }}>
             <h3 className="text-xl font-bold text-[#145da0] mb-4">
               Pricing Based on Your Needs
             </h3>
@@ -163,7 +166,7 @@ const PricingTabs = () => {
                 {
                   type: "Flexible",
                   description:
-                    "Automatic monthly payments, cancel anytime without fees.",
+                    "Monthly payments, cancel anytime without any additional fees.",
                   plans: [
                     {
                       name: "Business Subscription",
@@ -185,7 +188,7 @@ const PricingTabs = () => {
                 {
                   type: "Contract",
                   description:
-                    "Automatic monthly payments, 12 month minimum term.",
+                    "Monthly payments with a 12-month minimum commitment period.",
                   plans: [
                     {
                       name: "Business Subscription",
@@ -203,11 +206,11 @@ const PricingTabs = () => {
                       note: "USD, billed monthly",
                     },
                   ],
-                  discount: "Save 17%!",
                 },
                 {
                   type: "Annual",
-                  description: "Save up to 17% when you pay annually!",
+                  description:
+                    "Save up to 17% with annual billing compared to monthly plans.",
                   plans: [
                     {
                       name: "Business Subscription",
@@ -225,29 +228,35 @@ const PricingTabs = () => {
                       note: "USD, billed annually",
                     },
                   ],
+                  discount: "Save 17%!",
                 },
               ].map((option, i) => (
-                <div key={i} className="border border-gray-200 rounded-xl p-4">
+                <div
+                  key={i}
+                  className="border border-gray-400 rounded-xl px-4 py-5 relative"
+                >
+                  {/* Top-positioned discount badge */}
+                  {option.type === "Annual" && (
+                    <div className="absolute -top-3 right-4 bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium shadow-sm">
+                      Save 17%!
+                    </div>
+                  )}
+
                   <div className="flex justify-between items-left mb-2">
                     <h4 className="font-medium text-sm">{option.type}</h4>
-                    {option.discount && (
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
-                        {option.discount}
-                      </span>
-                    )}
                   </div>
-                  <p className="text-gray-600 text-xs mb-3">
+                  <p className="text-gray-600 text-xs mb-3 text-left border-b border-gray-300 pb-3">
                     {option.description}
                   </p>
                   <div className="space-y-2">
                     {option.plans.map((plan, j) => (
-                      <div key={j} className="flex items-start">
-                        <FaCheck className="text-green-500 text-xs mt-0.5 mr-2 flex-shrink-0" />
-                        <div>
-                          <p className="font-medium text-xs">{plan.name}</p>
-                          <p className="text-gray-700 text-xs">
+                      <div key={j} className="flex flex-col items-start">
+                        <p className="font-medium text-[10px]">{plan.name}</p>
+                        <div className="flex flex-row">
+                          <FaCheck className="text-green-500 text-[10px] mt-0.5 mr-1 flex-shrink-0" />
+                          <p className="text-gray-700 text-[10px]">
                             {plan.price}{" "}
-                            <span className="text-gray-500 text-xs">
+                            <span className="text-gray-500 text-[10px]">
                               {plan.note}
                             </span>
                           </p>
@@ -271,66 +280,161 @@ const PricingTabs = () => {
               {[
                 {
                   title: "Business",
-                  description: "For multiple team members.",
+                  description:
+                    "Provides shared access solutions for multiple team members",
                   features: [
-                    { value: "15", label: "individual begins" },
-                    { value: "2", label: "simultaneous users" },
                     {
-                      label: "options:",
-                      subFeatures: ["✓ increase users", "✓ add seats"],
+                      value: ["15", "2"],
+                      icons: [
+                        <MdOutlinePersonAddAlt1
+                          className={iconSize}
+                          key="icon1"
+                        />,
+                        <FaUserFriends className={iconSize} key="icon2" />,
+                      ],
+                      label: ["individual logins", "simultaneous users"],
+                      subFeatures: [
+                        "increase simultaneous users",
+                        "increase individual logins",
+                      ],
+                      growthText: "Includes options to grow!",
                     },
                   ],
                 },
                 {
                   title: "Professional",
-                  description: "Full software suite.",
+                  description:
+                    "Complete engineering software package for professional users",
                   features: [
-                    { value: "1", label: "single user" },
                     {
-                      label: "options:",
-                      subFeatures: ["✓ multi-seat", "✓ 3 devices"],
+                      value: "1",
+                      icon: (
+                        <MdOutlinePersonAddAlt1
+                          className={iconSize}
+                          key="icon3"
+                        />
+                      ),
+                      label: "designed for single users",
+                      subFeatures: [
+                        "add seats to your plan with multi-seat subscriptions",
+                        "1 user seat = 3 devices and 6 IP limits per month",
+                      ],
+                      growthText: "Includes options to grow!",
                     },
                   ],
                 },
                 {
                   title: "Basic",
-                  description: "Essential tools only.",
+                  description:
+                    "Essential structural analysis tools designed for individual users",
                   features: [
-                    { value: "1", label: "single user" },
                     {
-                      label: "options:",
-                      subFeatures: ["✓ multi-seat", "✓ 3 devices"],
+                      value: "1",
+                      icon: (
+                        <MdOutlinePersonAddAlt1
+                          className={iconSize}
+                          key="icon4"
+                        />
+                      ),
+                      label: "designed for single users",
+                      subFeatures: [
+                        "add seats to your plan with multi-seat subscriptions",
+                        "1 user seat = 3 devices and 6 IP limits per month",
+                      ],
+                      growthText: "Includes options to grow!",
                     },
                   ],
                 },
               ].map((plan, i) => (
-                <div key={i} className="bg-gray-50 rounded-xl p-2.5">
-                  <h4 className="font-medium text-xs mb-0.5">{plan.title}</h4>
-                  <p className="text-gray-600 text-[10px] mb-1.5">
-                    {plan.description}
-                  </p>
-                  <div className="grid grid-cols-3 gap-1">
-                    {plan.features.map((feature, j) => (
-                      <div key={j} className="col-span-1">
-                        {feature.value && (
-                          <p className="text-xs font-bold mb-0.5">
-                            {feature.value}
-                          </p>
-                        )}
-                        <p className="text-gray-600 text-[10px] mb-0.5">
-                          {feature.label}
-                        </p>
-                        {feature.subFeatures && (
-                          <ul className="space-y-0.5">
-                            {feature.subFeatures.map((sub, k) => (
-                              <li key={k} className="text-gray-600 text-[10px]">
-                                {sub}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    ))}
+                <div key={i} className="bg-gray-50 rounded-xl p-3">
+                  <div className="flex items-center">
+                    <div className="w-[30%] pr-3 text-left">
+                      <h4 className="font-medium text-sm mb-1">{plan.title}</h4>
+                      <p className="text-gray-600 text-[11px] leading-tight">
+                        {plan.description}
+                      </p>
+                    </div>
+
+                    <div className="border-l border-gray-300 ml-2 mr-3 self-stretch"></div>
+
+                    <div className="flex-1 flex flex-col md:flex-row items-center gap-6">
+                      {i === 0 ? (
+                        <>
+                          <div className="w-[20%] text-center">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <p className="text-xl font-semibold">
+                                {plan.features[0].value[0]}
+                              </p>
+                              {plan.features[0].icons[0]}
+                            </div>
+                            <p className="text-gray-600 text-[11px]">
+                              {plan.features[0].label[0]}
+                            </p>
+                          </div>
+                          <div className="w-[20%] text-center">
+                            <div className="flex items-center justify-center gap-1.5">
+                              {plan.features[0].icons[1]}
+                              <p className="text-xl font-semibold">
+                                {plan.features[0].value[1]}
+                              </p>
+                            </div>
+                            <p className="text-gray-600 text-[11px]">
+                              {plan.features[0].label[1]}
+                            </p>
+                          </div>
+                          <div className="w-[60%]">
+                            {plan.features[0].growthText && (
+                              <p className="text-[11px] text-gray-600 mb-1 text-left">
+                                {plan.features[0].growthText}
+                              </p>
+                            )}
+                            <ul className="space-y-1">
+                              {plan.features[0].subFeatures.map((sub, k) => (
+                                <li
+                                  key={k}
+                                  className="text-gray-600 text-[10px] flex"
+                                >
+                                  <span className="mr-1">✓</span>
+                                  <span>{sub}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-[20%] text-center">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <p className="text-xl font-semibold">
+                                {plan.features[0].value}
+                              </p>
+                              {plan.features[0].icon}
+                            </div>
+                            <p className="text-gray-600 text-[11px]">
+                              {plan.features[0].label}
+                            </p>
+                          </div>
+                          <div className="w-[80%]">
+                            {plan.features[0].growthText && (
+                              <p className="text-[11px] text-gray-600 mb-1 text-left">
+                                {plan.features[0].growthText}
+                              </p>
+                            )}
+                            <ul className="space-y-1">
+                              {plan.features[0].subFeatures.map((sub, k) => (
+                                <li
+                                  key={k}
+                                  className="text-gray-600 text-[10px] flex"
+                                >
+                                  <span className="mr-1">✓</span>
+                                  <span>{sub}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
