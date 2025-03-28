@@ -18,6 +18,7 @@ import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 
 const PricingTabs = () => {
   const [activeOption, setActiveOption] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
 
   const options = [
     {
@@ -80,8 +81,14 @@ const PricingTabs = () => {
     },
   ];
 
-  const contentContainerStyle = { minHeight: "380px" };
   const iconSize = "text-xl";
+
+  const handleOptionChange = (index) => {
+    if (transitioning || activeOption === index) return;
+    setTransitioning(true);
+    setActiveOption(index);
+    setTimeout(() => setTransitioning(false), 500);
+  };
 
   return (
     <div className="flex flex-col md:flex-row gap-0 pt-0 h-full">
@@ -90,13 +97,14 @@ const PricingTabs = () => {
         {options.map((option, index) => (
           <button
             key={index}
-            className={`w-full text-left px-6 py-3 transition-all rounded-xl flex items-center cursor-pointer ${
+            className={`w-full text-left px-6 py-3 rounded-xl flex items-center cursor-pointer transition-all duration-300 ease-out ${
               activeOption === index ? "bg-blue-50" : "hover:bg-gray-50"
             }`}
-            onClick={() => setActiveOption(index)}
+            onClick={() => handleOptionChange(index)}
+            disabled={transitioning}
           >
             <div
-              className={`flex items-center justify-center h-12 w-12 rounded-full mr-5 flex-shrink-0 ${
+              className={`flex items-center justify-center h-12 w-12 rounded-full mr-5 flex-shrink-0 transition-all duration-300 ${
                 activeOption === index
                   ? "bg-[#145da0] text-white"
                   : "bg-gray-200"
@@ -106,8 +114,10 @@ const PricingTabs = () => {
             </div>
             <div className="text-left">
               <h3
-                className={`text-xl ${
-                  activeOption === index ? "text-[#145da0]" : "text-gray-800"
+                className={`text-xl transition-colors duration-300 ${
+                  activeOption === index
+                    ? "text-[#145da0] font-medium"
+                    : "text-gray-800"
                 }`}
               >
                 {option.title}
@@ -119,49 +129,58 @@ const PricingTabs = () => {
       </div>
 
       {/* Right side - Content */}
-      <div className="md:w-[50%] bg-white p-8 overflow-y-auto">
-        {/* Exceptional Value Content - Tools List */}
-        {activeOption === 0 && (
-          <div className="h-full flex" style={contentContainerStyle}>
-            <div className="w-[70%] pr-6 flex items-center justify-center">
-              <img
-                src={heroPic}
-                alt="Software Preview"
-                className="max-h-full max-w-full object-contain"
-              />
-            </div>
-            <div className="w-[30%]">
-              <div className="bg-gray-50 rounded-xl p-2 h-full overflow-y-auto">
-                <div className="space-y-1">
-                  {tools.map((tool, i) => (
-                    <div
-                      key={i}
-                      className={`flex items-center p-1 hover:bg-gray-100 rounded ${
-                        i === 0 ? "mt-4" : ""
-                      }`}
-                    >
-                      <div className="ml-3 mr-2">{tool.icon}</div>
-                      <span className="text-[10px] leading-tight">
-                        {tool.name}
-                      </span>
+      <div className="md:w-[50%] bg-white p-8 relative overflow-hidden">
+        <div className="min-h-[380px] relative">
+          {/* Exceptional Value Content */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
+              activeOption === 0 ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <div className="h-full flex">
+              <div className="w-[70%] pr-6 flex items-center justify-center">
+                <img
+                  src={heroPic}
+                  alt="Software Preview"
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <div className="w-[30%]">
+                <div className="bg-gray-50 rounded-xl p-2 h-full">
+                  <div className="space-y-1">
+                    {tools.map((tool, i) => (
+                      <div
+                        key={i}
+                        className={`flex items-center p-1 rounded ${
+                          i === 0 ? "mt-4" : ""
+                        }`}
+                      >
+                        <div className="ml-3 mr-2">{tool.icon}</div>
+                        <span className="text-[10px] leading-tight">
+                          {tool.name}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="pt-1 pl-18">
+                      <p className="text-[10px] text-gray-500">...and more!</p>
                     </div>
-                  ))}
-                  <div className="pt-1 pl-18">
-                    <p className="text-[10px] text-gray-500">...and more!</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        )}
 
-        {/* Flexible Subscription Options Content - Horizontal Cards */}
-        {activeOption === 1 && (
-          <div className="h-full flex flex-col" style={{ minHeight: "300px" }}>
-            <h3 className="text-xl font-bold text-[#145da0] mb-4">
-              Pricing Based on Your Needs
+          {/* Flexible Subscription Options Content */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
+              activeOption === 1 ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <h3 className="text-2xl font-bold text-[#145da0] mb-4 text-left">
+              <div>Pricing Based on</div>
+              <div>Your Needs</div>
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {[
                 {
                   type: "Flexible",
@@ -235,13 +254,11 @@ const PricingTabs = () => {
                   key={i}
                   className="border border-gray-400 rounded-xl px-4 py-5 relative"
                 >
-                  {/* Top-positioned discount badge */}
                   {option.type === "Annual" && (
                     <div className="absolute -top-3 right-4 bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium shadow-sm">
                       Save 17%!
                     </div>
                   )}
-
                   <div className="flex justify-between items-left mb-2">
                     <h4 className="font-medium text-sm">{option.type}</h4>
                   </div>
@@ -268,15 +285,18 @@ const PricingTabs = () => {
               ))}
             </div>
           </div>
-        )}
 
-        {/* Growth Content - Vertical Cards */}
-        {activeOption === 2 && (
-          <div className="h-full flex flex-col" style={contentContainerStyle}>
-            <h3 className="text-xl font-bold text-[#145da0] mb-3">
-              Subscriptions Tailored for You
+          {/* Growth Content */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
+              activeOption === 2 ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <h3 className="text-2xl font-bold text-[#145da0] mb-3 text-left">
+              <div>Subscriptions Tailored</div>
+              <div>for You</div>
             </h3>
-            <div className="space-y-2 flex-1 overflow-y-auto">
+            <div className="space-y-2">
               {[
                 {
                   title: "Business",
@@ -354,9 +374,7 @@ const PricingTabs = () => {
                         {plan.description}
                       </p>
                     </div>
-
                     <div className="border-l border-gray-300 ml-2 mr-3 self-stretch"></div>
-
                     <div className="flex-1 flex flex-col md:flex-row items-center gap-6">
                       {i === 0 ? (
                         <>
@@ -383,11 +401,9 @@ const PricingTabs = () => {
                             </p>
                           </div>
                           <div className="w-[60%]">
-                            {plan.features[0].growthText && (
-                              <p className="text-[11px] text-gray-600 mb-1 text-left">
-                                {plan.features[0].growthText}
-                              </p>
-                            )}
+                            <p className="text-[11px] text-gray-600 mb-1 text-left">
+                              {plan.features[0].growthText}
+                            </p>
                             <ul className="space-y-1">
                               {plan.features[0].subFeatures.map((sub, k) => (
                                 <li
@@ -415,11 +431,9 @@ const PricingTabs = () => {
                             </p>
                           </div>
                           <div className="w-[80%]">
-                            {plan.features[0].growthText && (
-                              <p className="text-[11px] text-gray-600 mb-1 text-left">
-                                {plan.features[0].growthText}
-                              </p>
-                            )}
+                            <p className="text-[11px] text-gray-600 mb-1 text-left">
+                              {plan.features[0].growthText}
+                            </p>
                             <ul className="space-y-1">
                               {plan.features[0].subFeatures.map((sub, k) => (
                                 <li
@@ -440,7 +454,7 @@ const PricingTabs = () => {
               ))}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

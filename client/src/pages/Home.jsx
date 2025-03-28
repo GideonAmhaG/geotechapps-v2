@@ -332,12 +332,15 @@ export default function Home() {
 
           <PricingTabs />
 
-          <div className="mt-12 text-center">
+          <div className="mt-0 text-center">
             <Link
-              to="/pricing"
-              className="text-[#145da0] font-medium hover:text-[#104f85] transition duration-300 inline-flex items-center"
+              to="#"
+              className="text-[#145da0] text-[13px] font-medium hover:text-black transition duration-200 inline-flex items-center border-2 border-[#145da0] hover:border-black rounded-sm px-6 py-2 tracking-[0.2em] !font-sans"
             >
-              VIEW PRICING <span className="ml-2">→</span>
+              VIEW PRICING
+              <span className="ml-3 text-[17px] font-bold transform translate-y-[-0.5px]">
+                →
+              </span>{" "}
             </Link>
           </div>
         </div>
