@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { heroPic } from "../assets";
+import { useState, useRef, useEffect } from "react";
+import { value } from "../assets";
 import {
   FaCheck,
   FaCube,
@@ -19,6 +19,9 @@ import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 const PricingTabs = () => {
   const [activeOption, setActiveOption] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
+  const [sliderPosition, setSliderPosition] = useState({ top: 0, height: 0 });
+  const optionsRef = useRef([]);
+  const containerRef = useRef(null);
 
   const options = [
     {
@@ -83,28 +86,66 @@ const PricingTabs = () => {
 
   const iconSize = "text-xl";
 
+  const updateSliderPosition = () => {
+    if (optionsRef.current[activeOption]) {
+      const activeElement = optionsRef.current[activeOption];
+      const { offsetTop, offsetHeight } = activeElement;
+      setSliderPosition({
+        top: offsetTop,
+        height: offsetHeight,
+      });
+    }
+  };
+
+  useEffect(() => {
+    updateSliderPosition();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateSliderPosition();
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [activeOption]);
+
   const handleOptionChange = (index) => {
     if (transitioning || activeOption === index) return;
     setTransitioning(true);
     setActiveOption(index);
-    setTimeout(() => setTransitioning(false), 500);
+    setTimeout(() => setTransitioning(false), 250);
   };
 
   return (
     <div className="flex flex-col md:flex-row gap-0 pt-0 h-full">
       {/* Left side - Options */}
-      <div className="md:w-[50%] bg-white pr-8 pl-8 pt-16 flex flex-col">
+      <div
+        className="md:w-[50%] bg-white pr-8 pl-8 pt-16 flex flex-col relative"
+        ref={containerRef}
+      >
+        {/* Sliding background */}
+        <div
+          className="absolute left-6 right-8 bg-blue-50 rounded-3xl transition-all duration-200 ease-out z-0"
+          style={{
+            top: `${sliderPosition.top}px`,
+            height: `${sliderPosition.height}px`,
+          }}
+        />
+
         {options.map((option, index) => (
           <button
             key={index}
-            className={`w-full text-left px-6 py-3 rounded-xl flex items-center cursor-pointer transition-all duration-300 ease-out ${
-              activeOption === index ? "bg-blue-50" : "hover:bg-gray-50"
-            }`}
+            ref={(el) => (optionsRef.current[index] = el)}
+            className="w-full text-left px-6 py-3 rounded-md flex items-center cursor-pointer relative z-10"
             onClick={() => handleOptionChange(index)}
             disabled={transitioning}
           >
             <div
-              className={`flex items-center justify-center h-12 w-12 rounded-full mr-5 flex-shrink-0 transition-all duration-300 ${
+              className={`flex items-center justify-center h-12 w-12 rounded-full mr-5 flex-shrink-0 transition-all duration-200 ${
                 activeOption === index
                   ? "bg-[#145da0] text-white"
                   : "bg-gray-200"
@@ -114,10 +155,8 @@ const PricingTabs = () => {
             </div>
             <div className="text-left">
               <h3
-                className={`text-xl transition-colors duration-300 ${
-                  activeOption === index
-                    ? "text-[#145da0] font-medium"
-                    : "text-gray-800"
+                className={`text-xl font-medium transition-colors duration-200 ${
+                  activeOption === index ? "text-[#145da0]" : "text-gray-800"
                 }`}
               >
                 {option.title}
@@ -140,7 +179,8 @@ const PricingTabs = () => {
             <div className="h-full flex">
               <div className="w-[70%] pr-6 flex items-center justify-center">
                 <img
-                  src={heroPic}
+                  src={value}
+                  loading="lazy"
                   alt="Software Preview"
                   className="max-h-full max-w-full object-contain"
                 />

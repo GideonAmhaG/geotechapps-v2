@@ -6,6 +6,7 @@ import comprehensive from "./comprehensive.jpg";
 import enhanced from "./enhanced.jpg";
 import innovative from "./innovative.jpg";
 import streamlined from "./streamlined.jpg";
+import value from "./value.png";
 
 export {
   logo,
@@ -16,4 +17,5 @@ export {
   enhanced,
   innovative,
   streamlined,
+  value,
 };
