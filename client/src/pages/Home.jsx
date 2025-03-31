@@ -324,10 +324,10 @@ export default function Home() {
       <div className={`${styles.padding} bg-white`}>
         <div className={styles.sectionContainer}>
           <h2 className={`${styles.sectionHeadText}`}>
-            More Functionality, Better Value
+            Advanced Tools, Competitive Pricing
           </h2>
           <p className={`${styles.sectionSubText} mb-12`}>
-            Get more from your structural engineering software
+            Maximize your geotechnical engineering capabilities
           </p>
 
           <PricingTabs />
@@ -337,7 +337,7 @@ export default function Home() {
               to="#"
               className="text-[#145da0] text-[13px] font-medium hover:text-black transition duration-200 inline-flex items-center border-2 border-[#145da0] hover:border-black rounded-sm px-6 py-2 tracking-[0.2em] !font-sans"
             >
-              VIEW PRICING
+              SEE PLANS
               <span className="ml-3 text-[17px] font-bold transform translate-y-[-0.5px]">
                 →
               </span>{" "}

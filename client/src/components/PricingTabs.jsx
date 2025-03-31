@@ -25,61 +25,61 @@ const PricingTabs = () => {
 
   const options = [
     {
-      title: "Exceptional Value",
+      title: "Advanced Features",
       description:
-        "Get access to a complete package of structural analysis and design software at a cost-effective price.",
+        "Access premium geotechnical design tools and analysis software at competitive rates.",
     },
     {
-      title: "Flexible Subscription Options",
+      title: "Customizable Plans",
       description:
-        "Only pay for software when you need it with Flexible Monthly, Contract, and Annual Plans.",
+        "Choose from Monthly, Annual, or Project-based pricing to match your workflow.",
     },
     {
-      title: "SkyCiv Grows with You",
+      title: "Scalable Solutions",
       description:
-        "Expanding your team's subscription as your company grows is easy with multi-seat or Business Plans.",
+        "Easily upgrade your subscription as your engineering needs expand over time.",
     },
   ];
 
   const tools = [
     {
-      name: "Structural 3D",
+      name: "Soil Analysis",
       icon: <FaCube className="text-[#145da0] text-xs" />,
     },
     {
-      name: "SkyCiv Beam",
+      name: "Pile Design",
       icon: <FaRulerVertical className="text-[#145da0] text-xs" />,
     },
     {
-      name: "Section Builder",
+      name: "Slope Stability",
       icon: <FaLayerGroup className="text-[#145da0] text-xs" />,
     },
     {
-      name: "Load Generator",
+      name: "Load Analysis",
       icon: <FaWeightHanging className="text-[#145da0] text-xs" />,
     },
     {
-      name: "SkyCiv Mobile",
+      name: "Mobile Access",
       icon: <FaMobile className="text-[#145da0] text-xs" />,
     },
     {
-      name: "Base Plate Design",
+      name: "Foundation Design",
       icon: <FaAnchor className="text-[#145da0] text-xs" />,
     },
     {
-      name: "Member Design",
+      name: "Retaining Walls",
       icon: <FaProjectDiagram className="text-[#145da0] text-xs" />,
     },
     {
-      name: "RC Member Design",
+      name: "Bearing Capacity",
       icon: <FaBuilding className="text-[#145da0] text-xs" />,
     },
     {
-      name: "Connection Design",
+      name: "Settlement Calc",
       icon: <FaUserCog className="text-[#145da0] text-xs" />,
     },
     {
-      name: "Foundation Design",
+      name: "Geotech Reports",
       icon: <FaUsers className="text-[#145da0] text-xs" />,
     },
   ];
@@ -121,10 +121,10 @@ const PricingTabs = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-0 pt-0 h-full">
+    <div className="flex flex-col lg:flex-row gap-0 pt-0 h-full">
       {/* Left side - Options */}
       <div
-        className="md:w-[50%] bg-white pr-8 pl-8 pt-16 flex flex-col relative"
+        className="lg:w-[50%] bg-white pr-8 pl-8 pt-16 flex flex-col relative"
         ref={containerRef}
       >
         {/* Sliding background */}
@@ -168,9 +168,9 @@ const PricingTabs = () => {
       </div>
 
       {/* Right side - Content */}
-      <div className="md:w-[50%] bg-white p-8 relative overflow-hidden">
+      <div className="lg:w-[50%] bg-white p-8 relative overflow-hidden overflow-y-auto">
         <div className="min-h-[380px] relative">
-          {/* Exceptional Value Content */}
+          {/* Advanced Features Content */}
           <div
             className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
               activeOption === 0 ? "opacity-100 z-10" : "opacity-0 z-0"
@@ -210,58 +210,36 @@ const PricingTabs = () => {
             </div>
           </div>
 
-          {/* Flexible Subscription Options Content */}
+          {/* Customizable Plans Content */}
           <div
             className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
               activeOption === 1 ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
           >
             <h3 className="text-2xl font-bold text-[#145da0] mb-4 text-left">
-              <div>Pricing Based on</div>
-              <div>Your Needs</div>
+              <div>Flexible Pricing</div>
+              <div>Options</div>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {[
                 {
-                  type: "Flexible",
+                  type: "Monthly",
                   description:
-                    "Monthly payments, cancel anytime without any additional fees.",
+                    "Pay as you go with monthly access, cancel anytime without penalties.",
                   plans: [
                     {
-                      name: "Business Subscription",
+                      name: "Enterprise Plan",
                       price: "$699",
                       note: "USD, billed monthly",
                     },
                     {
-                      name: "Professional Subscription",
+                      name: "Professional Plan",
                       price: "$249",
                       note: "USD, billed monthly",
                     },
                     {
-                      name: "Basic Subscription",
+                      name: "Standard Plan",
                       price: "$89",
-                      note: "USD, billed monthly",
-                    },
-                  ],
-                },
-                {
-                  type: "Contract",
-                  description:
-                    "Monthly payments with a 12-month minimum commitment period.",
-                  plans: [
-                    {
-                      name: "Business Subscription",
-                      price: "$499",
-                      note: "USD, billed monthly",
-                    },
-                    {
-                      name: "Professional Subscription",
-                      price: "$139",
-                      note: "USD, billed monthly",
-                    },
-                    {
-                      name: "Basic Subscription",
-                      price: "$79",
                       note: "USD, billed monthly",
                     },
                   ],
@@ -269,34 +247,56 @@ const PricingTabs = () => {
                 {
                   type: "Annual",
                   description:
-                    "Save up to 17% with annual billing compared to monthly plans.",
+                    "Save up to 15% with yearly billing compared to monthly rates.",
                   plans: [
                     {
-                      name: "Business Subscription",
-                      price: "$4,990",
-                      note: "USD, billed annually",
+                      name: "Enterprise Plan",
+                      price: "$499",
+                      note: "USD, billed monthly",
                     },
                     {
-                      name: "Professional Subscription",
-                      price: "$1,390",
-                      note: "USD, billed annually",
+                      name: "Professional Plan",
+                      price: "$139",
+                      note: "USD, billed monthly",
                     },
                     {
-                      name: "Basic Subscription",
-                      price: "$790",
-                      note: "USD, billed annually",
+                      name: "Standard Plan",
+                      price: "$79",
+                      note: "USD, billed monthly",
                     },
                   ],
-                  discount: "Save 17%!",
+                },
+                {
+                  type: "Project",
+                  description:
+                    "Special rates for project-based work with extended access.",
+                  plans: [
+                    {
+                      name: "Enterprise Plan",
+                      price: "$4,990",
+                      note: "USD, per project",
+                    },
+                    {
+                      name: "Professional Plan",
+                      price: "$1,390",
+                      note: "USD, per project",
+                    },
+                    {
+                      name: "Standard Plan",
+                      price: "$790",
+                      note: "USD, per project",
+                    },
+                  ],
+                  discount: "Save 15%!",
                 },
               ].map((option, i) => (
                 <div
                   key={i}
                   className="border border-gray-400 rounded-xl px-4 py-5 relative"
                 >
-                  {option.type === "Annual" && (
+                  {option.type === "Project" && (
                     <div className="absolute -top-3 right-4 bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium shadow-sm">
-                      Save 17%!
+                      Save 15%!
                     </div>
                   )}
                   <div className="flex justify-between items-left mb-2">
@@ -326,25 +326,25 @@ const PricingTabs = () => {
             </div>
           </div>
 
-          {/* Growth Content */}
+          {/* Scalable Solutions Content */}
           <div
             className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
               activeOption === 2 ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
           >
             <h3 className="text-2xl font-bold text-[#145da0] mb-3 text-left">
-              <div>Subscriptions Tailored</div>
-              <div>for You</div>
+              <div>Growth-Oriented</div>
+              <div>Subscriptions</div>
             </h3>
             <div className="space-y-2">
               {[
                 {
-                  title: "Business",
+                  title: "Enterprise",
                   description:
-                    "Provides shared access solutions for multiple team members",
+                    "Team access with multiple licenses for large engineering firms",
                   features: [
                     {
-                      value: ["15", "2"],
+                      value: ["20", "5"],
                       icons: [
                         <MdOutlinePersonAddAlt1
                           className={iconSize}
@@ -352,19 +352,19 @@ const PricingTabs = () => {
                         />,
                         <FaUserFriends className={iconSize} key="icon2" />,
                       ],
-                      label: ["individual logins", "simultaneous users"],
+                      label: ["user licenses", "concurrent sessions"],
                       subFeatures: [
-                        "increase simultaneous users",
-                        "increase individual logins",
+                        "expand team size as needed",
+                        "add more concurrent users",
                       ],
-                      growthText: "Includes options to grow!",
+                      growthText: "Built for expansion!",
                     },
                   ],
                 },
                 {
                   title: "Professional",
                   description:
-                    "Complete engineering software package for professional users",
+                    "Full geotechnical suite for individual practitioners",
                   features: [
                     {
                       value: "1",
@@ -374,19 +374,19 @@ const PricingTabs = () => {
                           key="icon3"
                         />
                       ),
-                      label: "designed for single users",
+                      label: "single user license",
                       subFeatures: [
-                        "add seats to your plan with multi-seat subscriptions",
-                        "1 user seat = 3 devices and 6 IP limits per month",
+                        "upgrade to team plan anytime",
+                        "1 license = 3 devices and 6 IP limits",
                       ],
-                      growthText: "Includes options to grow!",
+                      growthText: "Easy to upgrade!",
                     },
                   ],
                 },
                 {
-                  title: "Basic",
+                  title: "Standard",
                   description:
-                    "Essential structural analysis tools designed for individual users",
+                    "Core geotechnical tools for individual engineers",
                   features: [
                     {
                       value: "1",
@@ -396,12 +396,12 @@ const PricingTabs = () => {
                           key="icon4"
                         />
                       ),
-                      label: "designed for single users",
+                      label: "single user license",
                       subFeatures: [
-                        "add seats to your plan with multi-seat subscriptions",
-                        "1 user seat = 3 devices and 6 IP limits per month",
+                        "upgrade to professional plan",
+                        "1 license = 2 devices and 4 IP limits",
                       ],
-                      growthText: "Includes options to grow!",
+                      growthText: "Easy to upgrade!",
                     },
                   ],
                 },
