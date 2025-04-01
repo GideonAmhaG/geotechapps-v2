@@ -210,7 +210,7 @@ const PricingTabs = () => {
             </div>
           </div>
 
-          {/* Customizable Plans Content */}
+          {/* Flexible Subscription Options Content */}
           <div
             className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out ${
               activeOption === 1 ? "opacity-100 z-10" : "opacity-0 z-0"
@@ -229,18 +229,18 @@ const PricingTabs = () => {
                   plans: [
                     {
                       name: "Enterprise Plan",
-                      price: "$699",
-                      note: "USD, billed monthly",
+                      price: "39,500",
+                      note: "ETB, billed monthly",
                     },
                     {
                       name: "Professional Plan",
-                      price: "$249",
-                      note: "USD, billed monthly",
+                      price: "14,000",
+                      note: "ETB, billed monthly",
                     },
                     {
                       name: "Standard Plan",
-                      price: "$89",
-                      note: "USD, billed monthly",
+                      price: "5,000",
+                      note: "ETB, billed monthly",
                     },
                   ],
                 },
@@ -251,18 +251,18 @@ const PricingTabs = () => {
                   plans: [
                     {
                       name: "Enterprise Plan",
-                      price: "$499",
-                      note: "USD, billed monthly",
+                      price: "28,200",
+                      note: "ETB, billed monthly",
                     },
                     {
                       name: "Professional Plan",
-                      price: "$139",
-                      note: "USD, billed monthly",
+                      price: "7,800",
+                      note: "ETB, billed monthly",
                     },
                     {
                       name: "Standard Plan",
-                      price: "$79",
-                      note: "USD, billed monthly",
+                      price: "4,500",
+                      note: "ETB, billed monthly",
                     },
                   ],
                 },
@@ -273,18 +273,18 @@ const PricingTabs = () => {
                   plans: [
                     {
                       name: "Enterprise Plan",
-                      price: "$4,990",
-                      note: "USD, per project",
+                      price: "280,000",
+                      note: "ETB, per project",
                     },
                     {
                       name: "Professional Plan",
-                      price: "$1,390",
-                      note: "USD, per project",
+                      price: "78,000",
+                      note: "ETB, per project",
                     },
                     {
                       name: "Standard Plan",
-                      price: "$790",
-                      note: "USD, per project",
+                      price: "44,500",
+                      note: "ETB, per project",
                     },
                   ],
                   discount: "Save 15%!",

@@ -7,6 +7,9 @@ import enhanced from "./enhanced.jpg";
 import innovative from "./innovative.jpg";
 import streamlined from "./streamlined.jpg";
 import value from "./value.png";
+import era from "./era.png";
+import aau from "./aau.png";
+import phaedrus from "./phaedrus.png";
 
 export {
   logo,
@@ -18,4 +21,7 @@ export {
   innovative,
   streamlined,
   value,
+  era,
+  aau,
+  phaedrus,
 };

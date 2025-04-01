@@ -32,4 +32,12 @@ border-radius: 5px;
   .shadow-cardhover {
     box-shadow: 0 0 1px 0 rgba(189,192,207,0.06), 0 10px 16px -1px rgba(189,192,207,0.4);
   }
+
+  .max-w-6\.5xl {
+    max-width: 76rem;
+  }
+
+  .max-w-7\.5xl {
+    max-width: 85rem;
+  }
 }

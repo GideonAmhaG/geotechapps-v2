@@ -23,7 +23,7 @@ const styles = {
   sectionGridFour:
     "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16",  
   sectionContainer:
-    "max-w-7xl mx-auto text-center",
+    "max-w-6.5xl mx-auto text-center",
   sectionCard:
     "bg-white p-6 rounded-lg shadow-md",
   sectionNumberBadge:

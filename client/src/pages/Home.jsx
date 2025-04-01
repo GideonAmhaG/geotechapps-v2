@@ -6,6 +6,9 @@ import {
   enhanced,
   innovative,
   streamlined,
+  aau,
+  phaedrus,
+  era,
 } from "../assets";
 import {
   FaDraftingCompass,
@@ -30,10 +33,10 @@ export default function Home() {
     <div className={`w-full`}>
       {/* Hero Section */}
       <div className="bg-gray-100 py-16 px-4">
-        <div className="flex flex-col md:flex-row items-center max-w-7xl mx-auto md:gap-16">
+        <div className="flex flex-col md:flex-row items-center max-w-7.5xl mx-auto md:gap-16">
           {/* Text Section */}
           <div className="md:w-1/2 text-center md:text-left md:pr-8">
-            <h1 className="text-3xl md:text-5xl font-bold text-black">
+            <h1 className="text-3xl md:text-5xl font-semibold text-black">
               Geotechnical Solutions, Simplified
             </h1>
             <p className="text-gray-700 mt-4 text-lg md:text-xl">
@@ -277,46 +280,33 @@ export default function Home() {
         </div>
       </div>
 
-      {/* New White Section */}
-      <div className={`${styles.padding} text-center bg-gray-100`}>
-        <h2 className={`${styles.sectionHeadText} text-black`}>
-          Trusted by Industry Leaders
-        </h2>
-        <p className={`${styles.sectionSubText} text-gray-700`}>
-          Leading geotechnical firms rely on our platform to deliver exceptional
-          results.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-          <div>
-            <img
-              src="/path-to-logo1.png"
-              alt="Company Logo 1"
-              className="mx-auto w-32"
-            />
-            <p className="text-gray-700 mt-4">
-              "Exceptional tools that transformed our workflow!"
-            </p>
+      {/* Backed by Industry Leaders Section */}
+      <div className={`${styles.padding} bg-gray-100`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={`${styles.sectionHeadText}`}>
+            Used by Industry Leaders
+          </h2>
+          <p className={`${styles.sectionSubText}`}>
+            We're proud to collaborate with forward-thinking organizations
+          </p>
+
+          <div className="flex flex-wrap justify-center items-center gap-16 md:gap-36 mt-12 mb-3">
+            {[aau, era, phaedrus].map((logo, index) => (
+              <img
+                key={index}
+                src={logo}
+                alt={`Partner ${["AAU", "ERA", "Phaedrus"][index]}`}
+                className="h-24 md:h-32 object-contain hover:scale-105 transition-transform"
+              />
+            ))}
           </div>
-          <div>
-            <img
-              src="/path-to-logo2.png"
-              alt="Company Logo 2"
-              className="mx-auto w-32"
-            />
-            <p className="text-gray-700 mt-4">
-              "Unparalleled support and innovation."
-            </p>
-          </div>
-          <div>
-            <img
-              src="/path-to-logo3.png"
-              alt="Company Logo 3"
-              className="mx-auto w-32"
-            />
-            <p className="text-gray-700 mt-4">
-              "Reliable and intuitive solutions."
-            </p>
-          </div>
+
+          <Link
+            to="/design"
+            className="bg-[#145da0] text-white px-8 py-3 rounded-lg hover:bg-[#104f85] transition duration-300 mt-16 inline-block"
+          >
+            START DESIGNING FOUNDATIONS
+          </Link>
         </div>
       </div>
 
@@ -337,7 +327,7 @@ export default function Home() {
               to="#"
               className="text-[#145da0] text-[13px] font-medium hover:text-black transition duration-200 inline-flex items-center border-2 border-[#145da0] hover:border-black rounded-sm px-6 py-2 tracking-[0.2em] !font-sans"
             >
-              SEE PLANS
+              COMPARE PLANS
               <span className="ml-3 text-[17px] font-bold transform translate-y-[-0.5px]">
                 →
               </span>{" "}
