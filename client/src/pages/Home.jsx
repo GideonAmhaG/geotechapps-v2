@@ -28,6 +28,8 @@ import {
   PricingTabs,
 } from "../components";
 
+const iconSize = "text-4xl";
+
 export default function Home() {
   return (
     <div className={`w-full`}>
@@ -336,22 +338,92 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Testimonials Section */}
-      <div className={`${styles.padding} bg-gray-100 text-center`}>
-        <h2 className={`${styles.sectionHeadText} text-black`}>
-          What Our Users Say
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-gray-700 italic">
-              "Geotech Apps has made my work so much easier. The tools are
-              intuitive and powerful, and the support is outstanding!"
-            </p>
-            <p className="text-gray-900 font-semibold mt-4">
-              Jane Doe, Geotechnical Engineer
-            </p>
+      {/* Common Questions Section */}
+      <div className={`${styles.padding} bg-gray-100`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={`${styles.sectionHeadText}`}>Common Questions</h2>
+          <p className={`${styles.sectionSubText}`}>
+            Analyze and design easier and faster
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mt-20">
+            {[
+              {
+                icon: (
+                  <FaClipboardList
+                    className={`text-[#145da0] ${iconSize} mx-auto`}
+                  />
+                ),
+                title: "How does the functionality compare?",
+                description:
+                  "Our Platform offers the same functionality as traditional geotechnical analysis software—often more. We're 100% cloud-based with responsive support, API integration, and mobile access.",
+                linkText: "Compare features",
+              },
+              {
+                icon: (
+                  <FaUsers className={`text-[#145da0] ${iconSize} mx-auto`} />
+                ),
+                title: "How long does it take to learn?",
+                description:
+                  "Designed to be 10x easier to learn. Most professional users master the core tools in under one week compared to the industry average of several months.",
+                linkText: "Learning guide",
+              },
+              {
+                icon: (
+                  <FaAward className={`text-[#145da0] ${iconSize} mx-auto`} />
+                ),
+                title: "Can I trust the results?",
+                description:
+                  "Results are QA-tested against industry standards and fully documented, but final foundation designs require verification by a licensed engineer with project-specific data.",
+                linkText: "Validation reports",
+              },
+              {
+                icon: (
+                  <FaCloud className={`text-[#145da0] ${iconSize} mx-auto`} />
+                ),
+                title: "What about data security?",
+                description:
+                  "All project data is secured with bank-grade encryption (AES-256) and HTTPS protection. Contact us for enterprise deployment solutions or custom security requirements.",
+                linkText: "Security details",
+              },
+            ].map((item, index) => (
+              <div key={index} className="text-center">
+                {item.icon}
+                <h3 className="text-2xl font-semibold mt-4">{item.title}</h3>
+                <p className="text-gray-700 mt-2 px-4">{item.description}</p>
+                <div className="mt-4">
+                  <Link
+                    href="#"
+                    className="text-[#145da0] text-xs font-medium hover:text-black transition duration-200 inline-flex items-center tracking-[0.3em] !font-sans px-6 py-2 uppercase"
+                  >
+                    {item.linkText}
+                    <span className="ml-3 text-xs font-bold transform translate-y-[-0px]">
+                      →
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
-          {/* Repeat testimonials with relevant content */}
+        </div>
+      </div>
+
+      {/* Join Engineers Section */}
+      <div className={`${styles.padding} bg-white`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={`${styles.sectionHeadText}`}>
+            Join 300+ Professional Engineers!
+          </h2>
+          <p className={`${styles.sectionSubText}`}>
+            Powerful cloud-based geotechnical analysis and design software
+          </p>
+
+          <Link
+            to="/design"
+            className="bg-[#145da0] text-white px-8 py-3 rounded-lg hover:bg-[#104f85] transition duration-300 mt-8 inline-block"
+          >
+            START DESIGNING FOUNDATIONS
+          </Link>
         </div>
       </div>
     </div>
