@@ -15,7 +15,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-100 border-t border-gray-200">
+    <footer className="bg-gray-800 border-t border-gray-700">
       {/* Main Footer Content */}
       <div className={`${styles.paddingX} py-12 max-w-7xl mx-auto`}>
         {/* Footer Grid - Original Four Columns */}
@@ -61,7 +61,7 @@ const Footer = () => {
             },
           ].map((section) => (
             <div key={section.title} className="space-y-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-800">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-300">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -69,7 +69,7 @@ const Footer = () => {
                   <li key={`${section.title}-${link.to}-${index}`}>
                     <Link
                       to={link.to}
-                      className="text-sm text-gray-600 hover:text-[#145da0] transition-colors inline-flex items-center"
+                      className="text-sm text-gray-400 hover:text-white transition-colors inline-flex items-center"
                     >
                       {link.name}
                       {link.icon}
@@ -82,13 +82,13 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-200 my-8"></div>
+        <div className="border-t border-gray-700 my-8"></div>
 
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Copyright */}
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-400">
               &copy; {new Date().getFullYear()} GeotechApps. All rights
               reserved.
             </p>
@@ -126,7 +126,7 @@ const Footer = () => {
               <a
                 key={social.href}
                 href={social.href}
-                className="text-gray-500 hover:text-[#145da0] transition-colors"
+                className="text-gray-400 hover:text-[#145da0] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
@@ -139,7 +139,7 @@ const Footer = () => {
           {/* Back to Top */}
           <button
             onClick={scrollToTop}
-            className="mt-4 md:mt-0 flex items-center text-sm text-gray-600 hover:text-[#145da0] transition-colors"
+            className="mt-4 md:mt-0 flex items-center text-sm text-gray-400 hover:text-white transition-colors"
             aria-label="Back to top"
           >
             <FaArrowUp className="mr-2" />

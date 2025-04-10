@@ -183,6 +183,8 @@ const PricingTabs = () => {
                   loading="lazy"
                   alt="Software Preview"
                   className="max-h-full max-w-full object-contain"
+                  width={500}
+                  height={300}
                 />
               </div>
               <div className="w-[30%]">

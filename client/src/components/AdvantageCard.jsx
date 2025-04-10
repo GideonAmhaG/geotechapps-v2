@@ -18,6 +18,7 @@ const AdvantageCard = ({
           src={image}
           alt={title}
           className="w-full h-90 object-cover rounded-2xl shadow-strong"
+          loading="lazy"
         />
       </div>
       <div className="md:w-1/2 mt-8 md:mt-0 text-center md:text-left">

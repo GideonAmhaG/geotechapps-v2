@@ -5,7 +5,8 @@ import {
   About,
   Help,
   Login,
-  SignUp /* Step1_SelectType, Step2_Inputs, Step3_Results */,
+  SignUp,
+  Design /* Step1_SelectType, Step2_Inputs, Step3_Results */,
 } from "./pages";
 
 import { Navbar, Footer /* DesignLayout */ } from "./components";
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/help" element={<Help />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/design" element={<Design />} />
 
             {/* Design Workflow */}
             {/* <Route path="/design" element={<DesignLayout />}>

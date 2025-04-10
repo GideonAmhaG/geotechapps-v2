@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Suspense } from "react";
 import { styles } from "../styles";
 import {
   heroPic,
@@ -60,6 +61,8 @@ export default function Home() {
               src={heroPic}
               alt="Geotechnical Engineering Software"
               className="object-contain w-full max-w-md md:max-w-full"
+              width={800}
+              height={500}
             />
           </div>
         </div>
@@ -299,6 +302,9 @@ export default function Home() {
                 src={logo}
                 alt={`Partner ${["AAU", "ERA", "Phaedrus"][index]}`}
                 className="h-24 md:h-32 object-contain hover:scale-105 transition-transform"
+                loading="lazy"
+                width={160}
+                height={80}
               />
             ))}
           </div>
@@ -322,7 +328,15 @@ export default function Home() {
             Maximize your geotechnical engineering capabilities
           </p>
 
-          <PricingTabs />
+          <Suspense
+            fallback={
+              <div className="h-[300px] flex items-center justify-center">
+                Loading...
+              </div>
+            }
+          >
+            <PricingTabs />
+          </Suspense>
 
           <div className="mt-0 text-center">
             <Link
