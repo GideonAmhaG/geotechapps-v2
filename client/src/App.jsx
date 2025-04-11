@@ -18,7 +18,7 @@ export default function App() {
         <div className="bg-hero-pattern bg-cover bg-no-repeat bg-center">
           <Navbar />
         </div>
-        <div className="pt-15">
+        <div className="pt-17">
           <Routes>
             {/* General Pages */}
             <Route path="/" element={<Home />} />
