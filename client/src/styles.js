@@ -28,6 +28,9 @@ const styles = {
     "bg-white p-6 rounded-lg shadow-md",
   sectionNumberBadge:
     "w-10 h-10 text-md sm:w-12 sm:h-12 sm:text-lg bg-[#145da0] text-white rounded-full mx-auto flex items-center justify-center font-bold mb-4",
+  cardTitle: "font-semibold text-gray-800 md:text-[18px] sm:text-[16px] text-[14px]",
+  cardDescription: "text-gray-600 sm:text-[14px] text-[12px] mt-1",
+  cardUseCase: "text-[#145da0] font-medium sm:text-[12px] text-[10px] mt-2",
 };
 
 export { styles };
