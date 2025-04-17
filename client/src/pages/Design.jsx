@@ -5,6 +5,7 @@ import {
   SoilType,
   InputParameters,
   Results,
+  SelectionSummary,
 } from "../components";
 
 export default function Design() {
@@ -38,20 +39,23 @@ export default function Design() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
       {/* Left Panel (Inputs) */}
       <div className="w-full lg:w-1/2 p-4 overflow-y-auto h-[50vh] lg:h-auto">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-xl md:text-2xl font-bold text-gray-600">
             Foundation Design
           </h1>
-          <div className="text-xs md:text-sm text-gray-500 hidden sm:block">
+          <div className="text-xs md:text-sm text-gray-500">
             Eurocode (EN) <span className="font-medium">1992-1-1</span>,{" "}
             <span className="font-medium">1997-1</span>
           </div>
         </div>
 
-        <div className="flex items-center mb-6 space-x-4">
+        {/* Render the SelectionSummary component here */}
+        <SelectionSummary designData={designData} />
+
+        <div className="flex items-center mb-4 space-x-4">
           <button
             onClick={handleBack}
             disabled={activeTab === 0}

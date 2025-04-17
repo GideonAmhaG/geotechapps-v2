@@ -259,7 +259,7 @@ export default function Home() {
               },
               {
                 Icon: FaTools,
-                value: "3",
+                value: "4",
                 text: "Geotechnical Tools Available",
               },
               {
