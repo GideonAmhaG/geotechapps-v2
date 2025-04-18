@@ -17,4 +17,5 @@ export { default as SelectionSummary } from './DesignTabs/SelectionSummary';
 export { default as ParameterInput } from './shared/ParameterInput';
 export { default as ResultCard } from './shared/ResultCard';
 export { default as TabButton } from './shared/TabButton';
-export { default as Guidance } from './shared/Guidance';
+export { default as GuidanceSection } from './shared/GuidanceSection';
+export { default as SelectionBox } from './shared/SelectionBox';
