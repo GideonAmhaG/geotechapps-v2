@@ -1,0 +1,633 @@
+//design.jsx
+import { useState } from "react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import {
+  FoundationType,
+  SoilType,
+  Inputs,
+  Results,
+  SelectionSummary,
+} from "../components";
+
+export default function Design() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [designData, setDesignData] = useState({
+    foundationType: null,
+    soilType: null,
+    inputs: {},
+    results: null,
+  });
+
+  const tabs = [
+    { id: 0, label: "Foundation", component: FoundationType },
+    { id: 1, label: "Soil", component: SoilType },
+    { id: 2, label: "Inputs", component: Inputs },
+    { id: 3, label: "Results", component: Results },
+  ];
+
+  const updateDesignData = (key, value) => {
+    setDesignData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const ActiveComponent = tabs[activeTab].component;
+
+  const handleNext = () => {
+    if (activeTab < tabs.length - 1) setActiveTab(activeTab + 1);
+  };
+
+  const handleBack = () => {
+    if (activeTab > 0) setActiveTab(activeTab - 1);
+  };
+
+  return (
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
+      {/* Left Panel (Inputs) */}
+      <div className="w-full lg:w-1/2 p-4 overflow-y-auto h-[50vh] lg:h-auto">
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-600">
+            Foundation Design
+          </h1>
+          <div className="text-xs md:text-sm text-gray-500">
+            Eurocode (EN) <span className="font-medium">1992-1-1</span>,{" "}
+            <span className="font-medium">1997-1</span>
+          </div>
+        </div>
+
+        {/* Render the SelectionSummary component here */}
+        <SelectionSummary designData={designData} />
+
+        <div className="flex items-center mb-4 space-x-4">
+          <button
+            onClick={handleBack}
+            disabled={activeTab === 0}
+            className={`p-2 rounded-full transition-colors ${
+              activeTab === 0
+                ? "text-gray-300 cursor-not-allowed"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <FiChevronLeft className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+          </button>
+
+          <div className="flex-1 overflow-x-auto">
+            <div className="flex space-x-1 pb-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  disabled={
+                    (tab.id === 1 && !designData.foundationType) ||
+                    (tab.id === 2 && !designData.soilType) ||
+                    (tab.id === 3 && !designData.inputs)
+                  }
+                  className={`relative px-4 py-2 text-xs md:text-sm lg:text-base font-medium transition-all duration-200 ${
+                    activeTab === tab.id
+                      ? "text-[#145da0]"
+                      : "text-gray-500 hover:text-gray-700"
+                  } ${
+                    (tab.id === 1 && !designData.foundationType) ||
+                    (tab.id === 2 && !designData.soilType) ||
+                    (tab.id === 3 && !designData.inputs)
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  {tab.label}
+                  {activeTab === tab.id && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[0.1rem] lg:h-0.5 bg-[#145da0] rounded-full" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={handleNext}
+            disabled={
+              (activeTab === 0 && !designData.foundationType) ||
+              (activeTab === 1 && !designData.soilType) ||
+              (activeTab === 2 && !designData.inputs) ||
+              activeTab === tabs.length - 1
+            }
+            className={`p-2 rounded-full ${
+              (activeTab === 0 && !designData.foundationType) ||
+              (activeTab === 1 && !designData.soilType) ||
+              (activeTab === 2 && !designData.inputs) ||
+              activeTab === tabs.length - 1
+                ? "text-gray-300 cursor-not-allowed"
+                : "text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            <FiChevronRight className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+          </button>
+        </div>
+
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200 mb-4 overflow-x-auto">
+          <ActiveComponent
+            data={designData}
+            updateData={updateDesignData}
+            setActiveTab={setActiveTab}
+          />
+        </div>
+      </div>
+
+      {/* Right Panel (Visuals) */}
+      <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
+        <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
+          <div className="p-4">
+            <span className="text-gray-400 block">Interactive Diagram</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+//foundationtype.jsx
+import { FaCube, FaObjectGroup, FaLink } from "react-icons/fa";
+import { GiBrickWall } from "react-icons/gi";
+import { styles } from "../../styles";
+import { GuidanceSection, SelectionBox } from "../";
+
+const foundationTypes = [
+  {
+    id: "isolated",
+    name: "Isolated Footing",
+    icon: <FaCube className="text-2xl" />,
+    description: "Single column support for stable soils",
+    useCase: "Best for: Individual columns with moderate loads",
+  },
+  {
+    id: "combined",
+    name: "Combined Footing",
+    icon: <FaObjectGroup className="text-2xl" />,
+    description: "Supports multiple closely-spaced columns",
+    useCase: "Best for: Adjacent columns where isolated footings would overlap",
+  },
+  {
+    id: "strap",
+    name: "Strap Footing",
+    icon: <FaLink className="text-2xl" />,
+    description: "Connected footings with a beam",
+    useCase: "Best for: Eccentric loading or property line constraints",
+  },
+  {
+    id: "retaining",
+    name: "Retaining Wall",
+    icon: <GiBrickWall className="text-2xl" />,
+    description: "Supports lateral earth pressure",
+    useCase: "Best for: Slope stabilization and basement walls",
+  },
+];
+
+const guidanceItems = [
+  {
+    main: "Isolated footings are most economical for standard structures.",
+    detail: "Saves 15-20% compared to combined footings in typical cases.",
+  },
+  {
+    main: "Choose combined footings when column spacing is less than 2m.",
+    detail: "Prevents overlapping stress zones in dense layouts.",
+  },
+  {
+    main: "Strap footings help when one column is near a property line.",
+    detail: "The connecting beam redistributes eccentric loads.",
+  },
+  {
+    main: "Retaining walls require special consideration of lateral forces.",
+    detail: "Hydrostatic pressure and soil friction must be calculated.",
+  },
+];
+
+export default function FoundationType({ data, updateData, setActiveTab }) {
+  const handleSelect = (type) => {
+    updateData("foundationType", type);
+    setActiveTab(1);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      <h2 className={`${styles.sectionTitleText}`}>Foundation Type</h2>
+      <p className={`${styles.sectionBodyText} mb-6`}>
+        Select the foundation type that matches your project requirements
+      </p>
+
+      <SelectionBox
+        options={foundationTypes}
+        selectedValue={data.foundationType}
+        onSelect={handleSelect}
+      />
+
+      <GuidanceSection
+        title="Selection Guidance"
+        items={guidanceItems}
+        tip="Tip: Soil conditions and load requirements affect foundation selection"
+      />
+    </div>
+  );
+}
+
+
+//soiltype.jsx
+import { FaMountain, FaRuler } from "react-icons/fa";
+import { styles } from "../../styles";
+import { GiWaterDrop, GiPowder } from "react-icons/gi";
+import { GuidanceSection, SelectionBox } from "../";
+
+const soilTypes = [
+  {
+    id: "CU",
+    name: "Clay (Undrained)",
+    icon: <GiWaterDrop className="text-2xl" />,
+    description: "Short-term behavior for all fine-grained soils",
+    useCase: "Best for: Silts and clays under immediate loading",
+  },
+  {
+    id: "CD",
+    name: "Clay (Drained)",
+    icon: <FaMountain className="text-2xl" />,
+    description: "Long-term behavior for cohesive soils",
+    useCase: "Best for: Consolidated clays and silty clays",
+  },
+  {
+    id: "S",
+    name: "Sand",
+    icon: <GiPowder className="text-2xl" />,
+    description: "Drained behavior for granular materials",
+    useCase: "Best for: Sands, gravels, and silty sands",
+  },
+  {
+    id: "CUST",
+    name: "Custom Bearing Capacity",
+    icon: <FaRuler className="text-2xl" />,
+    description: "User-specified bearing capacity",
+    useCase: "Best for: Pre-calculated or empirical values",
+  },
+];
+
+const guidanceItems = [
+  {
+    main: "Undrained analysis is conservative for all fine-grained soils.",
+    detail:
+      "Includes silty clays - uses total stress parameters (Sᵤ) with φ=0.",
+  },
+  {
+    main: "Drained analysis covers long-term conditions.",
+    detail:
+      "Effective stress parameters (c', φ') work for clays and most silty soils.",
+  },
+  {
+    main: "Sand analysis applies to all granular materials.",
+    detail: "For gravels, increase φ' to 35°-45° in input parameters.",
+  },
+  {
+    main: "Custom option allows direct bearing capacity input.",
+    detail:
+      "Provide your calculated bearing capacity to bypass automatic calculations.",
+  },
+];
+
+export default function SoilType({ data, updateData, setActiveTab }) {
+  const handleSelect = (type) => {
+    updateData("soilType", type);
+    setActiveTab(2);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      <h2 className={`${styles.sectionTitleText}`}>Soil Behavior Type</h2>
+      <p className={`${styles.sectionBodyText} mb-6`}>
+        Select the soil behavior that matches your site conditions
+      </p>
+
+      <SelectionBox
+        options={soilTypes}
+        selectedValue={data.soilType}
+        onSelect={handleSelect}
+      />
+
+      <GuidanceSection
+        title="Selection Guidance"
+        items={guidanceItems}
+        tip="Tip: For silty soils, use 'Clay' types and adjust φ' accordingly"
+      />
+    </div>
+  );
+}
+
+//selectionbox.jsx
+import { IoChevronForward } from "react-icons/io5";
+import { styles } from "../../styles";
+
+export default function SelectionBox({
+  options,
+  selectedValue,
+  onSelect,
+  className = "",
+}) {
+  return (
+    <div className={`grid grid-cols-1 gap-4 ${className}`}>
+      {options.map((option) => (
+        <button
+          key={option.id}
+          onClick={() => onSelect(option.id)}
+          className={`p-5 border-2 rounded-xl text-left transition-all duration-200 flex items-center justify-between ${
+            selectedValue === option.id
+              ? "border-[#145da0] bg-[#f0f7ff] shadow-md"
+              : "border-gray-200 hover:border-[#145da0]/50 hover:bg-[#f0f7ff]/50"
+          }`}
+        >
+          <div className="flex items-start">
+            <div className="mr-4 text-[#145da0] mt-1">{option.icon}</div>
+            <div>
+              <h3 className={`${styles.cardTitle}`}>{option.name}</h3>
+              <p className={`${styles.cardDescription}`}>
+                {option.description}
+              </p>
+              <p className={`${styles.cardUseCase}`}>{option.useCase}</p>
+            </div>
+          </div>
+          <IoChevronForward className="text-gray-400 text-xl" />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+//guidancesection.jsx
+import { useState } from "react";
+import { IoChevronForward, IoChevronDown } from "react-icons/io5";
+import { Link } from "react-router-dom";
+
+export default function GuidanceSection({ title, items, tip }) {
+  const [isGuidanceVisible, setGuidanceVisible] = useState(false);
+
+  return (
+    <div className="mt-8">
+      <button
+        onClick={() => setGuidanceVisible(!isGuidanceVisible)}
+        className="w-full flex items-center justify-between p-4"
+        aria-expanded={isGuidanceVisible}
+        aria-controls="guidance-content"
+      >
+        <div className="flex items-center text-[#145da0] hover:text-black">
+          <span className="font-medium md:text-[18px] sm:text-[16px] text-[14px]">
+            {title}
+          </span>
+          <span className="ml-2 md:text-[18px] sm:text-[16px] text-[14px]">
+            {isGuidanceVisible ? (
+              <IoChevronDown className="inline" />
+            ) : (
+              <IoChevronForward className="inline" />
+            )}
+          </span>
+        </div>
+      </button>
+
+      <div
+        id="guidance-content"
+        className={`transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden ${
+          isGuidanceVisible
+            ? "max-h-[var(--content-height)] opacity-100"
+            : "max-h-0 opacity-0"
+        }`}
+        aria-hidden={!isGuidanceVisible}
+        style={{ "--content-height": "500px" }}
+      >
+        <div className="px-5 pb-5 space-y-0">
+          {items.map((item, index) => (
+            <div key={index} className="p-3">
+              <div className="flex">
+                <div className="flex-shrink-0 mt-0.5 mr-3 text-blue-600">✓</div>
+                <div>
+                  <p className="font-medium text-gray-800 md:text-[16px] sm:text-[14px] text-[13px]">
+                    {item.main}
+                  </p>
+                  {item.detail && (
+                    <p className="mt-1.5 text-gray-600 pl-2 border-l-2 border-blue-200 md:text-[14px] sm:text-[12px] text-[11px]">
+                      {item.detail}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <div className="mt-4 text-center">
+            <Link
+              href="#"
+              className="text-[#145da0] font-medium hover:text-black transition duration-200 inline-flex items-center tracking-[0.3em] !font-sans px-6 py-2 uppercase"
+              style={{
+                fontSize: "clamp(0.6rem, 0.8vw, 0.75rem)",
+              }}
+            >
+              Documentation
+              <span className="ml-3 font-bold transform translate-y-[-0px] md:text-[14px] sm:text-[12px] text-[11px]">
+                →
+              </span>
+            </Link>
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-gray-500 italic md:text-[14px] sm:text-[12px] text-[11px]">
+              {tip}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+//style.js
+const styles = {  
+    paddingX: "sm:px-16 px-6",
+    paddingY: "sm:py-16 py-6",
+    padding: "sm:px-16 px-6 sm:py-16 py-10",
+    
+    heroHeadText:
+      "font-black text-white lg:text-[80px] sm:text-[60px] xs:text-[50px] text-[40px] lg:leading-[98px] mt-2",
+    heroSubText:
+      "text-[#dfd9ff] font-medium lg:text-[30px] sm:text-[26px] xs:text-[20px] text-[16px] lg:leading-[40px]",
+    
+    sectionHeadText:
+      "text-black font-bold md:text-[40px] sm:text-[30px] xs:text-[20px] text-[20px]",
+    sectionSubText:
+      "sm:text-[18px] text-[14px] text-secondary uppercase tracking-wider mt-4",
+    sectionTitleText:
+      "font-semibold text-black md:text-[24px] sm:text-[20px] xs:text-[18px] text-[16px]",
+    sectionBodyText:
+      "text-gray-700 sm:text-[16px] text-[14px] leading-relaxed",  
+    sectionCardText:
+      "text-gray-700 sm:text-[14px] text-[12px] leading-relaxed",  
+    sectionGridThree:
+      "grid grid-cols-1 md:grid-cols-3 gap-8 mt-12", 
+    sectionGridFour:
+      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16",  
+    sectionContainer:
+      "max-w-6.5xl mx-auto text-center",
+    sectionCard:
+      "bg-white p-6 rounded-lg shadow-md",
+    sectionNumberBadge:
+      "w-10 h-10 text-md sm:w-12 sm:h-12 sm:text-lg bg-[#145da0] text-white rounded-full mx-auto flex items-center justify-center font-bold mb-4",
+    cardTitle: "font-semibold text-gray-800 md:text-[18px] sm:text-[16px] text-[14px]",
+    cardDescription: "text-gray-600 sm:text-[14px] text-[12px] mt-1",
+    cardUseCase: "text-[#145da0] font-medium sm:text-[12px] text-[10px] mt-2",
+  };
+  
+  export { styles };
+  
+//codefromoldwebapp
+{% extends "base.html" %}
+{% block title %}Inputs{% endblock %}
+{% block header %}Inputs{% endblock %}
+{% block content %}
+<form action="/inputs" method="post" id="foundation-form">
+    <div class="row">
+        <div class="col">
+            <!-- <h4>Soil Type: <span id="selected-soil"></span></h4> -->
+            <h4>Soil Type: {{ soil_type }}</span></h4>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <h4>Loads and Moments:</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="DL">Permanent load (Unfactored), Gk (kN)</label>
+                    <input class="form-control" type="text" name="DL" id="DL"
+                        placeholder="Permanent load (Unfactored), Gk (kN)">
+                </div>
+                <div class="col-md-6">
+                    <label for="LL">Variable load (Unfactored), Qk (kN)</label>
+                    <input class="form-control" type="text" name="LL" id="LL"
+                        placeholder="Variabe load (Unfactored), Qk (kN)">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="mxp">MomentX Permanent (Unfactored), Mxp (kNm)</label>
+                    <input class="form-control" type="text" name="mxp" id="mxp"
+                        placeholder="MomentX permanent (Unfactored), Mxp (kNm)">
+                </div>
+                <div class="col-md-6">
+                    <label for="mxv">MomentX Variable (Unfactored), Mxv (kNm)</label>
+                    <input class="form-control" type="text" name="mxv" id="mxv"
+                        placeholder="MomentX variable (Unfactored), Mxv (kNm)">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="myp">MomentY Permanent (Unfactored), Myp (kNm)</label>
+                    <input class="form-control" type="text" name="myp" id="myp"
+                        placeholder="MomentY permanent (Unfactored), Myp (kNm)">
+                </div>
+                <div class="col-md-6">
+                    <label for="myv">MomentY Variable (Unfactored), Myv (kNm)</label>
+                    <input class="form-control" type="text" name="myv" id="myv"
+                        placeholder="MomentY variable (Unfactored), Myv (kNm)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <h4>Geometry:</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="COL">Column widthX (m)</label>
+                    <input class="form-control" type="text" name="COL" id="COL" placeholder="Column widthX (m)">
+                </div>
+                <div class="col-md-6">
+                    <label for="COLY">Column widthY (m)</label>
+                    <input class="form-control" type="text" name="COLY" id="COLY" placeholder="Column widthY (m)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <h4>Soil Property:</h4>
+            <div class="row">
+                <div class="col-md-6 bearing-c">
+                    <label for="BC">Allowable bearing capacity, qall (kPa)</label>
+                    <input class="form-control" type="text" name="BC" id="BC"
+                        placeholder="Allowable bearing capacity, qall (kPa)">
+                </div>
+                <div class="col-md-6 clay-sand">
+                    <label for="DF">Depth of foundation, Df (m)</label>
+                    <input class="form-control" type="text" name="DF" id="DF" placeholder="Depth of foundation, Df (m)">
+                </div>
+                <div class="col-md-6 clay">
+                    <label for="CU">Undrained cohesion, Cu (kPa)</label>
+                    <input class="form-control" type="text" name="CU" id="CU"
+                        placeholder="Undrained cohesion, Cu (kPa)">
+                </div>
+                <div class="col-md-6 sand">
+                    <label for="PHI">Angle of internal friction, PHI (degrees)</label>
+                    <input class="form-control" type="text" name="PHI" id="PHI"
+                        placeholder="Angle of internal friction, PHI (degrees)">
+                </div>
+                <div class="col-md-6 clay-sand">
+                    <label for="GAM">Unit weight of soil, &gamma; (kN/m<sup>3</sup>)</label>
+                    <input class="form-control" type="text" name="GAM" id="GAM"
+                        placeholder="Unit weight of soil, &gamma; (kN/m^3)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <h4>Material Property:</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="FCK">Concrete strength, fck (MPa)</label>
+                    <input class="form-control" type="text" name="FCK" id="FCK"
+                        placeholder="Concrete strength, fck (MPa)">
+                </div>
+                <div class="col-md-6">
+                    <label for="FYK">Steel strength, fyk (MPa)</label>
+                    <input class="form-control" type="text" name="FYK" id="FYK" placeholder="Steel strength, fyk (MPa)">
+                </div>
+                <div class="col-md-6">
+                    <label for="BAR">Re-Bar diameter (mm)</label>
+                    <input class="form-control" type="text" name="BAR" id="BAR" placeholder="Re-Bar diameter (mm)">
+                </div>
+                <div class="col mt-4">
+                    <label for="COV">Cover - </label>
+                    <select class="form-select" id="COV" name="COV">
+                        <option value="40">40 mm (Footing on lean concrete)</option>
+                        <option value="75">75 mm (Footing on soil)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row pt-4">
+        <div class="col">
+            <div class="row justify-content-end">
+                <button type="submit" name="submit_type" value="regular"
+                    class="btn btn-success">Calculate-Regular</button>
+            </div>
+        </div>
+        <div class="col">
+            <button type="submit" name="submit_type" value="advanced"
+                class="btn btn-warning">Calculate-Advanced</button>
+        </div>
+    </div>
+    <input type="hidden" name="option" value="{{ soil_type }}">
+</form>
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/inputs.js') }}"></script>
+<script>
+    var soilType = "{{ soil_type }}"; // Store the value from Flask
+    // document.getElementById("selected-soil").innerHTML = formatSoilType(soilType);
+    updateSoilFields(soilType); // Pass the variable to the function
+</script>
+{% endblock %}
