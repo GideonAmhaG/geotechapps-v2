@@ -116,12 +116,24 @@ const FormField = React.memo(({ field, value, onChange }) => {
         <div className="flex items-center gap-1.5">
           {field.label}
           {field.tooltip && (
-            <span title={field.tooltip} className="cursor-help">
-              <FaCircleInfo
-                className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-gray-500"
-                style={{ transitionDelay: "0s" }}
-              />
-            </span>
+            <div className="relative group" style={{ isolation: "isolate" }}>
+              <FaCircleInfo className="w-3.5 h-3.5 text-gray-500 cursor-help" />
+              <div
+                className="absolute z-[9999] opacity-0 group-hover:opacity-100 bottom-full left-0 mb-3 px-3 py-3 text-[11px] sm:text-[12.5px] bg-gray-800 text-white rounded min-w-[250px] whitespace-normal break-words transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto shadow-lg"
+                style={{
+                  maxWidth: "calc(100vw - 2rem)",
+                  transform: "translateY(2px)",
+                }}
+              >
+                {field.tooltip}
+                <div
+                  className="absolute top-full left-3 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gray-800"
+                  style={{
+                    transform: "translateY(-1px)",
+                  }}
+                />
+              </div>
+            </div>
           )}
         </div>
       </label>
@@ -428,15 +440,7 @@ export default function InputParameters({ data, updateData, setActiveTab }) {
     <div className="max-w-3xl mx-auto">
       <h2 className={`${styles.sectionTitleText}`}>Inputs</h2>
       <p className={`${styles.sectionBodyText} mb-6`}>
-        Enter the required parameters for your{" "}
-        <span className="font-semibold text-gray-700">
-          {foundationTypeNames[foundationType]}
-        </span>{" "}
-        foundation and{" "}
-        <span className="font-semibold text-gray-700">
-          {soilTypeNames[soilType]}
-        </span>{" "}
-        soil conditions
+        Enter the required parameters for your foundation design
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">

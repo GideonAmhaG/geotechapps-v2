@@ -121,7 +121,7 @@ export default function Design() {
           </button>
         </div>
 
-        <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200 mb-4 overflow-x-auto">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200 mb-4 overflow-visible">
           <ActiveComponent
             data={designData}
             updateData={updateDesignData}
