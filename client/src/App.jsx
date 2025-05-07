@@ -11,7 +11,7 @@ import {
 
 import { Navbar, Footer /* DesignLayout */ } from "./components";
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
       <div className="relative z-0 bg-primary">
@@ -41,3 +41,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+export default App;

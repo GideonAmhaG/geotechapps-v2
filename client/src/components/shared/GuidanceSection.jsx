@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IoChevronForward, IoChevronDown } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
-export default function GuidanceSection({ title, items, tip }) {
+function GuidanceSection({ title, items, tip }) {
   const [isGuidanceVisible, setGuidanceVisible] = useState(false);
 
   return (
@@ -81,3 +81,5 @@ export default function GuidanceSection({ title, items, tip }) {
     </div>
   );
 }
+
+export default GuidanceSection;

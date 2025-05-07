@@ -1,4 +1,4 @@
-export default function ResultCard({ title, value, unit, description }) {
+function ResultCard({ title, value, unit, description }) {
   return (
     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
       <h3 className="font-medium text-gray-700">{title}</h3>
@@ -12,3 +12,5 @@ export default function ResultCard({ title, value, unit, description }) {
     </div>
   );
 }
+
+export default ResultCard;

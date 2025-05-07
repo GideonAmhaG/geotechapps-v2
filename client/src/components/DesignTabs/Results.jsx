@@ -1,7 +1,7 @@
 import { ResultCard } from "../";
 import { FaCheckCircle, FaFileDownload } from "react-icons/fa";
 
-export default function Results({ data }) {
+function Results({ data }) {
   if (!data.results)
     return <p>No results available. Please complete the design process.</p>;
 
@@ -61,3 +61,5 @@ export default function Results({ data }) {
     </div>
   );
 }
+
+export default Results;

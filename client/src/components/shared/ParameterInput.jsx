@@ -1,4 +1,4 @@
-export default function ParameterInput({
+function ParameterInput({
   label,
   name,
   value,
@@ -30,3 +30,5 @@ export default function ParameterInput({
     </div>
   );
 }
+
+export default ParameterInput;

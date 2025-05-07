@@ -1,12 +1,7 @@
 import { IoChevronForward } from "react-icons/io5";
 import { styles } from "../../styles";
 
-export default function SelectionBox({
-  options,
-  selectedValue,
-  onSelect,
-  className = "",
-}) {
+function SelectionBox({ options, selectedValue, onSelect, className = "" }) {
   return (
     <div className={`grid grid-cols-1 gap-4 ${className}`}>
       {options.map((option) => (
@@ -35,3 +30,5 @@ export default function SelectionBox({
     </div>
   );
 }
+
+export default SelectionBox;

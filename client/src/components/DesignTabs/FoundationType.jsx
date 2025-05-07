@@ -53,7 +53,7 @@ const guidanceItems = [
   },
 ];
 
-export default function FoundationType({ data, updateData, setActiveTab }) {
+function FoundationType({ data, updateData, setActiveTab }) {
   const handleSelect = (type) => {
     updateData("foundationType", type);
     setActiveTab(1);
@@ -80,3 +80,5 @@ export default function FoundationType({ data, updateData, setActiveTab }) {
     </div>
   );
 }
+
+export default FoundationType;

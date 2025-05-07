@@ -9,7 +9,7 @@ export { default as ComplianceItem } from "./ComplianceItem";
 export const PricingTabs = lazy(() => import("./PricingTabs"));
 
 export { default as FoundationType } from './DesignTabs/FoundationType';
-export { default as InputParameters } from './DesignTabs/InputParameters';
+export { default as InputParameters } from './DesignTabs/InputParameters/index.jsx';
 export { default as Results } from './DesignTabs/Results';
 export { default as SoilType } from './DesignTabs/SoilType';
 export { default as SelectionSummary } from './DesignTabs/SelectionSummary';

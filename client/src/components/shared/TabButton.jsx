@@ -1,4 +1,4 @@
-export default function TabButton({ children, active, onClick, disabled }) {
+function TabButton({ children, active, onClick, disabled }) {
   return (
     <button
       className={`px-4 py-2 font-medium text-sm md:text-base transition-colors duration-200 ${
@@ -13,3 +13,5 @@ export default function TabButton({ children, active, onClick, disabled }) {
     </button>
   );
 }
+
+export default TabButton;

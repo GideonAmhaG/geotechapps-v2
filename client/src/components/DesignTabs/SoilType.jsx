@@ -56,7 +56,7 @@ const guidanceItems = [
   },
 ];
 
-export default function SoilType({ data, updateData, setActiveTab }) {
+function SoilType({ data, updateData, setActiveTab }) {
   const handleSelect = (type) => {
     updateData("soilType", type);
     setActiveTab(2);
@@ -83,3 +83,5 @@ export default function SoilType({ data, updateData, setActiveTab }) {
     </div>
   );
 }
+
+export default SoilType;

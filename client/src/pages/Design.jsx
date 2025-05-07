@@ -8,7 +8,7 @@ import {
   SelectionSummary,
 } from "../components";
 
-export default function Design() {
+function Design() {
   const [activeTab, setActiveTab] = useState(0);
   const [designData, setDesignData] = useState({
     foundationType: null,
@@ -141,3 +141,5 @@ export default function Design() {
     </div>
   );
 }
+
+export default Design;

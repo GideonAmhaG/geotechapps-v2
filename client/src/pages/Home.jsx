@@ -31,7 +31,7 @@ import {
 
 const iconSize = "text-4xl";
 
-export default function Home() {
+function Home() {
   return (
     <div className={`w-full`}>
       {/* Hero Section */}
@@ -443,3 +443,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;
