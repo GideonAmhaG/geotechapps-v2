@@ -3,8 +3,8 @@ import { FaCircleInfo } from "react-icons/fa6";
 
 const FormField = React.memo(({ field, register, errors }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [tooltipStyle, setTooltipStyle] = useState({});
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const tooltipRef = useRef(null);
 
   const updateTooltipPosition = useCallback(() => {
@@ -30,7 +30,7 @@ const FormField = React.memo(({ field, register, errors }) => {
     <div className="mb-4">
       <label
         htmlFor={field.id}
-        className={`text-gray-600 text-[11px] sm:text-[13px] font-medium block mb-1`}
+        className="text-gray-600 text-[11px] sm:text-[13px] font-medium block mb-1"
       >
         <div className="flex items-center gap-1.5">
           {field.label}
@@ -39,15 +39,16 @@ const FormField = React.memo(({ field, register, errors }) => {
               className="relative group"
               ref={tooltipRef}
               style={{ isolation: "isolate" }}
-              onMouseEnter={() => {
-                setIsHovered(true);
-                updateTooltipPosition();
-              }}
-              onMouseLeave={() => setIsHovered(false)}
+              onMouseEnter={updateTooltipPosition}
+              onClick={() => setIsTooltipVisible((prev) => !prev)}
             >
               <FaCircleInfo className="w-3.5 h-3.5 text-gray-500 cursor-help" />
               <div
-                className="absolute z-[9999] opacity-0 group-hover:opacity-100 bottom-full left-0 mb-3 px-3 py-3 text-[11px] sm:text-[12.5px] bg-gray-800 text-white rounded min-w-[250px] whitespace-normal break-words transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto shadow-lg"
+                className={`absolute z-[9999] ${
+                  isTooltipVisible
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-0 pointer-events-none"
+                } group-hover:opacity-100 bottom-full left-0 mb-3 px-3 py-3 text-[11px] sm:text-[12.5px] bg-gray-800 text-white rounded min-w-[250px] whitespace-normal break-words transition-all duration-300 ease-out shadow-lg`}
                 style={{
                   position: "fixed",
                   maxWidth: "calc(100vw - 2rem)",
@@ -80,7 +81,7 @@ const FormField = React.memo(({ field, register, errors }) => {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
             >
-              {field.options.map((option) => (
+              {field.options?.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -109,9 +110,11 @@ const FormField = React.memo(({ field, register, errors }) => {
             />
           )}
         </div>
-        <span className="bg-gray-100 px-3 py-[0.4rem] text-gray-600 border-t border-b border-r border-gray-300 rounded-r-sm flex items-center text-[11px] sm:text-[13px] leading-tight">
-          {field.unit}
-        </span>
+        {field.unit && (
+          <span className="bg-gray-100 px-3 py-[0.4rem] text-gray-600 border-t border-b border-r border-gray-300 rounded-r-sm flex items-center text-[11px] sm:text-[13px] leading-tight">
+            {field.unit}
+          </span>
+        )}
       </div>
       {error && <p className="text-red-500 text-xs mt-1">{error.message}</p>}
     </div>

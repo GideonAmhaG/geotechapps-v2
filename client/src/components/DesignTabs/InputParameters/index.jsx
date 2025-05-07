@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { styles } from "../../../styles";
 import FormField from "./FormField";
-import SectionSeparator from "./SectionSeparator";
 import {
   COMMON_FIELDS,
   MATERIAL_FIELDS,
@@ -19,6 +18,13 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
   } = useForm({
     defaultValues: data.inputs || {},
   });
+
+  const SectionSeparator = ({ title }) => (
+    <div className="w-full my-6">
+      <h3 className={`${styles.cardTitle} !text-[#008080] mb-2`}>{title}</h3>
+      <div className="w-full border-t border-gray-200" />
+    </div>
+  );
 
   const getGeometryFields = useCallback(() => {
     return GEOMETRY_FIELDS[foundationType] || [];
