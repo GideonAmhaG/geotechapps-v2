@@ -17,6 +17,11 @@ const SelectionSummary = ({ designData }) => {
     { id: "CUST", name: "Custom Bearing Capacity" },
   ];
 
+  const loadTypes = [
+    { id: "factored", name: "Factored" },
+    { id: "unfactored", name: "Unfactored" },
+  ];
+
   const selectionData = [
     {
       key: "foundationType",
@@ -30,6 +35,13 @@ const SelectionSummary = ({ designData }) => {
       label: "Soil",
       options: soilTypes,
       selected: designData.soilType,
+      marginClass: "mx-2",
+    },
+    {
+      key: "loadType",
+      label: "Load Type",
+      options: loadTypes,
+      selected: designData.loadType,
       marginClass: "ml-2",
     },
   ];
@@ -49,7 +61,8 @@ const SelectionSummary = ({ designData }) => {
     return null;
   };
 
-  const hasSelections = designData.foundationType || designData.soilType;
+  const hasSelections =
+    designData.foundationType || designData.soilType || designData.loadType;
 
   return (
     <div className={`mb-4`}>

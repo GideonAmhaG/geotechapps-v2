@@ -10,7 +10,7 @@ import {
 } from "./constants";
 
 const InputParameters = ({ data, updateData, setActiveTab }) => {
-  const { foundationType, soilType } = data;
+  const { foundationType, soilType, loadType } = data;
   const {
     register,
     handleSubmit,
@@ -36,7 +36,7 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
 
   const onSubmit = (formData) => {
     updateData("inputs", formData);
-    setActiveTab(3);
+    setActiveTab(4);
   };
 
   return (
@@ -49,7 +49,7 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <SectionSeparator title="Loads and Moments" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {COMMON_FIELDS.map((field) => (
+          {COMMON_FIELDS[loadType].map((field) => (
             <FormField
               key={field.id}
               field={field}

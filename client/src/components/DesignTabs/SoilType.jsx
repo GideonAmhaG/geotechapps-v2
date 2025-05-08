@@ -5,6 +5,13 @@ import { GuidanceSection, SelectionBox } from "../";
 
 const soilTypes = [
   {
+    id: "CUST",
+    name: "Custom Bearing Capacity",
+    icon: <FaRuler className="text-2xl" />,
+    description: "User-specified bearing capacity",
+    useCase: "Best for: Pre-calculated or empirical values",
+  },
+  {
     id: "CU",
     name: "Clay (Undrained)",
     icon: <GiWaterDrop className="text-2xl" />,
@@ -25,16 +32,14 @@ const soilTypes = [
     description: "Drained behavior for granular materials",
     useCase: "Best for: Sands, gravels, and silty sands",
   },
-  {
-    id: "CUST",
-    name: "Custom Bearing Capacity",
-    icon: <FaRuler className="text-2xl" />,
-    description: "User-specified bearing capacity",
-    useCase: "Best for: Pre-calculated or empirical values",
-  },
 ];
 
 const guidanceItems = [
+  {
+    main: "Custom option allows direct bearing capacity input.",
+    detail:
+      "Provide your calculated bearing capacity to bypass automatic calculations.",
+  },
   {
     main: "Undrained analysis is conservative for all fine-grained soils.",
     detail:
@@ -48,11 +53,6 @@ const guidanceItems = [
   {
     main: "Sand analysis applies to all granular materials.",
     detail: "For gravels, increase φ' to 35°-45° in input parameters.",
-  },
-  {
-    main: "Custom option allows direct bearing capacity input.",
-    detail:
-      "Provide your calculated bearing capacity to bypass automatic calculations.",
   },
 ];
 

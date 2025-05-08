@@ -9,7 +9,7 @@ import {
   SelectionSummary,
 } from "../components";
 
-export default function Design() {
+function Design() {
   const [activeTab, setActiveTab] = useState(0);
   const [designData, setDesignData] = useState({
     foundationType: null,
@@ -143,6 +143,8 @@ export default function Design() {
   );
 }
 
+export default Design;
+
 
 //foundationtype.jsx
 import { FaCube, FaObjectGroup, FaLink } from "react-icons/fa";
@@ -200,7 +202,7 @@ const guidanceItems = [
   },
 ];
 
-export default function FoundationType({ data, updateData, setActiveTab }) {
+function FoundationType({ data, updateData, setActiveTab }) {
   const handleSelect = (type) => {
     updateData("foundationType", type);
     setActiveTab(1);
@@ -228,6 +230,8 @@ export default function FoundationType({ data, updateData, setActiveTab }) {
   );
 }
 
+export default FoundationType;
+
 
 //soiltype.jsx
 import { FaMountain, FaRuler } from "react-icons/fa";
@@ -236,6 +240,13 @@ import { GiWaterDrop, GiPowder } from "react-icons/gi";
 import { GuidanceSection, SelectionBox } from "../";
 
 const soilTypes = [
+  {
+    id: "CUST",
+    name: "Custom Bearing Capacity",
+    icon: <FaRuler className="text-2xl" />,
+    description: "User-specified bearing capacity",
+    useCase: "Best for: Pre-calculated or empirical values",
+  },
   {
     id: "CU",
     name: "Clay (Undrained)",
@@ -257,16 +268,14 @@ const soilTypes = [
     description: "Drained behavior for granular materials",
     useCase: "Best for: Sands, gravels, and silty sands",
   },
-  {
-    id: "CUST",
-    name: "Custom Bearing Capacity",
-    icon: <FaRuler className="text-2xl" />,
-    description: "User-specified bearing capacity",
-    useCase: "Best for: Pre-calculated or empirical values",
-  },
 ];
 
 const guidanceItems = [
+  {
+    main: "Custom option allows direct bearing capacity input.",
+    detail:
+      "Provide your calculated bearing capacity to bypass automatic calculations.",
+  },
   {
     main: "Undrained analysis is conservative for all fine-grained soils.",
     detail:
@@ -281,14 +290,9 @@ const guidanceItems = [
     main: "Sand analysis applies to all granular materials.",
     detail: "For gravels, increase φ' to 35°-45° in input parameters.",
   },
-  {
-    main: "Custom option allows direct bearing capacity input.",
-    detail:
-      "Provide your calculated bearing capacity to bypass automatic calculations.",
-  },
 ];
 
-export default function SoilType({ data, updateData, setActiveTab }) {
+function SoilType({ data, updateData, setActiveTab }) {
   const handleSelect = (type) => {
     updateData("soilType", type);
     setActiveTab(2);
@@ -316,16 +320,14 @@ export default function SoilType({ data, updateData, setActiveTab }) {
   );
 }
 
+export default SoilType;
+
+
 //selectionbox.jsx
 import { IoChevronForward } from "react-icons/io5";
 import { styles } from "../../styles";
 
-export default function SelectionBox({
-  options,
-  selectedValue,
-  onSelect,
-  className = "",
-}) {
+function SelectionBox({ options, selectedValue, onSelect, className = "" }) {
   return (
     <div className={`grid grid-cols-1 gap-4 ${className}`}>
       {options.map((option) => (
@@ -355,12 +357,15 @@ export default function SelectionBox({
   );
 }
 
+export default SelectionBox;
+
+
 //guidancesection.jsx
 import { useState } from "react";
 import { IoChevronForward, IoChevronDown } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
-export default function GuidanceSection({ title, items, tip }) {
+function GuidanceSection({ title, items, tip }) {
   const [isGuidanceVisible, setGuidanceVisible] = useState(false);
 
   return (
@@ -440,6 +445,9 @@ export default function GuidanceSection({ title, items, tip }) {
   );
 }
 
+export default GuidanceSection;
+
+
 //style.js
 const styles = {  
     paddingX: "sm:px-16 px-6",
@@ -477,6 +485,7 @@ const styles = {
   };
   
   export { styles };
+
 
 //inputparamets folder
 //constants.js
@@ -1150,7 +1159,6 @@ export { default as Results } from './DesignTabs/Results';
 export { default as SoilType } from './DesignTabs/SoilType';
 export { default as SelectionSummary } from './DesignTabs/SelectionSummary';
 
-export { default as ParameterInput } from './shared/ParameterInput';
 export { default as ResultCard } from './shared/ResultCard';
 export { default as TabButton } from './shared/TabButton';
 export { default as GuidanceSection } from './shared/GuidanceSection';

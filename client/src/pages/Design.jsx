@@ -3,6 +3,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import {
   FoundationType,
   SoilType,
+  LoadType,
   InputParameters,
   Results,
   SelectionSummary,
@@ -13,6 +14,7 @@ function Design() {
   const [designData, setDesignData] = useState({
     foundationType: null,
     soilType: null,
+    loadType: null,
     inputs: {},
     results: null,
   });
@@ -20,8 +22,9 @@ function Design() {
   const tabs = [
     { id: 0, label: "Foundation", component: FoundationType },
     { id: 1, label: "Soil", component: SoilType },
-    { id: 2, label: "Inputs", component: InputParameters },
-    { id: 3, label: "Results", component: Results },
+    { id: 2, label: "Load Type", component: LoadType },
+    { id: 3, label: "Inputs", component: InputParameters },
+    { id: 4, label: "Results", component: Results },
   ];
 
   const updateDesignData = (key, value) => {
@@ -40,7 +43,6 @@ function Design() {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
-      {/* Left Panel (Inputs) */}
       <div className="w-full lg:w-1/2 p-4 overflow-y-auto h-[50vh] lg:h-auto">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-xl md:text-2xl font-bold text-gray-600">
@@ -52,7 +54,6 @@ function Design() {
           </div>
         </div>
 
-        {/* Render the SelectionSummary component here */}
         <SelectionSummary designData={designData} />
 
         <div className="flex items-center mb-4 space-x-4">
@@ -77,7 +78,8 @@ function Design() {
                   disabled={
                     (tab.id === 1 && !designData.foundationType) ||
                     (tab.id === 2 && !designData.soilType) ||
-                    (tab.id === 3 && !designData.inputs)
+                    (tab.id === 3 && !designData.loadType) ||
+                    (tab.id === 4 && !designData.inputs)
                   }
                   className={`relative px-4 py-2 text-xs md:text-sm lg:text-base font-medium transition-all duration-200 ${
                     activeTab === tab.id
@@ -86,7 +88,8 @@ function Design() {
                   } ${
                     (tab.id === 1 && !designData.foundationType) ||
                     (tab.id === 2 && !designData.soilType) ||
-                    (tab.id === 3 && !designData.inputs)
+                    (tab.id === 3 && !designData.loadType) ||
+                    (tab.id === 4 && !designData.inputs)
                       ? "opacity-50 cursor-not-allowed"
                       : "cursor-pointer"
                   }`}
@@ -105,13 +108,15 @@ function Design() {
             disabled={
               (activeTab === 0 && !designData.foundationType) ||
               (activeTab === 1 && !designData.soilType) ||
-              (activeTab === 2 && !designData.inputs) ||
+              (activeTab === 2 && !designData.loadType) ||
+              (activeTab === 3 && !designData.inputs) ||
               activeTab === tabs.length - 1
             }
             className={`p-2 rounded-full ${
               (activeTab === 0 && !designData.foundationType) ||
               (activeTab === 1 && !designData.soilType) ||
-              (activeTab === 2 && !designData.inputs) ||
+              (activeTab === 2 && !designData.loadType) ||
+              (activeTab === 3 && !designData.inputs) ||
               activeTab === tabs.length - 1
                 ? "text-gray-300 cursor-not-allowed"
                 : "text-gray-600 hover:bg-gray-200"
@@ -130,7 +135,6 @@ function Design() {
         </div>
       </div>
 
-      {/* Right Panel (Visuals) */}
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
         <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
           <div className="p-4">
