@@ -1,3 +1,4 @@
+import { FaBalanceScale, FaCalculator } from "react-icons/fa";
 import { styles } from "../../styles";
 import { GuidanceSection, SelectionBox } from "../";
 
@@ -5,33 +6,39 @@ const loadTypes = [
   {
     id: "unfactored",
     name: "Unfactored Loads",
-    description: "Service loads before applying safety factors",
-    useCase:
-      "Best for: Traditional design methods or when working with service load values",
+    icon: <FaBalanceScale className="text-2xl" />,
+    description: "Service loads with separate dead/live components",
+    useCase: "Best for: Entering dead and live load components separately",
   },
   {
     id: "factored",
     name: "Factored Loads",
-    description: "Design loads with safety factors already applied",
+    icon: <FaCalculator className="text-2xl" />,
+    description: "Service loads from structural analysis software",
     useCase:
-      "Best for: Direct input of ultimate limit state (ULS) design loads",
+      "Best for: Using service load outputs from ETABS or similar software",
   },
 ];
 
 const guidanceItems = [
   {
-    main: "Unfactored loads are service loads (characteristic values).",
+    main: "Unfactored loads allow precise control of load components.",
     detail:
-      "The software will apply appropriate partial safety factors (γG, γQ) according to Eurocode.",
+      "Enter dead and live loads separately for accurate working stress calculations.",
   },
   {
-    main: "Factored loads already include safety factors.",
+    main: "Factored loads should use service combinations from analysis software.",
     detail:
-      "Use when you've already calculated 1.35Gk + 1.5Qk or other load combinations.",
+      "Input 1.0DL + 1.0LL combinations directly from ETABS or similar programs.",
   },
   {
-    main: "Eurocode partial safety factors:",
-    detail: "Permanent (γG) = 1.35 (unfav) or 1.0 (fav), Variable (γQ) = 1.5",
+    main: "Working stress method applies a global safety factor of 3.0.",
+    detail: "Bearing capacity is calculated as q_ultimate divided by 3.0.",
+  },
+  {
+    main: "Moments require separate permanent/variable components when using Unfactored Loads.",
+    detail:
+      "Enter Mx and My moments with their dead and live load portions individually.",
   },
 ];
 
@@ -45,7 +52,7 @@ function LoadType({ data, updateData, setActiveTab }) {
     <div className="max-w-3xl mx-auto">
       <h2 className={`${styles.sectionTitleText}`}>Load Type</h2>
       <p className={`${styles.sectionBodyText} mb-6`}>
-        Specify whether your input loads are factored or unfactored
+        Select how you want to input your foundation loads
       </p>
 
       <SelectionBox
@@ -57,7 +64,7 @@ function LoadType({ data, updateData, setActiveTab }) {
       <GuidanceSection
         title="Selection Guidance"
         items={guidanceItems}
-        tip="Tip: Most engineers work with unfactored (characteristic) loads"
+        tip="Tip: The working stress method with global safety factor is currently implemented"
       />
     </div>
   );

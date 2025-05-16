@@ -4,6 +4,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import {
   FoundationType,
   SoilType,
+  LoadType,
   InputParameters,
   Results,
   SelectionSummary,
@@ -14,6 +15,7 @@ function Design() {
   const [designData, setDesignData] = useState({
     foundationType: null,
     soilType: null,
+    loadType: null,
     inputs: {},
     results: null,
   });
@@ -21,8 +23,9 @@ function Design() {
   const tabs = [
     { id: 0, label: "Foundation", component: FoundationType },
     { id: 1, label: "Soil", component: SoilType },
-    { id: 2, label: "Inputs", component: InputParameters },
-    { id: 3, label: "Results", component: Results },
+    { id: 2, label: "Load Type", component: LoadType },
+    { id: 3, label: "Inputs", component: InputParameters },
+    { id: 4, label: "Results", component: Results },
   ];
 
   const updateDesignData = (key, value) => {
@@ -41,7 +44,6 @@ function Design() {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
-      {/* Left Panel (Inputs) */}
       <div className="w-full lg:w-1/2 p-4 overflow-y-auto h-[50vh] lg:h-auto">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-xl md:text-2xl font-bold text-gray-600">
@@ -53,7 +55,6 @@ function Design() {
           </div>
         </div>
 
-        {/* Render the SelectionSummary component here */}
         <SelectionSummary designData={designData} />
 
         <div className="flex items-center mb-4 space-x-4">
@@ -78,7 +79,8 @@ function Design() {
                   disabled={
                     (tab.id === 1 && !designData.foundationType) ||
                     (tab.id === 2 && !designData.soilType) ||
-                    (tab.id === 3 && !designData.inputs)
+                    (tab.id === 3 && !designData.loadType) ||
+                    (tab.id === 4 && !designData.inputs)
                   }
                   className={`relative px-4 py-2 text-xs md:text-sm lg:text-base font-medium transition-all duration-200 ${
                     activeTab === tab.id
@@ -87,7 +89,8 @@ function Design() {
                   } ${
                     (tab.id === 1 && !designData.foundationType) ||
                     (tab.id === 2 && !designData.soilType) ||
-                    (tab.id === 3 && !designData.inputs)
+                    (tab.id === 3 && !designData.loadType) ||
+                    (tab.id === 4 && !designData.inputs)
                       ? "opacity-50 cursor-not-allowed"
                       : "cursor-pointer"
                   }`}
@@ -106,13 +109,15 @@ function Design() {
             disabled={
               (activeTab === 0 && !designData.foundationType) ||
               (activeTab === 1 && !designData.soilType) ||
-              (activeTab === 2 && !designData.inputs) ||
+              (activeTab === 2 && !designData.loadType) ||
+              (activeTab === 3 && !designData.inputs) ||
               activeTab === tabs.length - 1
             }
             className={`p-2 rounded-full ${
               (activeTab === 0 && !designData.foundationType) ||
               (activeTab === 1 && !designData.soilType) ||
-              (activeTab === 2 && !designData.inputs) ||
+              (activeTab === 2 && !designData.loadType) ||
+              (activeTab === 3 && !designData.inputs) ||
               activeTab === tabs.length - 1
                 ? "text-gray-300 cursor-not-allowed"
                 : "text-gray-600 hover:bg-gray-200"
@@ -131,7 +136,6 @@ function Design() {
         </div>
       </div>
 
-      {/* Right Panel (Visuals) */}
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
         <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
           <div className="p-4">
@@ -144,6 +148,7 @@ function Design() {
 }
 
 export default Design;
+
 
 
 //foundationtype.jsx
@@ -322,6 +327,83 @@ function SoilType({ data, updateData, setActiveTab }) {
 
 export default SoilType;
 
+//LoadType.jsx
+import { FaBalanceScale, FaCalculator } from "react-icons/fa";
+import { styles } from "../../styles";
+import { GuidanceSection, SelectionBox } from "../";
+
+const loadTypes = [
+  {
+    id: "unfactored",
+    name: "Unfactored Loads",
+    icon: <FaBalanceScale className="text-2xl" />,
+    description: "Service loads with separate dead/live components",
+    useCase: "Best for: Entering dead and live load components separately",
+  },
+  {
+    id: "factored",
+    name: "Factored Loads",
+    icon: <FaCalculator className="text-2xl" />,
+    description: "Service loads from structural analysis software",
+    useCase:
+      "Best for: Using service load outputs from ETABS or similar software",
+  },
+];
+
+const guidanceItems = [
+  {
+    main: "Unfactored loads allow precise control of load components.",
+    detail:
+      "Enter dead and live loads separately for accurate working stress calculations.",
+  },
+  {
+    main: "Factored loads should use service combinations from analysis software.",
+    detail:
+      "Input 1.0DL + 1.0LL combinations directly from ETABS or similar programs.",
+  },
+  {
+    main: "Working stress method applies a global safety factor of 3.0.",
+    detail: "Bearing capacity is calculated as q_ultimate divided by 3.0.",
+  },
+  {
+    main: "Moments require separate permanent/variable components when using Unfactored Loads.",
+    detail:
+      "Enter Mx and My moments with their dead and live load portions individually.",
+  },
+];
+
+function LoadType({ data, updateData, setActiveTab }) {
+  const handleSelect = (type) => {
+    updateData("loadType", type);
+    setActiveTab(3);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      <h2 className={`${styles.sectionTitleText}`}>Load Type</h2>
+      <p className={`${styles.sectionBodyText} mb-6`}>
+        Select how you want to input your foundation loads
+      </p>
+
+      <SelectionBox
+        options={loadTypes}
+        selectedValue={data.loadType}
+        onSelect={handleSelect}
+      />
+
+      <GuidanceSection
+        title="Selection Guidance"
+        items={guidanceItems}
+        tip="Tip: The working stress method with global safety factor is currently implemented"
+      />
+    </div>
+  );
+}
+
+export default LoadType;
+
+
+
 
 //selectionbox.jsx
 import { IoChevronForward } from "react-icons/io5";
@@ -489,64 +571,96 @@ const styles = {
 
 //inputparamets folder
 //constants.js
-export const COMMON_FIELDS = [
-  {
-    id: "DL",
-    label: "Gk",
-    type: "number",
-    placeholder: "e.g. 500",
-    unit: "kN",
-    tooltip: "Permanent Load (Gk) - Unfactored permanent vertical load",
-    required: true,
-    min: 0,
-  },
-  {
-    id: "LL",
-    label: "Qk",
-    type: "number",
-    placeholder: "e.g. 300",
-    unit: "kN",
-    tooltip: "Variable Load (Qk) - Unfactored variable vertical load",
-    required: true,
-    min: 0,
-  },
-  {
-    id: "mxp",
-    label: "Moment X Permanent",
-    type: "number",
-    placeholder: "e.g. 50",
-    unit: "kN-m",
-    tooltip: "Moment X Permanent - Unfactored permanent moment about X-axis",
-    required: true,
-  },
-  {
-    id: "mxv",
-    label: "Moment X Variable",
-    type: "number",
-    placeholder: "e.g. 30",
-    unit: "kN-m",
-    tooltip: "Moment X Variable - Unfactored variable moment about X-axis",
-    required: true,
-  },
-  {
-    id: "myp",
-    label: "Moment Y Permanent",
-    type: "number",
-    placeholder: "e.g. 50",
-    unit: "kN-m",
-    tooltip: "Moment Y Permanent - Unfactored permanent moment about Y-axis",
-    required: true,
-  },
-  {
-    id: "myv",
-    label: "Moment Y Variable",
-    type: "number",
-    placeholder: "e.g. 30",
-    unit: "kN-m",
-    tooltip: "Moment Y Variable - Unfactored variable moment about Y-axis",
-    required: true,
-  },
-];
+export const COMMON_FIELDS = {
+  unfactored: [
+    {
+      id: "DL",
+      label: "Gk",
+      type: "number",
+      placeholder: "e.g. 500",
+      unit: "kN",
+      tooltip: "Permanent Load (Gk) - Unfactored permanent vertical load",
+      required: true,
+      min: 0,
+    },
+    {
+      id: "LL",
+      label: "Qk",
+      type: "number",
+      placeholder: "e.g. 300",
+      unit: "kN",
+      tooltip: "Variable Load (Qk) - Unfactored variable vertical load",
+      required: true,
+      min: 0,
+    },
+    {
+      id: "mxp",
+      label: "Moment X Permanent",
+      type: "number",
+      placeholder: "e.g. 50",
+      unit: "kN-m",
+      tooltip: "Moment X Permanent - Unfactored permanent moment about X-axis",
+      required: true,
+    },
+    {
+      id: "mxv",
+      label: "Moment X Variable",
+      type: "number",
+      placeholder: "e.g. 30",
+      unit: "kN-m",
+      tooltip: "Moment X Variable - Unfactored variable moment about X-axis",
+      required: true,
+    },
+    {
+      id: "myp",
+      label: "Moment Y Permanent",
+      type: "number",
+      placeholder: "e.g. 50",
+      unit: "kN-m",
+      tooltip: "Moment Y Permanent - Unfactored permanent moment about Y-axis",
+      required: true,
+    },
+    {
+      id: "myv",
+      label: "Moment Y Variable",
+      type: "number",
+      placeholder: "e.g. 30",
+      unit: "kN-m",
+      tooltip: "Moment Y Variable - Unfactored variable moment about Y-axis",
+      required: true,
+    },
+  ],
+  factored: [
+    {
+      id: "NED",
+      label: "Design Axial Load",
+      type: "number",
+      placeholder: "e.g. 1200",
+      unit: "kN",
+      tooltip: "Factored design axial load (NEd)",
+      required: true,
+      min: 0,
+    },
+    {
+      id: "MXED",
+      label: "Design Moment X",
+      type: "number",
+      placeholder: "e.g. 150",
+      unit: "kN-m",
+      tooltip: "Factored design moment about X-axis (Mx,Ed)",
+      required: true,
+    },
+    {
+      id: "MYED",
+      label: "Design Moment Y",
+      type: "number",
+      placeholder: "e.g. 150",
+      unit: "kN-m",
+      tooltip: "Factored design moment about Y-axis (My,Ed)",
+      required: true,
+    }
+  ]
+};
 
 export const MATERIAL_FIELDS = [
   {
@@ -897,6 +1011,7 @@ export const SOIL_FIELDS = {
   ],
 };
 
+
 //FOrmField.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
@@ -1026,6 +1141,7 @@ FormField.displayName = "FormField";
 export default FormField;
 
 
+
 //index.jsx
 import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -1039,7 +1155,7 @@ import {
 } from "./constants";
 
 const InputParameters = ({ data, updateData, setActiveTab }) => {
-  const { foundationType, soilType } = data;
+  const { foundationType, soilType, loadType } = data;
   const {
     register,
     handleSubmit,
@@ -1065,7 +1181,7 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
 
   const onSubmit = (formData) => {
     updateData("inputs", formData);
-    setActiveTab(3);
+    setActiveTab(4);
   };
 
   return (
@@ -1078,7 +1194,7 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <SectionSeparator title="Loads and Moments" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {COMMON_FIELDS.map((field) => (
+          {COMMON_FIELDS[loadType].map((field) => (
             <FormField
               key={field.id}
               field={field}
@@ -1138,6 +1254,7 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
 };
 
 export default InputParameters;
+
 
 
 
