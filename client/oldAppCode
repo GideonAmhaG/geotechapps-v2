@@ -1,154 +1,311 @@
-//codefromoldwebapp
-{% extends "base.html" %}
-{% block title %}Inputs{% endblock %}
-{% block header %}Inputs{% endblock %}
-{% block content %}
-<form action="/inputs" method="post" id="foundation-form">
-    <div class="row">
-        <div class="col">
-            <!-- <h4>Soil Type: <span id="selected-soil"></span></h4> -->
-            <h4>Soil Type: {{ soil_type }}</span></h4>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col">
-            <h4>Loads and Moments:</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="DL">Permanent load (Unfactored), Gk (kN)</label>
-                    <input class="form-control" type="text" name="DL" id="DL"
-                        placeholder="Permanent load (Unfactored), Gk (kN)">
-                </div>
-                <div class="col-md-6">
-                    <label for="LL">Variable load (Unfactored), Qk (kN)</label>
-                    <input class="form-control" type="text" name="LL" id="LL"
-                        placeholder="Variabe load (Unfactored), Qk (kN)">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="mxp">MomentX Permanent (Unfactored), Mxp (kNm)</label>
-                    <input class="form-control" type="text" name="mxp" id="mxp"
-                        placeholder="MomentX permanent (Unfactored), Mxp (kNm)">
-                </div>
-                <div class="col-md-6">
-                    <label for="mxv">MomentX Variable (Unfactored), Mxv (kNm)</label>
-                    <input class="form-control" type="text" name="mxv" id="mxv"
-                        placeholder="MomentX variable (Unfactored), Mxv (kNm)">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="myp">MomentY Permanent (Unfactored), Myp (kNm)</label>
-                    <input class="form-control" type="text" name="myp" id="myp"
-                        placeholder="MomentY permanent (Unfactored), Myp (kNm)">
-                </div>
-                <div class="col-md-6">
-                    <label for="myv">MomentY Variable (Unfactored), Myv (kNm)</label>
-                    <input class="form-control" type="text" name="myv" id="myv"
-                        placeholder="MomentY variable (Unfactored), Myv (kNm)">
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col">
-            <h4>Geometry:</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="COL">Column widthX (m)</label>
-                    <input class="form-control" type="text" name="COL" id="COL" placeholder="Column widthX (m)">
-                </div>
-                <div class="col-md-6">
-                    <label for="COLY">Column widthY (m)</label>
-                    <input class="form-control" type="text" name="COLY" id="COLY" placeholder="Column widthY (m)">
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col">
-            <h4>Soil Property:</h4>
-            <div class="row">
-                <div class="col-md-6 bearing-c">
-                    <label for="BC">Allowable bearing capacity, qall (kPa)</label>
-                    <input class="form-control" type="text" name="BC" id="BC"
-                        placeholder="Allowable bearing capacity, qall (kPa)">
-                </div>
-                <div class="col-md-6 clay-sand">
-                    <label for="DF">Depth of foundation, Df (m)</label>
-                    <input class="form-control" type="text" name="DF" id="DF" placeholder="Depth of foundation, Df (m)">
-                </div>
-                <div class="col-md-6 clay">
-                    <label for="CU">Undrained cohesion, Cu (kPa)</label>
-                    <input class="form-control" type="text" name="CU" id="CU"
-                        placeholder="Undrained cohesion, Cu (kPa)">
-                </div>
-                <div class="col-md-6 sand">
-                    <label for="PHI">Angle of internal friction, PHI (degrees)</label>
-                    <input class="form-control" type="text" name="PHI" id="PHI"
-                        placeholder="Angle of internal friction, PHI (degrees)">
-                </div>
-                <div class="col-md-6 clay-sand">
-                    <label for="GAM">Unit weight of soil, &gamma; (kN/m<sup>3</sup>)</label>
-                    <input class="form-control" type="text" name="GAM" id="GAM"
-                        placeholder="Unit weight of soil, &gamma; (kN/m^3)">
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col">
-            <h4>Material Property:</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="FCK">Concrete strength, fck (MPa)</label>
-                    <input class="form-control" type="text" name="FCK" id="FCK"
-                        placeholder="Concrete strength, fck (MPa)">
-                </div>
-                <div class="col-md-6">
-                    <label for="FYK">Steel strength, fyk (MPa)</label>
-                    <input class="form-control" type="text" name="FYK" id="FYK" placeholder="Steel strength, fyk (MPa)">
-                </div>
-                <div class="col-md-6">
-                    <label for="BAR">Re-Bar diameter (mm)</label>
-                    <input class="form-control" type="text" name="BAR" id="BAR" placeholder="Re-Bar diameter (mm)">
-                </div>
-                <div class="col mt-4">
-                    <label for="COV">Cover - </label>
-                    <select class="form-select" id="COV" name="COV">
-                        <option value="40">40 mm (Footing on lean concrete)</option>
-                        <option value="75">75 mm (Footing on soil)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row pt-4">
-        <div class="col">
-            <div class="row justify-content-end">
-                <button type="submit" name="submit_type" value="regular"
-                    class="btn btn-success">Calculate-Regular</button>
-            </div>
-        </div>
-        <div class="col">
-            <button type="submit" name="submit_type" value="advanced"
-                class="btn btn-warning">Calculate-Advanced</button>
-        </div>
-    </div>
-    <input type="hidden" name="option" value="{{ soil_type }}">
-</form>
-{% endblock %}
-{% block javascript %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/inputs.js') }}"></script>
-<script>
-    var soilType = "{{ soil_type }}"; // Store the value from Flask
-    // document.getElementById("selected-soil").innerHTML = formatSoilType(soilType);
-    updateSoilFields(soilType); // Pass the variable to the function
-</script>
-{% endblock %}
+"""
+Module for storing all functions used to calculate values
+"""
+import math
+
+
+pi = math.pi
+
+def valid_inputs(DL, LL, mxp, mxv, myp, myv, colx, coly, fck, fyk, bar, soil_type,
+    phi_f=None, cu=None, Df=None, gamma=None, bc=None):
+    """
+    Checks if the provided input values are within acceptable ranges.
+    """
+    valid_range = lambda val, min_val, max_val: min_val <= val <= max_val
+    base_checks = (valid_range(DL, 200, 4100) and
+            valid_range(LL, 130, 2100) and
+            valid_range(colx, 0.1, 1.5) and
+            valid_range(mxp, -2000, 2000) and
+            valid_range(mxv, -2000, 2000) and
+            valid_range(myp, -2000, 2000) and
+            valid_range(myv, -2000, 2000) and
+            valid_range(fck, 25, 100) and
+            valid_range(fyk, 100, 1000) and
+            valid_range(bar, 12, 32) and
+            valid_range(coly, 0.1, 1.5))
+    if soil_type == "clay":
+        clay_checks = (valid_range(cu, 1, 1000) and
+            valid_range(Df, 0, 10) and
+            valid_range(gamma, 1, 30))  
+        return base_checks and clay_checks
+    elif soil_type == "sand":
+        sand_checks = (valid_range(phi_f, 1, 70) and
+            valid_range(Df, 0, 10) and
+            valid_range(gamma, 1, 30))  
+        return base_checks and sand_checks
+    elif soil_type == "bearing_c":
+        bc_checks = valid_range(bc, 50, 1000)  
+        return base_checks and bc_checks
+    return False
+
+def d_avg(D, phi, cov):
+    d = ((D - cov - phi - (phi / 2)) + (D - cov - phi)) / 2
+    return d
+
+def kay(D, phi, cover):
+    d = d_avg(D, phi, cover)
+    k = 1 + ((200 / (d * 1000)) ** 0.5)
+    # print(k)
+    if k <= 2:
+        return k
+    else:
+        return 2
+
+def area_part2_punch(D, phi, B, colx, coly, cover):
+    d = d_avg(D, phi, cover)
+    Ap2 = (B * B) - ((((4 * d) + coly) * colx) + (4 * d * coly) + (pi * d * d * 4))
+    if Ap2 > 0:
+        return Ap2
+    else:
+        return 0
+
+def area_part2_wide(D, phi, B, col, cover):
+    d = d_avg(D, phi, cover)
+    Ap2 = ((B / 2) - (col / 2) - d) * B
+    if Ap2 > 0:
+        return Ap2
+    else:
+        return 0
+
+def ved_vrd_wide(D, phi, fck, B, col, sig_s, rho, cover):
+    d = d_avg(D, phi, cover)
+    k = kay(D, phi, cover)
+    vrd_a = (0.12 * k * ((100 * rho * fck) ** (1 / 3))) * 1000
+    vrd_min = (0.035 * (k ** 1.5) * (fck ** 0.5)) * 1000
+    vrd = max(vrd_a, vrd_min)
+    Ap2_wide = area_part2_wide(D, phi, B, col, cover)
+    As_wide = B * d
+    ved_wide = (sig_s * Ap2_wide) / As_wide
+    return ved_wide, vrd, k, vrd_min, Ap2_wide, As_wide
+
+def ved_vrd_punch(D, phi, fck, B, colx, coly, sig_s, rho, cover):
+    d = d_avg(D, phi, cover)
+    k = kay(D, phi, cover)
+    vrd_a = (0.12 * k * ((100 * rho * fck) ** (1 / 3))) * 1000
+    vrd_min = (0.035 * (k ** 1.5) * (fck ** 0.5)) * 1000
+    vrd = max(vrd_a, vrd_min)
+    Ap2_punch = area_part2_punch(D, phi, B, colx, coly, cover)
+    As_punch = ((2 * colx) + (2 * coly) + (4 * pi * d)) * d
+    ved_punch = (sig_s * Ap2_punch) / As_punch
+    return ved_punch, vrd, k, vrd_min, Ap2_punch, As_punch
+
+def terzaghi(phi):
+    phi_r = math.radians(phi)
+    Nq = math.exp(((270-phi)/180)*math.pi*math.tan(phi_r))/(2*(math.cos(math.radians(45+(phi/2))))**2)
+    Nc = (Nq-1)/(math.tan(phi_r))
+    Ngamma = (2*(Nq+1)*math.tan(phi_r))/(1+(0.4*math.sin(math.radians(4*phi))))
+    return Nc, Nq, Ngamma
+
+def sig_prop(B, D, col, DL, LL, mxp, mxv, myp, myv, soil_type, Df=None, phi_f=None, cu=None,
+        gamma=None, bc=None):
+    if soil_type == 'bearing_c':
+        Df = 3
+    SW_conc = 24 * B * B * D
+    SW_fill = (((B * B) - (col * col))) * Df * 0
+    SW = SW_conc + SW_fill
+    p_p = DL + SW + LL
+    ex = abs((myp + myv) / p_p)
+    ey = abs((mxp + mxv) / p_p)
+    sig_p = (p_p / (B * B)) * (1 + ((6 * ex) / B) + ((6 * ey) / B))
+    FS = 3
+    if soil_type == "clay":
+        qu = (1.3 * cu * 5.14) + (gamma * Df)
+        qa = qu / FS
+        return sig_p, qa, ex, ey, SW_conc, SW_fill
+    elif soil_type == "sand":
+        Nc, Nq, Ngamma = terzaghi(phi_f)
+        qu = (gamma * Df * Nq) + (0.4 * B * gamma * Ngamma)
+        qa = qu / FS
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma
+    elif soil_type == "bearing_c":
+        qa = bc
+        return sig_p, qa, ex, ey, SW_conc, SW_fill
+    return None
+
+def zed(D, phi, m, B, fck, cover):
+    d = d_avg(D, phi, cover)
+    z = d * (0.5 + (0.25 - (m / (B * (d ** 2) * (fck * 1000) * 1.134))) ** 0.5)
+    return z
+
+def med_mrd(sig_s, B, col, D, phi, fck, rho, rho_min, fyk, cover):
+    med = sig_s * (B / 2) * ((B / 2 - col / 2) ** 2)
+    z = zed(D, phi, med, B, fck, cover)
+    d = d_avg(D, phi, cover)
+    rho = max(rho, rho_min)
+    mrd = 0.87 * (fyk * 1000) * z * rho * B * d
+    return med, mrd, z
+
+def iter_b(B, D, col, DL, LL, mxp, mxv, myp, myv, soil_type, Df,
+        cu=None, phi_f=None, bc=None, gamma=None):
+    if soil_type == 'bearing_c':
+        Df = 3
+    tolerance = 0.00005
+    diff = 0.01
+    if soil_type == "sand":
+        sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma = sig_prop(B, D, col, DL,
+            LL, mxp, mxv, myp, myv, soil_type, Df=Df, phi_f=phi_f, gamma=gamma)
+        while abs(sig_p - qa) > diff:
+            if sig_p > qa:
+                B += tolerance
+            else:
+                B -= tolerance
+            sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma = sig_prop(B, D, col, DL,
+                LL, mxp, mxv, myp, myv, soil_type, Df=Df, phi_f=phi_f, gamma=gamma)
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma, B
+    else:
+        sig_p, qa, ex, ey, SW_conc, SW_fill = sig_prop(B, D, col, DL, LL, mxp, mxv,
+            myp, myv, soil_type, Df=Df, cu=cu if soil_type == "clay" else None,
+            gamma=gamma if soil_type == "clay" else None, bc=bc if soil_type != "clay" else None)
+        while abs(sig_p - qa) > diff:
+            if sig_p > qa:
+                B += tolerance
+            else:
+                B -= tolerance
+            sig_p, qa, ex, ey, SW_conc, SW_fill = sig_prop(B, D, col, DL, LL, mxp, mxv,
+                myp, myv, soil_type, Df, cu=cu if soil_type == "clay" else None,
+                gamma=gamma if soil_type == "clay" else None, bc=bc if soil_type != "clay" else None)
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, B
+
+
+""" for isolated footing """
+import math
+from .calc_funcs import *
+
+
+def iso(DL, LL, mxp, mxv, myp, myv, colx, coly, fck, fyk, bar, covr, soil_type,
+        cu=None, phi_f=None, Df=None, gamma=None, bc=None):
+    #variables
+    pi = math.pi
+    col = min(colx, coly)
+    B_initial = col
+    D_initial = 0.7
+    phi = bar / 1000
+    rho_initial = 0.0025
+    rho_min = max((0.26 * (1.43 / fyk) * 0.21 * (fck ** (2 / 3))) , 0.0013)
+    cover = covr / 1000
+    cover_side = 0.075
+
+    valid = False
+    if soil_type == "clay":
+        r_bool = valid_inputs(DL, LL, mxp, mxv, myp, myv, colx, coly, fck, fyk, bar, soil_type,
+            cu=cu, Df=Df, gamma=gamma)
+        valid = valid or r_bool
+    elif soil_type == "sand":
+        r_bool = valid_inputs(DL, LL, mxp, mxv, myp, myv, colx, coly, fck, fyk, bar, soil_type,
+            phi_f=phi_f, Df=Df, gamma=gamma)
+        valid = valid or r_bool
+    elif soil_type == "bearing_c":
+        r_bool = valid_inputs(DL, LL, mxp, mxv, myp, myv, colx, coly, fck, fyk, bar, soil_type, bc=bc)
+        valid = valid or r_bool
+    if valid:
+        #main function
+        def B_D_rho(D, D_tmp, DL, LL, mxp, mxv, myp, myv, B, fyk, rho, rho_min):
+            if soil_type == "sand":
+                sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma, B = iter_b(B, D, col,
+                    DL, LL, mxp, mxv, myp, myv, soil_type, Df=Df, phi_f=phi_f, gamma=gamma)
+            else:
+                sig_p, qa, ex, ey, SW_conc, SW_fill, B = iter_b(B, D, col, DL, LL, mxp, mxv,
+                    myp, myv, soil_type, Df=Df, cu=cu if soil_type == "clay" else None,
+                    gamma=gamma if soil_type == "clay" else None, bc=bc if soil_type != "clay" else None)
+            q_all = math.ceil(qa * 10) / 10
+            FOS = 3
+            qultm = q_all * FOS 
+            q_ult = math.ceil(qultm * 10) / 10
+            p_s = (1.35 * DL) + (1.5 * LL)
+            sig_s = p_s / (B * B)
+            ved_wide, vrd, k_wide, vrd_min_wide, Ap2_wide, As_wide = ved_vrd_wide(D, phi, fck,
+                B, col, sig_s, rho, cover)
+            ved_punch, vrd, k_punch, vrd_min_punch, Ap2_punch, As_punch = ved_vrd_punch(D, phi,
+                fck, B, colx, coly, sig_s, rho, cover)
+            vrd_start = vrd
+            if ved_wide <= vrd:
+                while ved_wide <= vrd:
+                    ved_wide, vrd, k_wide, vrd_min_wide, Ap2_wide, As_wide = ved_vrd_wide(D, phi,
+                        fck, B, col, sig_s, rho, cover)
+                    D -= 0.000005
+            else:
+                while ved_wide >= vrd:
+                    ved_wide, vrd, k_wide, vrd_min_wide, Ap2_wide, As_wide= ved_vrd_wide(D, phi,
+                        fck, B, col, sig_s, rho, cover)
+                    D += 0.000005
+            D_wide = D
+            d_wide = d_avg(D_wide, phi, cover)
+            D = D_tmp
+            vrd_wide = vrd
+            vrd = vrd_start
+            if ved_punch <= vrd:
+                while ved_punch <= vrd:
+                    ved_punch, vrd, k_punch, vrd_min_punch, Ap2_punch, As_punch = ved_vrd_punch(D,
+                        phi, fck, B, colx, coly, sig_s, rho, cover)
+                    D -= 0.0005
+            else:
+                while ved_punch >= vrd:
+                    ved_punch, vrd, k_punch, vrd_min_punch, Ap2_punch, As_punch = ved_vrd_punch(D,
+                        phi, fck, B, colx, coly, sig_s, rho, cover)
+                    D += 0.0005
+            D_punch = D
+            d_punch = d_avg(D_punch, phi, cover)
+            vrd_punch = vrd
+            D = max(max(D_wide, D_punch), 0.3)
+            med, mrd, z = med_mrd(sig_s, B, col, D, phi, fck, rho, rho_min, fyk, cover)
+            if med < mrd:
+                while med <= mrd:
+                    med, mrd, z = med_mrd(sig_s, B, col, D, phi, fck, rho, rho_min, fyk, cover)
+                    rho -= 0.0000005
+            else:
+                while med >= mrd:
+                    med, mrd, z = med_mrd(sig_s, B, col, D, phi, fck, rho, rho_min, fyk, cover)
+                    rho += 0.0000005
+            com_vars = [D, B, rho, p_s, ex, ey, sig_p, D_wide, D_punch, ved_wide, ved_punch,\
+                vrd, med, mrd, SW_conc, SW_fill, sig_s, d_wide, d_punch, vrd_wide, vrd_punch, k_wide,\
+                vrd_min_wide, Ap2_wide, As_wide, k_punch, vrd_min_punch, Ap2_punch, As_punch, z]
+            if soil_type == "clay":
+                clay_vars = [q_all, q_ult, FOS]
+                return com_vars + clay_vars
+            elif soil_type == 'sand':
+                sand_vars = [q_all, q_ult, FOS, Nc, Nq, Ngamma]
+                return com_vars + sand_vars
+            else:
+                return com_vars
+            
+        res = B_D_rho(D_initial, D_initial, DL, LL, mxp, mxv, myp, myv, B_initial,
+            fyk, rho_initial, rho_min)
+        print(res)
+        for _ in range(5):
+            res = B_D_rho(res[0], res[0], DL, LL, mxp, mxv, myp, myv, res[1], fyk, res[2], rho_min)
+        D_final, B_final, rho_final, p_s, ex, ey, sig_p, D_wide, D_punch, ved_wide, ved_punch,\
+            vrd, med, mrd, SW_conc, SW_fill, sig_s, d_wide, d_punch, vrd_wide, vrd_punch, k_wide,\
+            vrd_min_wide, Ap2_wide, As_wide, k_punch, vrd_min_punch, Ap2_punch, As_punch, z = res[:30]
+        if soil_type == "clay":
+            q_all, q_ult, FOS = res[30:]  
+        elif soil_type == "sand":  
+            q_all, q_ult, FOS, Nc, Nq, Ngamma = res[30:]  
+        d_final = d_avg(D_final, phi, cover)
+        As = rho_final * B_final * d_final * 1000000
+        Asmin = rho_min * B_final * d_final * 1000000
+        N = math.ceil(As / (math.pi * (((phi / 2) * 1000) ** 2)))
+        As_f = round((N * (math.pi * (((phi / 2) * 1000) ** 2))), 1)
+        B_f = math.ceil(B_final * 10) / 10
+        s_a = ((B_f / (N - 1)) - phi - (cover_side * 2)) * 1000
+        s_ini = math.floor(s_a / 10) * 10
+        D_f = max((round((math.ceil(D_final / 0.05) * 0.05), 2)), 0.3)
+        s = min(s_ini, 400, (3 * D_f * 1000))
+        s_f = max(s, 20, phi)
+        com_vals = {'b': B_f, 'd': D_f, 'As': As_f, 'N': N, 's': s_f, 'p_s': p_s, 'ex': ex, 'ey': ey,
+            'sig_p': sig_p, 'D_wide': D_wide, 'D_punch': D_punch, 'ved_wide': ved_wide, 'ved_punch': ved_punch,
+            'vrd': vrd, 'med': med, 'mrd': mrd, 'rho_min': rho_min, 'SW_conc': SW_conc, 'SW_fill': SW_fill,
+            'B_final': B_final, 'D_final': D_final, 'd_final': d_final, 'sig_s': sig_s, 'd_wide': d_wide,
+            'd_punch': d_punch, 'vrd_wide': vrd_wide, 'vrd_punch': vrd_punch, 'k_wide': k_wide,
+            'vrd_min_wide': vrd_min_wide, 'Ap2_wide': Ap2_wide, 'As_wide': As_wide, 'k_punch': k_punch,
+            'vrd_min_punch': vrd_min_punch, 'Ap2_punch': Ap2_punch, 'As_punch': As_punch, 'rho_final': rho_final,
+            'z': z, 'As_old': As, 'Asmin': Asmin}
+        if soil_type == "clay":
+            clay_vals = {'qa': q_all, 'qu': q_ult, 'fs': FOS }
+            return {**com_vals, **clay_vals}
+        elif soil_type == "sand":
+            sand_vals = {'qa': q_all, 'qu': q_ult, 'fs': FOS, 'Nc': Nc, 'Nq': Nq, 'Ngamma': Ngamma}
+            return {**com_vals, **sand_vals}
+        else:
+            return com_vals
+    else:
+        return {}

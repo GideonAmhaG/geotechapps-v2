@@ -33,7 +33,7 @@ const FormField = React.memo(({ field, register, errors }) => {
         className="text-gray-600 text-[11px] sm:text-[13px] font-medium block mb-1"
       >
         <div className="flex items-center gap-1.5">
-          {field.label}
+          {field.displayLabel}
           {field.tooltip && (
             <div
               className="relative group"
@@ -55,7 +55,10 @@ const FormField = React.memo(({ field, register, errors }) => {
                   ...tooltipStyle,
                 }}
               >
-                {field.tooltip}
+                <div className="font-bold">{field.label}</div>
+                {field.tooltip.split(" - ").map((part, index) => (
+                  <div key={index}>{index === 0 ? null : part} </div>
+                ))}
                 <div className="absolute top-full left-3 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gray-800" />
               </div>
             </div>

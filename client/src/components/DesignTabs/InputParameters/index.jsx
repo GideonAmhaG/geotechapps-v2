@@ -52,7 +52,10 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
           {COMMON_FIELDS[loadType].map((field) => (
             <FormField
               key={field.id}
-              field={field}
+              field={{
+                ...field,
+                displayLabel: field.shortLabel || field.id,
+              }}
               register={register}
               errors={errors}
             />
@@ -64,7 +67,10 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
           {getGeometryFields().map((field) => (
             <FormField
               key={field.id}
-              field={field}
+              field={{
+                ...field,
+                displayLabel: field.shortLabel || field.id,
+              }}
               register={register}
               errors={errors}
             />
@@ -76,7 +82,10 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
           {getSoilFields().map((field) => (
             <FormField
               key={field.id}
-              field={field}
+              field={{
+                ...field,
+                displayLabel: field.shortLabel || field.id,
+              }}
               register={register}
               errors={errors}
             />
@@ -88,7 +97,10 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
           {MATERIAL_FIELDS.map((field) => (
             <FormField
               key={field.id}
-              field={field}
+              field={{
+                ...field,
+                displayLabel: field.shortLabel || field.id,
+              }}
               register={register}
               errors={errors}
             />
