@@ -1,0 +1,25 @@
+# Python
+**/__pycache__/
+**/.venv/
+**/venv/
+**/*.pyc
+**/.python-version
+
+# Node.js
+node_modules/
+dist/
+.env
+.env.local
+.npm
+.pnpm
+.yarn-integrity
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

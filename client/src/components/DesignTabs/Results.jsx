@@ -1,63 +1,65 @@
-import { ResultCard } from "../";
-import { FaCheckCircle, FaFileDownload } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { styles } from "../../styles";
+import { ResultCard } from "../shared";
 
-function Results({ data }) {
-  if (!data.results)
-    return <p>No results available. Please complete the design process.</p>;
+function Results({ data, updateData }) {
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        const response = await fetch("/api/design", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            foundationType: data.foundationType,
+            inputs: data.inputs,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        const results = await response.json();
+        setResults(results);
+        updateData("results", results);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [data, updateData]);
+
+  if (loading) return <div className="text-center py-8">Calculating...</div>;
+  if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
 
   return (
-    <div>
-      <div className="flex items-center mb-6">
-        <h2 className="text-xl font-semibold">Design Results</h2>
-        <span className="ml-2 text-green-500 flex items-center">
-          <FaCheckCircle className="mr-1" />
-          Success
-        </span>
-      </div>
+    <div className="max-w-3xl mx-auto">
+      <h2 className={`${styles.sectionTitleText}`}>Isolated Footing Results</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {data.foundationType === "shallow" ? (
-          <>
-            <ResultCard
-              title="Bearing Capacity"
-              value={data.results.bearingCapacity}
-              unit="kPa"
-              description="Maximum pressure the soil can withstand"
-            />
-            <ResultCard
-              title="Expected Settlement"
-              value={data.results.settlement}
-              unit="mm"
-              description="Estimated foundation settlement"
-            />
-          </>
-        ) : (
-          <>
-            <ResultCard
-              title="Pile Capacity"
-              value={data.results.pileCapacity}
-              unit="kN"
-              description="Maximum load capacity of the pile"
-            />
-            <ResultCard
-              title="Expected Settlement"
-              value={data.results.settlement}
-              unit="mm"
-              description="Estimated foundation settlement"
-            />
-          </>
-        )}
-      </div>
-
-      <div className="flex flex-wrap gap-4">
-        <button className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#104f85] transition-colors duration-200 flex items-center">
-          <FaFileDownload className="mr-2" />
-          Download Report
-        </button>
-        <button className="px-4 py-2 border border-[#145da0] text-[#145da0] rounded-md hover:bg-blue-50 transition-colors duration-200">
-          Start New Design
-        </button>
-      </div>
+      {results && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <ResultCard
+            title="Dimensions"
+            items={[
+              { label: "Width (B)", value: `${results.width} m` },
+              { label: "Depth (D)", value: `${results.depth} m` },
+            ]}
+          />
+          <ResultCard
+            title="Reinforcement"
+            items={[
+              { label: "Area", value: `${results.reinforcement_area} mm²/m` },
+            ]}
+          />
+        </div>
+      )}
     </div>
   );
 }
