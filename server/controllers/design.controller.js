@@ -1,25 +1,16 @@
-import createError from 'http-errors';
-
 export const calculateFoundation = async (req, res, next) => {
-  const { foundationType } = req.body;
+  const { foundationType, inputs } = req.body;
   
-  // Hardcoded to only allow isolated footing
   if (foundationType !== 'isolated') {
-    return next(createError(
-      400, 
-      'Only isolated footing is currently supported. Contact support for other types.'
-    ));
+    return next(createError(400, 'Only isolated footing is currently supported'));
   }
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000); // 8s timeout
 
   try {
     const response = await fetch('http://localhost:8000/calculate/isolated', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body.inputs),
-      signal: controller.signal
+      body: JSON.stringify(inputs),
+      timeout: 8000
     });
 
     if (!response.ok) {
@@ -28,13 +19,8 @@ export const calculateFoundation = async (req, res, next) => {
     }
 
     const { data } = await response.json();
-    res.json(data);
+    res.json({ data }); 
   } catch (error) {
-    next(createError(
-      500,
-      error.name === 'AbortError' ? 'Calculation timed out' : error.message
-    ));
-  } finally {
-    clearTimeout(timeout);
+    next(createError(500, error.message));
   }
 };
