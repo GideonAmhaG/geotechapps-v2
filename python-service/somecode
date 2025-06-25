@@ -1,49 +1,85 @@
 # calculator_service.py
+"""
+Module for managing foundation calculations using a FastAPI web application.
+"""
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from foundations.isolated import iso  # Calculation module
+from foundations.isolated import iso
 
 app = FastAPI()
 
-# CORS Configuration (allow Node.js and frontend)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5000",  # Node.js dev
-        "https://your-node-production-url.com"  # Production
+        "http://localhost:5000",
+        "https://your-node-production-url.com"
     ],
     allow_methods=["POST"]
 )
 
 @app.post("/calculate/isolated")
 async def calculate_isolated(data: dict):
+    """
+    Endpoint to calculate isolated footing parameters.
+    
+    Args:
+        data (dict): Input data containing soil type and various parameters for the calculation.
+
+    Returns:
+        dict: Success status and calculated data, or raises HTTP exceptions for errors.
+    """
     try:
-        # Convert and map all parameters
-        converted = {
-            "DL": data["DL"],
-            "LL": data["LL"],
-            "mxp": data.get("mxp", 0),  # Default to 0 if not provided
-            "mxv": data.get("mxv", 0),
-            "myp": data.get("myp", 0),
-            "myv": data.get("myv", 0),
-            "colx": data.get("colx", 300) / 1000,  # Convert mm to m
-            "coly": data.get("coly", 300) / 1000,
-            "fck": data.get("fck", 25),
-            "fyk": data.get("fyk", 500),
-            "bar": data.get("bar", 16),
-            "covr": data.get("covr", 75),
-            "soil_type": data["soilType"].lower(),  # Convert to lowercase
-            "cu": data.get("CU") if data["soilType"].upper() == "CU" else None,
-            "phi_f": data.get("PHI_PRIME") if data["soilType"].upper() in ["CD", "S"] else None,
-            "Df": data.get("Df", 1500) / 1000,
-            "gamma": data.get("gamma", 18),
-            "bc": data.get("bc") if data["soilType"].upper() == "CUST" else None
+        soil_mapping = {
+            "CU": "clay",
+            "CD": "sand",
+            "S": "sand",
+            "CUST": "bearing_c"
         }
         
+        soil_type_input = data["soilType"].upper()
+        if soil_type_input not in soil_mapping:
+            raise HTTPException(400, detail=f"Invalid soilType: {data['soilType']}")
+        
+        soil_type = soil_mapping[soil_type_input]
+
+        converted = {
+            "DL": float(data["DL"]),
+            "LL": float(data["LL"]),
+            "mxp": float(data.get("mxp", 0)),
+            "mxv": float(data.get("mxv", 0)),
+            "myp": float(data.get("myp", 0)),
+            "myv": float(data.get("myv", 0)),
+            "colx": float(data["colx"]) / 1000,
+            "coly": float(data["coly"]) / 1000,
+            "fck": float(data["fck"]),
+            "fyk": float(data["fyk"]),
+            "bar": float(data["bar"]),
+            "covr": float(data["covr"]),
+            "soil_type": soil_type,
+            "Df": float(data["Df"]) / 1000,
+            "gamma": float(data["gamma"])
+        }
+
+        if soil_type == "clay":
+            converted["cu"] = float(data["CU"])
+        elif soil_type == "sand":
+            converted["phi_f"] = float(data.get("PHI", 30))
+        elif soil_type == "bearing_c":
+            converted["bc"] = float(data.get("bc", 150))
+
         result = iso(**converted)
+        
+        if not result:
+            raise HTTPException(400, detail="Invalid input values")
+            
         return {"success": True, "data": result}
+        
+    except KeyError as e:
+        raise HTTPException(400, detail=f"Missing parameter: {str(e)}")
     except Exception as e:
-        raise HTTPException(500, detail=f"Calculation failed: {str(e)}")
+        raise HTTPException(500, detail=f"Calculation error: {str(e)}")
+    
     
 
 #requirements/txt
