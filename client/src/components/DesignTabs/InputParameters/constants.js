@@ -8,435 +8,131 @@ const createField = (id, label, shortLabel, type, placeholder, unit, description
   unit,
   tooltip: `${label} - ${description} - Valid values: ${range}`,
   required: true,
-  ...(type === 'number' ? { min: range.split('-')[0].trim(), max: range.split('-')[1].split(' ')[0].trim() } : {}),
-  ...(options ? { options } : {}),
+  ...(type === 'number' ? { 
+    min: range.split('-')[0].trim(), 
+    max: range.split('-')[1].split(' ')[0].trim(),
+    ...(options?.step && { step: options.step })
+  } : {}),
+  ...(options?.options ? { options: options.options } : {})
 });
 
-// Common field configurations
+// Shared field configurations
+const FIELD_TEMPLATES = {
+  load: {
+    kN: (id, label, shortLabel, range) => 
+      createField(id, label, shortLabel, 'number', `e.g. ${range.split('-')[0]}`, 'kN', 
+                `Unfactored ${label.toLowerCase()}`, range),
+    kNm: (id, label, shortLabel) => 
+      createField(id, label, shortLabel, 'number', 'e.g. 50', 'kN-m', 
+                `Unfactored ${label.toLowerCase()}`, '-1000-1000 kNm')
+  },
+  material: {
+    strength: (id, label, range, step) => 
+      createField(id, label, id, 'number', `e.g. ${range.split('-')[0]}`, 'MPa', 
+                `Characteristic ${label.toLowerCase()}`, range, { step }),
+    bar: () => 
+      createField('bar', 'Rebar Diameter', 'Ø', 'number', 'e.g. 16', 'mm', 
+                'Main reinforcement bar size', '12-32 mm', { step: 2 }),
+    cover: () => ({
+      ...createField('covr', 'Concrete Cover', 'c', 'select', '', '', 
+                   'Nominal concrete cover to reinforcement', ''),
+      options: [
+        { value: "40", label: "40 mm (Footing on lean concrete)" },
+        { value: "75", label: "75 mm (Footing on soil)" }
+      ]
+    })
+  },
+  geometry: {
+    dimension: (id, label, shortLabel) => 
+      createField(id, label, shortLabel, 'number', 'e.g. 300', 'mm', 
+                `${label} dimension`, '100-1500 mm'),
+    spacing: (id, label, shortLabel) => 
+      createField(id, label, shortLabel, 'number', 'e.g. 3000', 'mm', 
+                `Distance between ${label.toLowerCase()}`, '500-10000 mm')
+  },
+  soil: {
+    depth: () => 
+      createField('Df', 'Foundation Depth', 'Df', 'number', 'e.g. 1500', 'mm', 
+                'Depth from ground surface to footing base', '100-10000 mm'),
+    weight: () => 
+      createField('gamma', 'Soil Unit Weight', 'γ', 'number', 'e.g. 18', 'kN/m³', 
+                'Unit weight of soil', '1.1-30 kN/m³', { step: 0.1 })
+  }
+};
+
+// Field definitions
 const LOAD_FIELDS = {
   unfactored: [
-    createField(
-      'DL',
-      'Permanent Load (Gk)',
-      'Gk',
-      'number',
-      'e.g. 500',
-      'kN',
-      'Unfactored permanent vertical load',
-      '200-4100 kN'
-    ),
-    createField(
-      'LL',
-      'Variable Load (Qk)',
-      'Qk',
-      'number',
-      'e.g. 300',
-      'kN',
-      'Unfactored variable vertical load',
-      '130-2100 kN'
-    ),
-    createField(
-      'mxp',
-      'Moment X Permanent',
-      'Mx,Gk',
-      'number',
-      'e.g. 50',
-      'kN-m',
-      'Unfactored permanent moment about X-axis',
-      '-1000-1000 kNm'
-    ),
-    createField(
-      'mxv',
-      'Moment X Variable',
-      'Mx,Qk',
-      'number',
-      'e.g. 30',
-      'kN-m',
-      'Unfactored variable moment about X-axis',
-      '-1000-1000 kNm'
-    ),
-    createField(
-      'myp',
-      'Moment Y Permanent',
-      'My,Gk',
-      'number',
-      'e.g. 50',
-      'kN-m',
-      'Unfactored permanent moment about Y-axis',
-      '-1000-1000 kNm'
-    ),
-    createField(
-      'myv',
-      'Moment Y Variable',
-      'My,Qk',
-      'number',
-      'e.g. 30',
-      'kN-m',
-      'Unfactored variable moment about Y-axis',
-      '-1000-1000 kNm'
-    )
+    FIELD_TEMPLATES.load.kN('DL', 'Permanent Load (Gk)', 'Gk', '200-4100 kN'),
+    FIELD_TEMPLATES.load.kN('LL', 'Variable Load (Qk)', 'Qk', '130-2100 kN'),
+    FIELD_TEMPLATES.load.kNm('mxp', 'Moment X Permanent', 'Mx,Gk'),
+    FIELD_TEMPLATES.load.kNm('mxv', 'Moment X Variable', 'Mx,Qk'),
+    FIELD_TEMPLATES.load.kNm('myp', 'Moment Y Permanent', 'My,Gk'),
+    FIELD_TEMPLATES.load.kNm('myv', 'Moment Y Variable', 'My,Qk')
   ],
   factored: [
-    createField(
-      'NED',
-      'Design Axial Load',
-      'P',
-      'number',
-      'e.g. 1200',
-      'kN',
-      'Factored design axial load',
-      '300-6000 kN'
-    ),
-    createField(
-      'MXED',
-      'Design Moment X',
-      'Mx',
-      'number',
-      'e.g. 150',
-      'kN-m',
-      'Factored design moment about X-axis',
-      '-1500-1500 kNm'
-    ),
-    createField(
-      'MYED',
-      'Design Moment Y',
-      'My',
-      'number',
-      'e.g. 150',
-      'kN-m',
-      'Factored design moment about Y-axis',
-      '-1500-1500 kNm'
-    )
+    FIELD_TEMPLATES.load.kN('NED', 'Design Axial Load', 'P', '300-6000 kN'),
+    FIELD_TEMPLATES.load.kNm('MXED', 'Design Moment X', 'Mx'),
+    FIELD_TEMPLATES.load.kNm('MYED', 'Design Moment Y', 'My')
   ]
 };
 
 const MATERIAL_FIELDS = [
-  createField(
-    'FCK',
-    'Concrete Strength',
-    'fck',
-    'number',
-    'e.g. 25',
-    'MPa',
-    'Characteristic compressive strength',
-    '25-100 MPa',
-    { step: 5 }
-  ),
-  createField(
-    'FYK',
-    'Steel Strength',
-    'fyk',
-    'number',
-    'e.g. 500',
-    'MPa',
-    'Characteristic yield strength',
-    '100-1000 MPa',
-    { step: 50 }
-  ),
-  createField(
-    'BAR',
-    'Rebar Diameter',
-    'Ø',
-    'number',
-    'e.g. 16',
-    'mm',
-    'Main reinforcement bar size',
-    '12-32 mm',
-    { step: 2 }
-  ),
-  {
-    ...createField(
-      'COV',
-      'Concrete Cover',
-      'c',
-      'select',
-      '',
-      '',
-      'Nominal concrete cover to reinforcement',
-      ''
-    ),
-    options: [
-      { value: "40", label: "40 mm (Footing on lean concrete)" },
-      { value: "75", label: "75 mm (Footing on soil)" }
-    ],
-    tooltip: "Concrete Cover - Nominal concrete cover to reinforcement"
-  }
+  FIELD_TEMPLATES.material.strength('fck', 'Concrete Strength', '25-100 MPa', 5),
+  FIELD_TEMPLATES.material.strength('fyk', 'Steel Strength', '100-1000 MPa', 50),
+  FIELD_TEMPLATES.material.bar(),
+  FIELD_TEMPLATES.material.cover()
 ];
 
-// Geometry fields by foundation type
 const GEOMETRY_FIELDS = {
   isolated: [
-    createField(
-      'COL',
-      'Column Width X',
-      'b',
-      'number',
-      'e.g. 300',
-      'mm',
-      'Column dimension along X-axis',
-      '100-1500 mm'
-    ),
-    createField(
-      'COLY',
-      'Column Width Y',
-      'h',
-      'number',
-      'e.g. 300',
-      'mm',
-      'Column dimension along Y-axis',
-      '100-1500 mm'
-    )
+    FIELD_TEMPLATES.geometry.dimension('colx', 'Column Width X', 'b'),
+    FIELD_TEMPLATES.geometry.dimension('coly', 'Column Width Y', 'h')
   ],
   combined: [
-    createField(
-      'COL1',
-      'Column 1 Width X',
-      'b1',
-      'number',
-      'e.g. 300',
-      'mm',
-      'First column X dimension',
-      '100-1500 mm'
-    ),
-    createField(
-      'COLY1',
-      'Column 1 Width Y',
-      'h1',
-      'number',
-      'e.g. 300',
-      'mm',
-      'First column Y dimension',
-      '100-1500 mm'
-    ),
-    createField(
-      'COL2',
-      'Column 2 Width X',
-      'b2',
-      'number',
-      'e.g. 300',
-      'mm',
-      'Second column X dimension',
-      '100-1500 mm'
-    ),
-    createField(
-      'COLY2',
-      'Column 2 Width Y',
-      'h2',
-      'number',
-      'e.g. 300',
-      'mm',
-      'Second column Y dimension',
-      '100-1500 mm'
-    ),
-    createField(
-      'COL_SPACING',
-      'Column Spacing',
-      'L',
-      'number',
-      'e.g. 3000',
-      'mm',
-      'Distance between column centers',
-      '500-10000 mm'
-    )
+    FIELD_TEMPLATES.geometry.dimension('colx1', 'Column 1 Width X', 'b1'),
+    FIELD_TEMPLATES.geometry.dimension('coly1', 'Column 1 Width Y', 'h1'),
+    FIELD_TEMPLATES.geometry.dimension('colx2', 'Column 2 Width X', 'b2'),
+    FIELD_TEMPLATES.geometry.dimension('coly2', 'Column 2 Width Y', 'h2'),
+    FIELD_TEMPLATES.geometry.spacing('col_spacing', 'Column Spacing', 'L')
   ],
   strap: [
-    createField(
-      'COL_MAIN',
-      'Main Column Width',
-      'bc',
-      'number',
-      'e.g. 400',
-      'mm',
-      'Primary column dimension',
-      '100-1500 mm'
-    ),
-    createField(
-      'COL_STRAP',
-      'Strap Column Width',
-      'bs',
-      'number',
-      'e.g. 300',
-      'mm',
-      'Secondary column dimension',
-      '100-1500 mm'
-    ),
-    createField(
-      'STRAP_LENGTH',
-      'Strap Beam Length',
-      'Ls',
-      'number',
-      'e.g. 2500',
-      'mm',
-      'Distance between columns',
-      '500-10000 mm'
-    )
+    FIELD_TEMPLATES.geometry.dimension('col_main', 'Main Column Width', 'bc'),
+    FIELD_TEMPLATES.geometry.dimension('col_strap', 'Strap Column Width', 'bs'),
+    FIELD_TEMPLATES.geometry.spacing('strap_length', 'Strap Beam Length', 'Ls')
   ],
   retaining: [
-    createField(
-      'WALL_HEIGHT',
-      'Wall Height',
-      'H',
-      'number',
-      'e.g. 2000',
-      'mm',
-      'Total wall height',
-      '500-10000 mm'
-    ),
-    createField(
-      'WALL_THICKNESS',
-      'Wall Thickness',
-      't',
-      'number',
-      'e.g. 300',
-      'mm',
-      'Base thickness of wall',
-      '100-1500 mm'
-    ),
-    createField(
-      'TOE_LENGTH',
-      'Toe Length',
-      'Lt',
-      'number',
-      'e.g. 1000',
-      'mm',
-      'Length of toe extension',
-      '300-5000 mm'
-    ),
-    createField(
-      'HEEL_LENGTH',
-      'Heel Length',
-      'Lh',
-      'number',
-      'e.g. 1500',
-      'mm',
-      'Length of heel extension',
-      '300-5000 mm'
-    )
+    FIELD_TEMPLATES.geometry.dimension('wall_height', 'Wall Height', 'H'),
+    FIELD_TEMPLATES.geometry.dimension('wall_thickness', 'Wall Thickness', 't'),
+    FIELD_TEMPLATES.geometry.dimension('toe_length', 'Toe Length', 'Lt'),
+    FIELD_TEMPLATES.geometry.dimension('heel_length', 'Heel Length', 'Lh')
   ]
 };
 
-// Soil fields by soil type
 const SOIL_FIELDS = {
   CU: [
-    createField(
-      'DF',
-      'Foundation Depth',
-      'Df',
-      'number',
-      'e.g. 1500',
-      'mm',
-      'Depth from ground surface to footing base',
-      '100-10000 mm'
-    ),
-    createField(
-      'CU',
-      'Undrained Cohesion',
-      'Cu',
-      'number',
-      'e.g. 50',
-      'kPa',
-      'Soil undrained cohesion/shear strength',
-      '1-1000 kPa'
-    ),
-    createField(
-      'GAM',
-      'Soil Unit Weight',
-      'γ',
-      'number',
-      'e.g. 18',
-      'kN/m³',
-      'Unit weight of soil',
-      '1.1-30 kN/m³',
-      { step: 0.1 }
-    )
+    FIELD_TEMPLATES.soil.depth(),
+    createField('CU', 'Undrained Cohesion', 'Cu', 'number', 'e.g. 50', 'kPa', 
+              'Soil undrained cohesion/shear strength', '1-1000 kPa'),
+    FIELD_TEMPLATES.soil.weight()
   ],
   CD: [
-    createField(
-      'DF',
-      'Foundation Depth',
-      'Df',
-      'number',
-      'e.g. 1500',
-      'mm',
-      'Depth from ground surface to footing base',
-      '100-10000 mm'
-    ),
-    createField(
-      'C_PRIME',
-      'Effective Cohesion',
-      "c'",
-      'number',
-      'e.g. 5',
-      'kPa',
-      'Effective cohesion parameter',
-      '0-200 kPa'
-    ),
-    createField(
-      'PHI_PRIME',
-      'Friction Angle',
-      "φ'",
-      'number',
-      'e.g. 25',
-      '°',
-      'Effective angle of internal friction',
-      '1-70°'
-    ),
-    createField(
-      'GAM',
-      'Soil Unit Weight',
-      'γ',
-      'number',
-      'e.g. 18',
-      'kN/m³',
-      'Unit weight of soil',
-      '1.1-30 kN/m³',
-      { step: 0.1 }
-    )
+    FIELD_TEMPLATES.soil.depth(),
+    createField('c_prime', 'Effective Cohesion', "c'", 'number', 'e.g. 5', 'kPa', 
+              'Effective cohesion parameter', '0-200 kPa'),
+    createField('phi_prime', 'Friction Angle', "φ'", 'number', 'e.g. 25', '°', 
+              'Effective angle of internal friction', '1-70°'),
+    FIELD_TEMPLATES.soil.weight()
   ],
   S: [
-    createField(
-      'DF',
-      'Foundation Depth',
-      'Df',
-      'number',
-      'e.g. 1500',
-      'mm',
-      'Depth from ground surface to footing base',
-      '100-10000 mm'
-    ),
-    createField(
-      'PHI_PRIME',
-      'Friction Angle',
-      "φ'",
-      'number',
-      'e.g. 30',
-      '°',
-      'Effective angle of internal friction',
-      '1-70°'
-    ),
-    createField(
-      'GAM',
-      'Soil Unit Weight',
-      'γ',
-      'number',
-      'e.g. 18',
-      'kN/m³',
-      'Unit weight of soil',
-      '1.1-30 kN/m³',
-      { step: 0.1 }
-    )
+    FIELD_TEMPLATES.soil.depth(),
+    createField('phi_prime', 'Friction Angle', "φ'", 'number', 'e.g. 30', '°', 
+              'Effective angle of internal friction', '1-70°'),
+    FIELD_TEMPLATES.soil.weight()
   ],
   CUST: [
-    createField(
-      'BC',
-      'Bearing Capacity',
-      'qa',
-      'number',
-      'e.g. 200',
-      'kPa',
-      'Allowable bearing capacity',
-      '50-1000 kPa'
-    )
+    createField('bc', 'Bearing Capacity', 'qa', 'number', 'e.g. 200', 'kPa', 
+              'Allowable bearing capacity', '50-1000 kPa')
   ]
 };
 

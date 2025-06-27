@@ -36,9 +36,13 @@ async def calculate_isolated(data: dict):
             "CUST": "bearing_c"
         }
         
-        soil_type_input = data["soilType"].upper()
+        # Get soilType from either top level or inputs
+        soil_type_input = data.get("soilType", "").upper()
+        if not soil_type_input:
+            raise HTTPException(400, detail="Missing soilType parameter")
+            
         if soil_type_input not in soil_mapping:
-            raise HTTPException(400, detail=f"Invalid soilType: {data['soilType']}")
+            raise HTTPException(400, detail=f"Invalid soilType: {soil_type_input}")
         
         soil_type = soil_mapping[soil_type_input]
 
