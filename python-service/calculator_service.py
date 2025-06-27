@@ -4,6 +4,9 @@ Module for managing foundation calculations using a FastAPI web application.
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import multiprocessing
+import concurrent.futures
+from functools import partial
 from foundations.isolated import iso
 
 app = FastAPI()
@@ -17,10 +20,20 @@ app.add_middleware(
     allow_methods=["POST"]
 )
 
+# Timeout configuration
+CALCULATION_TIMEOUT = 10  # seconds
+
+def run_iso_in_process(**kwargs):
+    """Run the iso function in a separate process with timeout handling."""
+    try:
+        return iso(**kwargs)
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.post("/calculate/isolated")
 async def calculate_isolated(data: dict):
     """
-    Endpoint to calculate isolated footing parameters.
+    Endpoint to calculate isolated footing parameters with timeout protection.
     
     Args:
         data (dict): Input data containing soil type and various parameters for the calculation.
@@ -71,7 +84,16 @@ async def calculate_isolated(data: dict):
         elif soil_type == "bearing_c":
             converted["bc"] = float(data.get("bc", 150))
 
-        result = iso(**converted)
+        # Run the calculation in a separate process with timeout
+        with multiprocessing.Pool(1) as pool:
+            try:
+                result = pool.apply_async(iso, kwds=converted)
+                # Wait for the result with timeout
+                result = result.get(timeout=CALCULATION_TIMEOUT)
+            except multiprocessing.TimeoutError:
+                raise HTTPException(408, detail="Calculation timed out. Iterations are diverging. Adjust inputs in the Inputs tab and try again.")
+            except Exception as e:
+                raise HTTPException(500, detail=f"Calculation error: {str(e)}")
         
         if not result:
             raise HTTPException(400, detail="Invalid input values")
@@ -80,6 +102,8 @@ async def calculate_isolated(data: dict):
         
     except KeyError as e:
         raise HTTPException(400, detail=f"Missing parameter: {str(e)}")
+    except HTTPException:
+        raise  # Re-raise existing HTTP exceptions
     except Exception as e:
-        raise HTTPException(500, detail=f"Calculation error: {str(e)}")
+        raise HTTPException(500, detail=f"Unexpected error: {str(e)}")
     
