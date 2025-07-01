@@ -717,8 +717,8 @@ export {
 };
 
 
-//FOrmField.jsx
-import React, { useState, useEffect, useRef, useCallback } from "react";
+//FormField.jsx
+import React, { useState, useEffect, useRef } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 
 const FormField = React.memo(({ field, register, errors }) => {
@@ -726,8 +726,9 @@ const FormField = React.memo(({ field, register, errors }) => {
   const [tooltipStyle, setTooltipStyle] = useState({});
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const tooltipRef = useRef(null);
+  const inputRef = useRef(null);
 
-  const updateTooltipPosition = useCallback(() => {
+  const updateTooltipPosition = () => {
     if (tooltipRef.current) {
       const rect = tooltipRef.current.getBoundingClientRect();
       setTooltipStyle({
@@ -735,16 +736,36 @@ const FormField = React.memo(({ field, register, errors }) => {
         bottom: `${window.innerHeight - rect.top + 8}px`,
       });
     }
-  }, []);
+  };
 
   useEffect(() => {
     updateTooltipPosition();
     const handleScroll = () => updateTooltipPosition();
     window.addEventListener("scroll", handleScroll, true);
     return () => window.removeEventListener("scroll", handleScroll, true);
-  }, [updateTooltipPosition]);
+  }, []);
 
   const error = errors[field.id];
+
+  // Add this effect to prevent unwanted value changes
+  useEffect(() => {
+    const handleWheel = (e) => {
+      if (document.activeElement === inputRef.current) {
+        e.preventDefault();
+      }
+    };
+
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      inputElement.addEventListener("wheel", handleWheel, { passive: false });
+    }
+
+    return () => {
+      if (inputElement) {
+        inputElement.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, []);
 
   return (
     <div className="mb-4">
@@ -814,22 +835,27 @@ const FormField = React.memo(({ field, register, errors }) => {
             <input
               type={field.type}
               id={field.id}
-              {...register(field.id, {
-                required: field.required && "This field is required",
-                min: field.min && {
-                  value: field.min,
-                  message: `Minimum value is ${field.min}`,
-                },
-                max: field.max && {
-                  value: field.max,
-                  message: `Maximum value is ${field.max}`,
-                },
-                valueAsNumber: field.type === "number",
-              })}
+              ref={(e) => {
+                inputRef.current = e;
+                register(field.id, {
+                  required: field.required && "This field is required",
+                  min: field.min && {
+                    value: field.min,
+                    message: `Minimum value is ${field.min}`,
+                  },
+                  max: field.max && {
+                    value: field.max,
+                    message: `Maximum value is ${field.max}`,
+                  },
+                  valueAsNumber: field.type === "number",
+                }).ref(e);
+              }}
               className="w-full px-3 py-[0.4rem] border-none focus:outline-none text-[11px] sm:text-[13px] leading-tight"
               placeholder={field.placeholder}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
+              step={field.step || "any"} // Add this to prevent step interference
+              onWheel={(e) => e.target.blur()} // Add this to prevent wheel changes
             />
           )}
         </div>
@@ -849,11 +875,8 @@ FormField.displayName = "FormField";
 export default FormField;
 
 
-
-
-
 //index.jsx
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { styles } from "../../../styles";
 import FormField from "./FormField";
