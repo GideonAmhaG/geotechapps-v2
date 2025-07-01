@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 
 const FormField = React.memo(({ field, register, errors }) => {
@@ -8,7 +8,7 @@ const FormField = React.memo(({ field, register, errors }) => {
   const tooltipRef = useRef(null);
   const inputRef = useRef(null);
 
-  const updateTooltipPosition = () => {
+  const updateTooltipPosition = useCallback(() => {
     if (tooltipRef.current) {
       const rect = tooltipRef.current.getBoundingClientRect();
       setTooltipStyle({
@@ -16,18 +16,16 @@ const FormField = React.memo(({ field, register, errors }) => {
         bottom: `${window.innerHeight - rect.top + 8}px`,
       });
     }
-  };
+  }, []);
 
   useEffect(() => {
     updateTooltipPosition();
     const handleScroll = () => updateTooltipPosition();
     window.addEventListener("scroll", handleScroll, true);
     return () => window.removeEventListener("scroll", handleScroll, true);
-  }, []);
+  }, [updateTooltipPosition]);
 
-  const error = errors[field.id];
-
-  // Add this effect to prevent unwanted value changes
+  // Prevent wheel events from changing number inputs when focused
   useEffect(() => {
     const handleWheel = (e) => {
       if (document.activeElement === inputRef.current) {
@@ -36,7 +34,7 @@ const FormField = React.memo(({ field, register, errors }) => {
     };
 
     const inputElement = inputRef.current;
-    if (inputElement) {
+    if (inputElement && field.type === "number") {
       inputElement.addEventListener("wheel", handleWheel, { passive: false });
     }
 
@@ -45,7 +43,9 @@ const FormField = React.memo(({ field, register, errors }) => {
         inputElement.removeEventListener("wheel", handleWheel);
       }
     };
-  }, []);
+  }, [field.type]);
+
+  const error = errors[field.id];
 
   return (
     <div className="mb-4">
@@ -115,27 +115,28 @@ const FormField = React.memo(({ field, register, errors }) => {
             <input
               type={field.type}
               id={field.id}
+              {...register(field.id, {
+                required: field.required && "This field is required",
+                min: field.min && {
+                  value: field.min,
+                  message: `Minimum value is ${field.min}`,
+                },
+                max: field.max && {
+                  value: field.max,
+                  message: `Maximum value is ${field.max}`,
+                },
+                valueAsNumber: field.type === "number",
+              })}
               ref={(e) => {
-                inputRef.current = e;
-                register(field.id, {
-                  required: field.required && "This field is required",
-                  min: field.min && {
-                    value: field.min,
-                    message: `Minimum value is ${field.min}`,
-                  },
-                  max: field.max && {
-                    value: field.max,
-                    message: `Maximum value is ${field.max}`,
-                  },
-                  valueAsNumber: field.type === "number",
-                }).ref(e);
+                register(field.id).ref(e); // Properly connect the ref
+                inputRef.current = e; // Store ref for our use
               }}
               className="w-full px-3 py-[0.4rem] border-none focus:outline-none text-[11px] sm:text-[13px] leading-tight"
               placeholder={field.placeholder}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              step={field.step || "any"} // Add this to prevent step interference
-              onWheel={(e) => e.target.blur()} // Add this to prevent wheel changes
+              step={field.step || "any"}
+              onWheel={(e) => field.type === "number" && e.target.blur()}
             />
           )}
         </div>
