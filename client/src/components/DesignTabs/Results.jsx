@@ -36,8 +36,6 @@ function Results({ data }) {
 
         const responseData = await response.json();
 
-        console.log("API Response:", responseData); // Debug log
-
         if (!responseData.data) {
           throw new Error("Invalid response format from server");
         }
