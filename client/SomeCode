@@ -569,7 +569,7 @@ const styles = {
   export { styles };
 
 
-//inputparamets folder
+//inputparamets folder (following 3 files)
 //constants.js
 // Helper function to generate consistent field definitions
 const createField = (id, label, shortLabel, type, placeholder, unit, description, range, options) => ({
@@ -1002,18 +1002,302 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
 
 export default InputParameters;
 
-//Results.jsx
-import { useEffect, useState, useRef } from "react";
-import { FiDownload, FiPrinter } from "react-icons/fi";
-import { useReactToPrint } from "react-to-print";
-import { saveAs } from "file-saver";
+//Results folder (following 3 files)
+//constants.js
+export const MAIN_RESULTS = [
+  { id: 'b', label: 'Width (B)', unit: 'mm' },
+  { id: 'l', label: 'Length (L)', unit: 'mm' },
+  { id: 'd', label: 'Thickness (D)', unit: 'mm' },
+  { id: 'Nxb', label: 'Number of bars, x-direction, bottom (Nxb)', unit: '' },
+  { id: 'Nyb', label: 'Number of bars, y-direction, bottom (Nyb)', unit: '' }, 
+  { id: 'Sxb', label: 'Spacing between bars, x-direction, bottom (Sxb)', unit: 'mm' },
+  { id: 'Syb', label: 'Spacing between bars, y-direction, bottom (Syb)', unit: 'mm' },
+];
 
-function Results({ data }) {
-  const [results, setResults] = useState(null);
+export const ADDITIONAL_RESULTS = [
+  { id: 'As', label: 'Reinforcement Area (As)', unit: 'mm²' },
+  { id: 'qu', label: 'Ultimate Bearing Capacity (qu)', unit: 'kPa' },
+  { id: 'qa', label: 'Allowable Bearing Capacity (qa)', unit: 'kPa' },
+  { id: 'fs', label: 'Factor of Safety (FS)', unit: '' },
+  { id: 'sig_p', label: 'Maximum Stress (σmax)', unit: 'kPa' },
+  { id: 'vrd', label: 'Shear Resistance (vRd)', unit: 'kPa' },
+  { id: 'mrd', label: 'Moment Resistance (MRd)', unit: 'kNm' }
+];
+
+export const VERIFICATION_CHECKS = [
+  { id: 'ved_wide', label: 'Wide Beam Shear (vEd)', unit: 'kPa' },
+  { id: 'vrd_wide', label: 'Wide Beam Resistance (vRd)', unit: 'kPa' },
+  { id: 'ved_punch', label: 'Punching Shear (vEd)', unit: 'kPa' },
+  { id: 'vrd_punch', label: 'Punching Resistance (vRd)', unit: 'kPa' },
+  { id: 'med', label: 'Design Moment (MEd)', unit: 'kNm' },
+  { id: 'mrd', label: 'Moment Resistance (MRd)', unit: 'kNm' }
+];
+
+
+//DesignReport.jsx
+import { useState } from "react";
+import { FiDownload } from "react-icons/fi";
+import {
+  PDFDownloadLink,
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+} from "@react-pdf/renderer";
+import { styles } from "../../../styles";
+import {
+  MAIN_RESULTS,
+  ADDITIONAL_RESULTS,
+  VERIFICATION_CHECKS,
+} from "./constants";
+import { IoChevronForward, IoChevronDown } from "react-icons/io5";
+
+const stylesPDF = StyleSheet.create({
+  page: { padding: 30, fontFamily: "Helvetica" },
+  header: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  section: { marginBottom: 15 },
+  sectionTitle: { fontSize: 14, marginBottom: 8, fontWeight: "bold" },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 5,
+  },
+  label: { fontSize: 10, width: "60%" },
+  value: { fontSize: 10, width: "40%", textAlign: "right" },
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#cccccc",
+    marginVertical: 10,
+  },
+});
+
+const ReportPDF = ({ data, results }) => (
+  <Document>
+    <Page style={stylesPDF.page}>
+      <View style={stylesPDF.section}>
+        <Text style={stylesPDF.header}>Foundation Design Report</Text>
+        <Text style={{ textAlign: "center", marginBottom: 15 }}>
+          Generated on {new Date().toLocaleDateString()}
+        </Text>
+
+        {/* Project Information */}
+        <Text style={stylesPDF.sectionTitle}>1. Project Information</Text>
+        <View style={stylesPDF.row}>
+          <Text style={stylesPDF.label}>Foundation Type:</Text>
+          <Text style={stylesPDF.value}>{data.foundationType}</Text>
+        </View>
+        <View style={stylesPDF.row}>
+          <Text style={stylesPDF.label}>Soil Type:</Text>
+          <Text style={stylesPDF.value}>{data.soilType}</Text>
+        </View>
+        <View style={stylesPDF.divider} />
+
+        {/* Main Results */}
+        <Text style={stylesPDF.sectionTitle}>2. Design Results</Text>
+        {MAIN_RESULTS.map((item) => (
+          <View key={item.id} style={stylesPDF.row}>
+            <Text style={stylesPDF.label}>{item.label}:</Text>
+            <Text style={stylesPDF.value}>
+              {results[item.id]} {item.unit}
+            </Text>
+          </View>
+        ))}
+        <View style={stylesPDF.divider} />
+
+        {/* Additional Results */}
+        <Text style={stylesPDF.sectionTitle}>3. Additional Results</Text>
+        {ADDITIONAL_RESULTS.map((item) => (
+          <View key={item.id} style={stylesPDF.row}>
+            <Text style={stylesPDF.label}>{item.label}:</Text>
+            <Text style={stylesPDF.value}>
+              {results[item.id]} {item.unit}
+            </Text>
+          </View>
+        ))}
+        <View style={stylesPDF.divider} />
+
+        {/* Verification Checks */}
+        <Text style={stylesPDF.sectionTitle}>4. Verification Checks</Text>
+        {VERIFICATION_CHECKS.map((item) => (
+          <View key={item.id} style={stylesPDF.row}>
+            <Text style={stylesPDF.label}>{item.label}:</Text>
+            <Text style={stylesPDF.value}>
+              {results[item.id]} {item.unit}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </Page>
+  </Document>
+);
+
+const DesignReport = ({ data, results }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="mt-8">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between p-4"
+        aria-expanded={isExpanded}
+        aria-controls="design-report-content"
+      >
+        <div className="flex items-center text-[#145da0] hover:text-black">
+          <span className="font-medium md:text-[18px] sm:text-[16px] text-[14px]">
+            Design Report
+          </span>
+          <span className="ml-2 md:text-[18px] sm:text-[16px] text-[14px]">
+            {isExpanded ? (
+              <IoChevronDown className="inline" />
+            ) : (
+              <IoChevronForward className="inline" />
+            )}
+          </span>
+        </div>
+      </button>
+
+      <div
+        id="design-report-content"
+        className={`transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden ${
+          isExpanded
+            ? "max-h-[var(--content-height)] opacity-100"
+            : "max-h-0 opacity-0"
+        }`}
+        aria-hidden={!isExpanded}
+        style={{ "--content-height": "500px" }}
+      >
+        <div className="bg-white p-6 rounded-b-lg border border-t-0 border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div>
+              <h4 className={`${styles.cardTitle} mb-4`}>Additional Results</h4>
+              <div className="space-y-4">
+                {ADDITIONAL_RESULTS.map((item) => (
+                  <div key={item.id} className="flex justify-between">
+                    <span className={`${styles.cardDescription}`}>
+                      {item.label}
+                    </span>
+                    <span className={`${styles.cardDescription} font-medium`}>
+                      {results[item.id]} {item.unit}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className={`${styles.cardTitle} mb-4`}>
+                Verification Checks
+              </h4>
+              <div className="space-y-4">
+                {VERIFICATION_CHECKS.map((item) => (
+                  <div key={item.id} className="flex justify-between">
+                    <span className={`${styles.cardDescription}`}>
+                      {item.label}
+                    </span>
+                    <span className={`${styles.cardDescription} font-medium`}>
+                      {results[item.id]} {item.unit}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <PDFDownloadLink
+              document={<ReportPDF data={data} results={results} />}
+              fileName={`foundation_design_${
+                new Date().toISOString().split("T")[0]
+              }.pdf`}
+              className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center"
+            >
+              {({ loading }) => (
+                <>
+                  <FiDownload className="mr-2" />
+                  {loading ? "Preparing PDF..." : "Download PDF"}
+                </>
+              )}
+            </PDFDownloadLink>
+
+            <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center">
+              Save to Database
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DesignReport;
+
+
+
+//index.jsx
+import { useState, useEffect, useRef } from "react";
+import { styles } from "../../../styles";
+import DesignReport from "./DesignReport";
+import { MAIN_RESULTS } from "./constants";
+
+const ResultCard = ({ items, results }) => {
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <table className="w-full">
+        <thead>
+          <tr className="bg-gray-100 border-b border-gray-200">
+            <th className="py-3 px-4"></th>
+            <th
+              scope="col"
+              className={`${styles.cardDescription} py-3 px-4 text-right`}
+            >
+              Results
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200">
+          {items.map((item) => (
+            <tr key={item.id} className="bg-green-50">
+              <td className={`${styles.cardDescription} py-3 px-4`}>
+                {item.label}
+              </td>
+              <td
+                className={`${styles.cardDescription} font-medium py-3 px-4 text-right`}
+              >
+                {results[item.id]}
+                {item.unit && ` ${item.unit}`}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const Results = ({ data }) => {
+  const [rawResults, setRawResults] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showReport, setShowReport] = useState(false);
   const reportRef = useRef();
+
+  const convertedResults = rawResults
+    ? {
+        ...rawResults,
+        b: rawResults.b ? rawResults.b * 1000 : null,
+        l: rawResults.b ? rawResults.b * 1000 : null,
+        d: rawResults.d ? rawResults.d * 1000 : null,
+        Nxb: rawResults.N,
+        Nyb: rawResults.N,
+        Sxb: rawResults.s,
+        Syb: rawResults.s,
+      }
+    : null;
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -1033,31 +1317,13 @@ function Results({ data }) {
         });
 
         if (!response.ok) {
-          let errorMessage = "Calculation failed";
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error?.message || errorMessage;
-          } catch (e) {
-            console.error("Error parsing error response:", e);
-          }
-          throw new Error(`${errorMessage} (Status: ${response.status})`);
+          throw new Error(`Calculation failed (Status: ${response.status})`);
         }
 
         const responseData = await response.json();
-        if (!responseData.data) {
-          throw new Error("Invalid response format from server");
-        }
-
-        setResults({
-          b: responseData.data.b,
-          d: responseData.data.d,
-          N: responseData.data.N,
-          s: responseData.data.s,
-          ...responseData.data, // Include all additional data for the report
-        });
+        setRawResults(responseData.data);
       } catch (err) {
-        console.error("Calculation error:", err);
-        setError(err.message || "An unknown error occurred");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -1066,303 +1332,60 @@ function Results({ data }) {
     fetchResults();
   }, [data]);
 
-  const handlePrint = useReactToPrint({
-    content: () => reportRef.current,
-    pageStyle: `
-      @page { size: A4; margin: 1cm; }
-      @media print { 
-        body { font-size: 12pt; }
-        .print-section { break-inside: avoid; }
-      }
-    `,
-    documentTitle: `Foundation_Design_Report_${
-      new Date().toISOString().split("T")[0]
-    }`,
-  });
-
-  const handleDownload = () => {
-    const blob = new Blob(
-      [document.getElementById("design-report").innerHTML],
-      {
-        type: "text/html;charset=utf-8",
-      }
-    );
-    saveAs(
-      blob,
-      `Foundation_Design_${new Date().toISOString().split("T")[0]}.html`
-    );
-  };
-
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#145da0]"></div>
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4 text-red-600">Error</h2>
+      <div className="max-w-md mx-auto p-6">
+        <h2 className={`${styles.sectionTitleText} text-red-600 mb-4`}>
+          Error
+        </h2>
         <p className="text-red-600 mb-4">{error}</p>
-        <p className="text-sm text-gray-600">
-          Please check your input parameters and try again.
+      </div>
+    );
+  }
+
+  if (!convertedResults) {
+    return (
+      <div className="max-w-md mx-auto p-6">
+        <h2 className={`${styles.sectionTitleText} mb-4`}>No Results</h2>
+        <p className={`${styles.sectionBodyText}`}>
+          No results available for the current design.
         </p>
       </div>
     );
-
-  if (!results)
-    return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">No Results</h2>
-        <p>No results available for the current design.</p>
-      </div>
-    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Main Results Card */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Design Summary
-          </h2>
+    <div className="max-w-3xl mx-auto">
+      <h2 className={`${styles.sectionTitleText}`}>Results</h2>
+      <p className={`${styles.sectionBodyText} mb-6`}>
+        Review your foundation design results
+      </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-gray-700 mb-3">Dimensions</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Footing Width (B)</span>
-                  <span className="font-medium">{results.b} m</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Thickness (D)</span>
-                  <span className="font-medium">{results.d} m</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-gray-700 mb-3">
-                Reinforcement
-              </h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Number of Bars (N)</span>
-                  <span className="font-medium">{results.N}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Bar Spacing (S)</span>
-                  <span className="font-medium">{results.s} mm</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-center space-x-4">
-            <button
-              onClick={() => setShowReport(true)}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
-            >
-              View Full Report
-            </button>
-          </div>
-        </div>
+      <div className="mb-8">
+        <h3 className={`${styles.cardTitle} !text-[#008080] mb-2`}>
+          Design Summary
+        </h3>
+        <div className="w-full border-t border-gray-200 mb-4" />
+        <ResultCard items={MAIN_RESULTS} results={convertedResults} />
       </div>
 
-      {/* Design Report Modal */}
-      {showReport && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center border-b p-4">
-              <h3 className="text-xl font-bold text-gray-800">Design Report</h3>
-              <button
-                onClick={() => setShowReport(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div
-              className="overflow-y-auto p-6"
-              ref={reportRef}
-              id="design-report"
-            >
-              <div className="mb-8">
-                <h1 className="text-2xl font-bold text-center mb-2">
-                  Foundation Design Report
-                </h1>
-                <p className="text-center text-gray-600">
-                  Generated on {new Date().toLocaleDateString()}
-                </p>
-              </div>
-
-              {/* Project Information */}
-              <div className="mb-8 print-section">
-                <h2 className="text-lg font-semibold border-b pb-2 mb-4">
-                  Project Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p>
-                      <span className="font-medium">Foundation Type:</span>{" "}
-                      {data.foundationType}
-                    </p>
-                    <p>
-                      <span className="font-medium">Soil Type:</span>{" "}
-                      {data.soilType}
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      <span className="font-medium">Date:</span>{" "}
-                      {new Date().toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Design Results Summary */}
-              <div className="mb-8 print-section">
-                <h2 className="text-lg font-semibold border-b pb-2 mb-4">
-                  Design Results
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                    <h3 className="font-medium mb-2">Dimensions</h3>
-                    <ul className="space-y-1">
-                      <li>Footing Width (B): {results.b} m</li>
-                      <li>Thickness (D): {results.d} m</li>
-                    </ul>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                    <h3 className="font-medium mb-2">Reinforcement</h3>
-                    <ul className="space-y-1">
-                      <li>Number of Bars (N): {results.N}</li>
-                      <li>Bar Spacing (S): {results.s} mm</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* Detailed Calculations */}
-              <div className="mb-8 print-section">
-                <h2 className="text-lg font-semibold border-b pb-2 mb-4">
-                  Detailed Calculations
-                </h2>
-
-                {/* Bearing Capacity */}
-                <div className="mb-6">
-                  <h3 className="font-medium mb-2">1. Bearing Capacity</h3>
-                  <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                    {results.qa && (
-                      <p>
-                        Allowable bearing capacity (q<sub>a</sub>): {results.qa}{" "}
-                        kPa
-                      </p>
-                    )}
-                    {results.qu && (
-                      <p>
-                        Ultimate bearing capacity (q<sub>u</sub>): {results.qu}{" "}
-                        kPa
-                      </p>
-                    )}
-                    {results.fs && <p>Factor of safety (FS): {results.fs}</p>}
-                  </div>
-                </div>
-
-                {/* Structural Design */}
-                <div className="mb-6">
-                  <h3 className="font-medium mb-2">2. Structural Design</h3>
-                  <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                    <p>
-                      Design axial load (P): {results.p_s?.toFixed(2) || "N/A"}{" "}
-                      kN
-                    </p>
-                    <p>
-                      Maximum stress (σ<sub>max</sub>):{" "}
-                      {results.sig_p?.toFixed(2) || "N/A"} kPa
-                    </p>
-                    <p>
-                      Reinforcement area (A<sub>s</sub>):{" "}
-                      {results.As?.toFixed(2) || "N/A"} mm²
-                    </p>
-                  </div>
-                </div>
-
-                {/* Verification Checks */}
-                <div>
-                  <h3 className="font-medium mb-2">3. Verification Checks</h3>
-                  <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                    <p>
-                      Shear resistance (v<sub>Rd</sub>):{" "}
-                      {results.vrd?.toFixed(2) || "N/A"} kPa
-                    </p>
-                    <p>
-                      Moment resistance (M<sub>Rd</sub>):{" "}
-                      {results.mrd?.toFixed(2) || "N/A"} kNm
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Input Parameters */}
-              <div className="print-section">
-                <h2 className="text-lg font-semibold border-b pb-2 mb-4">
-                  Input Parameters
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="font-medium mb-2">Loads</h3>
-                    <ul className="space-y-1">
-                      <li>
-                        Permanent load (G<sub>k</sub>): {data.inputs.DL} kN
-                      </li>
-                      <li>
-                        Variable load (Q<sub>k</sub>): {data.inputs.LL} kN
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-medium mb-2">Material Properties</h3>
-                    <ul className="space-y-1">
-                      <li>
-                        Concrete strength (f<sub>ck</sub>): {data.inputs.fck}{" "}
-                        MPa
-                      </li>
-                      <li>
-                        Steel strength (f<sub>yk</sub>): {data.inputs.fyk} MPa
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t p-4 flex justify-end space-x-3">
-              <button
-                onClick={handlePrint}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 flex items-center"
-              >
-                <FiPrinter className="mr-2" /> Print
-              </button>
-              <button
-                onClick={handleDownload}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
-              >
-                <FiDownload className="mr-2" /> Download
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DesignReport data={data} results={convertedResults} />
     </div>
   );
-}
+};
 
 export default Results;
+
+
+
 
 
 
@@ -1380,11 +1403,11 @@ export const PricingTabs = lazy(() => import("./PricingTabs"));
 
 export { default as FoundationType } from './DesignTabs/FoundationType';
 export { default as InputParameters } from './DesignTabs/InputParameters/index.jsx';
-export { default as Results } from './DesignTabs/Results';
+export { default as Results } from './DesignTabs/Results/index.jsx';
 export { default as SoilType } from './DesignTabs/SoilType';
+export { default as LoadType } from './DesignTabs/LoadType';
 export { default as SelectionSummary } from './DesignTabs/SelectionSummary';
 
-export { default as ResultCard } from './shared/ResultCard';
 export { default as TabButton } from './shared/TabButton';
 export { default as GuidanceSection } from './shared/GuidanceSection';
 export { default as SelectionBox } from './shared/SelectionBox';
