@@ -1,107 +1,134 @@
 import { useState } from "react";
 import { FiDownload } from "react-icons/fi";
-import {
-  PDFDownloadLink,
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-} from "@react-pdf/renderer";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { styles } from "../../../styles";
-import {
-  MAIN_RESULTS,
-  ADDITIONAL_RESULTS,
-  VERIFICATION_CHECKS,
-} from "./constants";
 import { IoChevronForward, IoChevronDown } from "react-icons/io5";
+import { ReportPDF } from "./DesignReportPDF";
 
-const stylesPDF = StyleSheet.create({
-  page: { padding: 30, fontFamily: "Helvetica" },
-  header: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  section: { marginBottom: 15 },
-  sectionTitle: { fontSize: 14, marginBottom: 8, fontWeight: "bold" },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 5,
-  },
-  label: { fontSize: 10, width: "60%" },
-  value: { fontSize: 10, width: "40%", textAlign: "right" },
-  divider: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#cccccc",
-    marginVertical: 10,
-  },
-});
+const formatValue = (value, unit, decimals = 2) => {
+  if (value === undefined || value === null) return "N/A";
+  const numValue = typeof value === "number" ? value : parseFloat(value);
 
-const ReportPDF = ({ data, results }) => (
-  <Document>
-    <Page style={stylesPDF.page}>
-      <View style={stylesPDF.section}>
-        <Text style={stylesPDF.header}>Foundation Design Report</Text>
-        <Text style={{ textAlign: "center", marginBottom: 15 }}>
-          Generated on {new Date().toLocaleDateString()}
-        </Text>
+  if (
+    unit === "" &&
+    (value.toString().includes("rho") || Math.abs(numValue) < 0.0001)
+  ) {
+    return numValue.toFixed(4);
+  }
 
-        {/* Project Information */}
-        <Text style={stylesPDF.sectionTitle}>1. Project Information</Text>
-        <View style={stylesPDF.row}>
-          <Text style={stylesPDF.label}>Foundation Type:</Text>
-          <Text style={stylesPDF.value}>{data.foundationType}</Text>
-        </View>
-        <View style={stylesPDF.row}>
-          <Text style={stylesPDF.label}>Soil Type:</Text>
-          <Text style={stylesPDF.value}>{data.soilType}</Text>
-        </View>
-        <View style={stylesPDF.divider} />
+  if (Number.isInteger(numValue)) {
+    return `${numValue} ${unit}`;
+  }
 
-        {/* Main Results */}
-        <Text style={stylesPDF.sectionTitle}>2. Design Results</Text>
-        {MAIN_RESULTS.map((item) => (
-          <View key={item.id} style={stylesPDF.row}>
-            <Text style={stylesPDF.label}>{item.label}:</Text>
-            <Text style={stylesPDF.value}>
-              {results[item.id]} {item.unit}
-            </Text>
-          </View>
-        ))}
-        <View style={stylesPDF.divider} />
+  return `${numValue.toFixed(decimals)} ${unit}`;
+};
 
-        {/* Additional Results */}
-        <Text style={stylesPDF.sectionTitle}>3. Additional Results</Text>
-        {ADDITIONAL_RESULTS.map((item) => (
-          <View key={item.id} style={stylesPDF.row}>
-            <Text style={stylesPDF.label}>{item.label}:</Text>
-            <Text style={stylesPDF.value}>
-              {results[item.id]} {item.unit}
-            </Text>
-          </View>
-        ))}
-        <View style={stylesPDF.divider} />
-
-        {/* Verification Checks */}
-        <Text style={stylesPDF.sectionTitle}>4. Verification Checks</Text>
-        {VERIFICATION_CHECKS.map((item) => (
-          <View key={item.id} style={stylesPDF.row}>
-            <Text style={stylesPDF.label}>{item.label}:</Text>
-            <Text style={stylesPDF.value}>
-              {results[item.id]} {item.unit}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </Page>
-  </Document>
-);
+const ParameterTable = ({ title, items, results }) => {
+  return (
+    <div className="mb-6">
+      <h4 className="text-lg font-semibold text-gray-800 mb-2 px-2 py-1 bg-gray-100 rounded">
+        {title}
+      </h4>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <tbody className="divide-y divide-gray-200">
+            {items.map((item) => (
+              <tr key={item.id} className="hover:bg-gray-50">
+                <td className="py-2 px-3 text-sm text-gray-700 w-2/3">
+                  {item.label}
+                </td>
+                <td className="py-2 px-3 text-sm text-gray-900 text-right font-medium w-1/3">
+                  {formatValue(results[item.id], item.unit, item.decimals)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
 const DesignReport = ({ data, results }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // 1. Proportioning
+  const proportioningItems = [
+    { id: "d", label: "Footing thickness", unit: "mm" },
+    { id: "SW_conc", label: "Self weight of footing", unit: "kN" },
+    { id: "SW_fill", label: "Self weight of fill", unit: "kN" },
+    { id: "DL", label: "Permanent Load (Gk)", unit: "kN" },
+    { id: "LL", label: "Variable Load (Qk)", unit: "kN" },
+    { id: "p_s", label: "P = 1(Gk + Self Weight) + 1Qk", unit: "kN" },
+    { id: "b", label: "B = L", unit: "mm" },
+    { id: "sig_p", label: "A = B * L", unit: "m²" },
+    { id: "mxp", label: "Mx = 1Mxp + 1Mxv", unit: "kNm" },
+    { id: "myp", label: "My = 1Myp + 1Myv", unit: "kNm" },
+    { id: "ex", label: "e_x = abs(My / P)", unit: "mm", decimals: 4 },
+    { id: "ey", label: "e_y = abs(Mx / P)", unit: "mm", decimals: 4 },
+    { id: "CU", label: "Undrained Cohesion (Cu)", unit: "kPa" },
+    { id: "gamma", label: "Soil Unit Weight (γ)", unit: "kN/m³" },
+    { id: "Df", label: "Foundation Depth (Df)", unit: "mm" },
+    { id: "qu", label: "Ultimate Bearing Capacity (qu)", unit: "kPa" },
+    { id: "fs", label: "Factor of Safety (FS)", unit: "" },
+    { id: "sig_p", label: "σmax", unit: "kPa" },
+    { id: "qa", label: "qall", unit: "kPa" },
+  ];
+
+  // 2. Structural Design
+  const structuralDesignItems = [
+    { id: "p_s", label: "P = 1.35Gk + 1.5Qk", unit: "kN" },
+    { id: "sig_s", label: "σ", unit: "kPa" },
+    { id: "fck", label: "fck", unit: "MPa" },
+    { id: "fyk", label: "fyk", unit: "MPa" },
+  ];
+
+  // 2.1 Shear Failure - Punching
+  const shearFailurePunchingItems = [
+    { id: "d_punch", label: "d", unit: "mm" },
+    { id: "k_punch", label: "k", unit: "" },
+    { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
+    { id: "As_punch", label: "As", unit: "mm²" },
+    { id: "Ap2_punch", label: "Ap", unit: "mm²" },
+    { id: "vrd_min_punch", label: "vRd,min", unit: "kPa" },
+    { id: "ved_punch", label: "vEd", unit: "kPa" },
+    { id: "vrd_punch", label: "vRd", unit: "kPa" },
+    { id: "D_punch", label: "D", unit: "mm" },
+  ];
+
+  // 2.1 Shear Failure - Wide Beam
+  const shearFailureWideBeamItems = [
+    { id: "d_wide", label: "d", unit: "mm" },
+    { id: "k_wide", label: "k", unit: "" },
+    { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
+    { id: "As_wide", label: "As", unit: "mm²" },
+    { id: "Ap2_wide", label: "Ap", unit: "mm²" },
+    { id: "vrd_min_wide", label: "vRd,min", unit: "kPa" },
+    { id: "ved_wide", label: "vEd", unit: "kPa" },
+    { id: "vrd_wide", label: "vRd", unit: "kPa" },
+    { id: "D_wide", label: "D", unit: "mm" },
+  ];
+
+  // 2.2 Bending Moment Failure
+  const bendingMomentItems = [
+    { id: "d_final", label: "d", unit: "mm" },
+    { id: "b", label: "B", unit: "mm" },
+    { id: "z", label: "z", unit: "mm" },
+    { id: "rho_min", label: "ρmin", unit: "", decimals: 4 },
+    { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
+    { id: "Asmin", label: "As,min", unit: "mm²" },
+    { id: "med", label: "MEd", unit: "kNm" },
+    { id: "mrd", label: "MRd", unit: "kNm" },
+    { id: "As_old", label: "As", unit: "mm²" },
+  ];
+
+  // 3. Final Rounded Values
+  const finalValuesItems = [
+    { id: "d", label: "D", unit: "mm" },
+    { id: "b", label: "B", unit: "mm" },
+    { id: "Nxb", label: "N", unit: "" },
+    { id: "Sxb", label: "s", unit: "mm" },
+  ];
 
   return (
     <div className="mt-8">
@@ -128,57 +155,54 @@ const DesignReport = ({ data, results }) => {
       <div
         id="design-report-content"
         className={`transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden ${
-          isExpanded
-            ? "max-h-[var(--content-height)] opacity-100"
-            : "max-h-0 opacity-0"
+          isExpanded ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
         }`}
         aria-hidden={!isExpanded}
-        style={{ "--content-height": "500px" }}
       >
-        <div className="bg-white p-6 rounded-b-lg border border-t-0 border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div>
-              <h4 className={`${styles.cardTitle} mb-4`}>Additional Results</h4>
-              <div className="space-y-4">
-                {ADDITIONAL_RESULTS.map((item) => (
-                  <div key={item.id} className="flex justify-between">
-                    <span className={`${styles.cardDescription}`}>
-                      {item.label}
-                    </span>
-                    <span className={`${styles.cardDescription} font-medium`}>
-                      {results[item.id]} {item.unit}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <div className="space-y-6 mt-4">
+          <ParameterTable
+            title="1. Proportioning"
+            items={proportioningItems}
+            results={{ ...data.inputs, ...results }}
+          />
 
-            <div>
-              <h4 className={`${styles.cardTitle} mb-4`}>
-                Verification Checks
-              </h4>
-              <div className="space-y-4">
-                {VERIFICATION_CHECKS.map((item) => (
-                  <div key={item.id} className="flex justify-between">
-                    <span className={`${styles.cardDescription}`}>
-                      {item.label}
-                    </span>
-                    <span className={`${styles.cardDescription} font-medium`}>
-                      {results[item.id]} {item.unit}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ParameterTable
+            title="2. Structural Design"
+            items={structuralDesignItems}
+            results={{ ...data.inputs, ...results }}
+          />
 
-          <div className="flex justify-end space-x-4">
+          <ParameterTable
+            title="2.1 Shear Failure - Punching"
+            items={shearFailurePunchingItems}
+            results={results}
+          />
+
+          <ParameterTable
+            title="2.1 Shear Failure - Wide Beam"
+            items={shearFailureWideBeamItems}
+            results={results}
+          />
+
+          <ParameterTable
+            title="2.2 Bending Moment Failure"
+            items={bendingMomentItems}
+            results={results}
+          />
+
+          <ParameterTable
+            title="3. Final Rounded Values"
+            items={finalValuesItems}
+            results={results}
+          />
+
+          <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
             <PDFDownloadLink
               document={<ReportPDF data={data} results={results} />}
               fileName={`foundation_design_${
                 new Date().toISOString().split("T")[0]
               }.pdf`}
-              className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center"
+              className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center justify-center transition-colors"
             >
               {({ loading }) => (
                 <>
@@ -188,7 +212,7 @@ const DesignReport = ({ data, results }) => {
               )}
             </PDFDownloadLink>
 
-            <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center">
+            <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors">
               Save to Database
             </button>
           </div>
