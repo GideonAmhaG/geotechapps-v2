@@ -100,10 +100,10 @@ def sig_prop(B, D, col, DL, LL, mxp, mxv, myp, myv, soil_type, Df=None, phi_f=No
         gamma=None, bc=None):
     if soil_type == 'bearing_c':
         Df = 3
-    SW_conc = 24 * B * B * D
+    gamma_conc = 25
+    SW_conc = gamma_conc * B * B * D
     SW_fill = (((B * B) - (col * col))) * Df * 0
-    SW = SW_conc + SW_fill
-    p_p = DL + SW + LL
+    p_p = DL + SW_conc + SW_fill + LL
     ex = abs((myp + myv) / p_p)
     ey = abs((mxp + mxv) / p_p)
     sig_p = (p_p / (B * B)) * (1 + ((6 * ex) / B) + ((6 * ey) / B))
@@ -111,15 +111,15 @@ def sig_prop(B, D, col, DL, LL, mxp, mxv, myp, myv, soil_type, Df=None, phi_f=No
     if soil_type == "clay":
         qu = (1.3 * cu * 5.14) + (gamma * Df)
         qa = qu / FS
-        return sig_p, qa, ex, ey, SW_conc, SW_fill
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, p_p
     elif soil_type == "sand":
         Nc, Nq, Ngamma = terzaghi(phi_f)
         qu = (gamma * Df * Nq) + (0.4 * B * gamma * Ngamma)
         qa = qu / FS
-        return sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma, p_p
     elif soil_type == "bearing_c":
         qa = bc
-        return sig_p, qa, ex, ey, SW_conc, SW_fill
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, p_p
     return None
 
 def zed(D, phi, m, B, fck, cover):
@@ -142,18 +142,18 @@ def iter_b(B, D, col, DL, LL, mxp, mxv, myp, myv, soil_type, Df,
     tolerance = 0.00005
     diff = 0.01
     if soil_type == "sand":
-        sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma = sig_prop(B, D, col, DL,
+        sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma, p_p = sig_prop(B, D, col, DL,
             LL, mxp, mxv, myp, myv, soil_type, Df=Df, phi_f=phi_f, gamma=gamma)
         while abs(sig_p - qa) > diff:
             if sig_p > qa:
                 B += tolerance
             else:
                 B -= tolerance
-            sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma = sig_prop(B, D, col, DL,
+            sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma, p_p = sig_prop(B, D, col, DL,
                 LL, mxp, mxv, myp, myv, soil_type, Df=Df, phi_f=phi_f, gamma=gamma)
-        return sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma, B
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, Nc, Nq, Ngamma, B, p_p
     else:
-        sig_p, qa, ex, ey, SW_conc, SW_fill = sig_prop(B, D, col, DL, LL, mxp, mxv,
+        sig_p, qa, ex, ey, SW_conc, SW_fill, p_p = sig_prop(B, D, col, DL, LL, mxp, mxv,
             myp, myv, soil_type, Df=Df, cu=cu if soil_type == "clay" else None,
             gamma=gamma if soil_type == "clay" else None, bc=bc if soil_type != "clay" else None)
         while abs(sig_p - qa) > diff:
@@ -161,7 +161,7 @@ def iter_b(B, D, col, DL, LL, mxp, mxv, myp, myv, soil_type, Df,
                 B += tolerance
             else:
                 B -= tolerance
-            sig_p, qa, ex, ey, SW_conc, SW_fill = sig_prop(B, D, col, DL, LL, mxp, mxv,
+            sig_p, qa, ex, ey, SW_conc, SW_fill, p_p = sig_prop(B, D, col, DL, LL, mxp, mxv,
                 myp, myv, soil_type, Df, cu=cu if soil_type == "clay" else None,
                 gamma=gamma if soil_type == "clay" else None, bc=bc if soil_type != "clay" else None)
-        return sig_p, qa, ex, ey, SW_conc, SW_fill, B
+        return sig_p, qa, ex, ey, SW_conc, SW_fill, B, p_p

@@ -54,14 +54,16 @@ const DesignReport = ({ data, results }) => {
 
   // 1. Proportioning
   const proportioningItems = [
-    { id: "d", label: "Footing thickness", unit: "mm" },
+    { id: "D_final", label: "Footing thickness", unit: "mm" },
+    { id: "gamma_conc", label: "Concrete Unit Weight (γ_conc)", unit: "kN/m³" },
     { id: "SW_conc", label: "Self weight of footing", unit: "kN" },
     { id: "SW_fill", label: "Self weight of fill", unit: "kN" },
     { id: "DL", label: "Permanent Load (Gk)", unit: "kN" },
     { id: "LL", label: "Variable Load (Qk)", unit: "kN" },
-    { id: "p_s", label: "P = 1(Gk + Self Weight) + 1Qk", unit: "kN" },
-    { id: "b", label: "B = L", unit: "mm" },
-    { id: "sig_p", label: "A = B * L", unit: "m²" },
+    { id: "p_p", label: "P = 1(Gk + Self Weight) + 1Qk", unit: "kN" },
+    { id: "b", label: "B", unit: "mm" },
+    { id: "l", label: "L", unit: "mm" },
+    { id: "area", label: "A = B * L", unit: "m²" },
     { id: "mxp", label: "Mx = 1Mxp + 1Mxv", unit: "kNm" },
     { id: "myp", label: "My = 1Myp + 1Myv", unit: "kNm" },
     { id: "ex", label: "e_x = abs(My / P)", unit: "mm", decimals: 4 },
@@ -88,21 +90,21 @@ const DesignReport = ({ data, results }) => {
     { id: "d_punch", label: "d", unit: "mm" },
     { id: "k_punch", label: "k", unit: "" },
     { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
-    { id: "As_punch", label: "As", unit: "mm²" },
-    { id: "Ap2_punch", label: "Ap", unit: "mm²" },
+    { id: "As_punch", label: "As", unit: "m²" },
+    { id: "Ap2_punch", label: "Ap", unit: "m²" },
     { id: "vrd_min_punch", label: "vRd,min", unit: "kPa" },
     { id: "ved_punch", label: "vEd", unit: "kPa" },
     { id: "vrd_punch", label: "vRd", unit: "kPa" },
     { id: "D_punch", label: "D", unit: "mm" },
   ];
 
-  // 2.1 Shear Failure - Wide Beam
+  // 2.1 Shear Failure - Vertical/Wide Beam
   const shearFailureWideBeamItems = [
     { id: "d_wide", label: "d", unit: "mm" },
     { id: "k_wide", label: "k", unit: "" },
     { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
-    { id: "As_wide", label: "As", unit: "mm²" },
-    { id: "Ap2_wide", label: "Ap", unit: "mm²" },
+    { id: "As_wide", label: "As", unit: "m²" },
+    { id: "Ap2_wide", label: "Ap", unit: "m²" },
     { id: "vrd_min_wide", label: "vRd,min", unit: "kPa" },
     { id: "ved_wide", label: "vEd", unit: "kPa" },
     { id: "vrd_wide", label: "vRd", unit: "kPa" },
@@ -112,7 +114,7 @@ const DesignReport = ({ data, results }) => {
   // 2.2 Bending Moment Failure
   const bendingMomentItems = [
     { id: "d_final", label: "d", unit: "mm" },
-    { id: "b", label: "B", unit: "mm" },
+    { id: "B_final", label: "B", unit: "mm" },
     { id: "z", label: "z", unit: "mm" },
     { id: "rho_min", label: "ρmin", unit: "", decimals: 4 },
     { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
@@ -179,13 +181,13 @@ const DesignReport = ({ data, results }) => {
           />
 
           <ParameterTable
-            title="2.1 Shear Failure - Wide Beam"
+            title="2.2 Shear Failure - Vertical/Wide Beam"
             items={shearFailureWideBeamItems}
             results={results}
           />
 
           <ParameterTable
-            title="2.2 Bending Moment Failure"
+            title="2.3 Bending Moment Failure"
             items={bendingMomentItems}
             results={results}
           />
