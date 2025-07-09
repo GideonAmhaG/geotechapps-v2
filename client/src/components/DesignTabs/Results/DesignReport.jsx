@@ -3,7 +3,7 @@ import { FiDownload } from "react-icons/fi";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { styles } from "../../../styles";
 import { IoChevronForward, IoChevronDown } from "react-icons/io5";
-import { ReportPDF } from "./DesignReportPDF";
+import ReportPDF from "./DesignReportPDF";
 
 const formatValue = (value, unit, decimals = 2) => {
   if (value === undefined || value === null) return "N/A";
@@ -109,10 +109,14 @@ const DesignReport = ({ data, results }) => {
       unit: "",
       decimals: 4,
     },
-    { id: "As_punch", label: "Critical-Section Surface Area (As)", unit: "m²" },
+    {
+      id: "As_punch",
+      label: "Critical-Section Surface Area (Acs)",
+      unit: "m²",
+    },
     {
       id: "Ap2_punch",
-      label: "Critical-Section Cross-Sectional Area (Ap)",
+      label: "Critical-Section Cross-Sectional Area (Acc)",
       unit: "m²",
     },
     {
@@ -135,10 +139,10 @@ const DesignReport = ({ data, results }) => {
       unit: "",
       decimals: 4,
     },
-    { id: "As_wide", label: "Critical-Section Surface Area (As)", unit: "m²" },
+    { id: "As_wide", label: "Critical-Section Surface Area (Acs)", unit: "m²" },
     {
       id: "Ap2_wide",
-      label: "Critical-Section Cross-Sectional Area (Ap)",
+      label: "Critical-Section Cross-Sectional Area (Acc)",
       unit: "m²",
     },
     {
