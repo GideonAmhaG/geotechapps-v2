@@ -233,9 +233,10 @@ def sig_prop(B, D, col, DL, LL, mxp, mxv, myp, myv, soil_type, Df=None, phi_f=No
         gamma=None, bc=None):
     if soil_type == 'bearing_c':
         Df = 3
+        gamma = 18
     gamma_conc = 25
     SW_conc = gamma_conc * B * B * D
-    SW_fill = (((B * B) - (col * col))) * Df * 0
+    SW_fill = ((B * B) - (col * col)) * (Df - D) * gamma
     p_p = DL + SW_conc + SW_fill + LL
     ex = abs((myp + myv) / p_p)
     ey = abs((mxp + mxv) / p_p)

@@ -5,7 +5,7 @@ import { MAIN_RESULTS } from "./constants";
 
 const ResultCard = ({ items, results }) => {
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border border-gray-200 rounded-md overflow-hidden">
       <table className="w-full">
         <thead>
           <tr className="bg-gray-100 border-b border-gray-200">

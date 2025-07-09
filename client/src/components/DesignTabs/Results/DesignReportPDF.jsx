@@ -137,7 +137,7 @@ const ResultsTable = ({ results, title, items }) => {
   );
 };
 
-export const ReportPDF = ({ data, results }) => (
+const ReportPDF = ({ data, results }) => (
   <Document>
     <Page style={stylesPDF.page}>
       <View style={stylesPDF.section}>
@@ -221,3 +221,5 @@ export const ReportPDF = ({ data, results }) => (
     </Page>
   </Document>
 );
+
+export default ReportPDF;

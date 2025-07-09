@@ -1089,84 +1089,145 @@ const ParameterTable = ({ title, items, results }) => {
 const DesignReport = ({ data, results }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // 1. Proportioning
+  // 1. Geotechnical Design
   const proportioningItems = [
-    { id: "D_final", label: "Footing thickness", unit: "mm" },
-    { id: "gamma_conc", label: "Concrete Unit Weight (γ_conc)", unit: "kN/m³" },
-    { id: "SW_conc", label: "Self weight of footing", unit: "kN" },
-    { id: "SW_fill", label: "Self weight of fill", unit: "kN" },
+    { id: "D_final", label: "Footing thickness (D)", unit: "mm" },
+    { id: "gamma_conc", label: "Concrete Unit Weight (γconc)", unit: "kN/m³" },
+    { id: "SW_conc", label: "Self weight of footing (SWconc)", unit: "kN" },
+    { id: "SW_fill", label: "Self weight of fill (SWfill)", unit: "kN" },
     { id: "DL", label: "Permanent Load (Gk)", unit: "kN" },
     { id: "LL", label: "Variable Load (Qk)", unit: "kN" },
-    { id: "p_p", label: "P = 1(Gk + Self Weight) + 1Qk", unit: "kN" },
-    { id: "b", label: "B", unit: "mm" },
-    { id: "l", label: "L", unit: "mm" },
-    { id: "area", label: "A = B * L", unit: "m²" },
-    { id: "mxp", label: "Mx = 1Mxp + 1Mxv", unit: "kNm" },
-    { id: "myp", label: "My = 1Myp + 1Myv", unit: "kNm" },
-    { id: "ex", label: "e_x = abs(My / P)", unit: "mm", decimals: 4 },
-    { id: "ey", label: "e_y = abs(Mx / P)", unit: "mm", decimals: 4 },
+    {
+      id: "p_p",
+      label: "Service Load (P = [Gk + SWconc + SWfill] + Qk)",
+      unit: "kN",
+    },
+    { id: "b", label: "Footing Width (B)", unit: "mm" },
+    { id: "l", label: "Footing Length (L)", unit: "mm" },
+    { id: "area", label: "Footing Area (A)", unit: "m²" },
+    { id: "mxp", label: "Moment X (Mx = Mx,Gk + Mx,Qk)", unit: "kNm" },
+    { id: "myp", label: "Moment Y (My = My,Gk + My,Qk)", unit: "kNm" },
+    {
+      id: "ex",
+      label: "Eccentricity X (ex)",
+      unit: "mm",
+      decimals: 4,
+    },
+    {
+      id: "ey",
+      label: "Eccentricity Y (ey)",
+      unit: "mm",
+      decimals: 4,
+    },
     { id: "CU", label: "Undrained Cohesion (Cu)", unit: "kPa" },
     { id: "gamma", label: "Soil Unit Weight (γ)", unit: "kN/m³" },
     { id: "Df", label: "Foundation Depth (Df)", unit: "mm" },
     { id: "qu", label: "Ultimate Bearing Capacity (qu)", unit: "kPa" },
     { id: "fs", label: "Factor of Safety (FS)", unit: "" },
-    { id: "sig_p", label: "σmax", unit: "kPa" },
-    { id: "qa", label: "qall", unit: "kPa" },
+    { id: "sig_p", label: "Maximum Stress (σmax)", unit: "kPa" },
+    { id: "qa", label: "Allowable Bearing Capacity (qall)", unit: "kPa" },
   ];
 
   // 2. Structural Design
   const structuralDesignItems = [
-    { id: "p_s", label: "P = 1.35Gk + 1.5Qk", unit: "kN" },
-    { id: "sig_s", label: "σ", unit: "kPa" },
-    { id: "fck", label: "fck", unit: "MPa" },
-    { id: "fyk", label: "fyk", unit: "MPa" },
+    { id: "p_s", label: "Design Load (P = 1.35Gk + 1.5Qk)", unit: "kN" },
+    { id: "sig_s", label: "Design Stress (σ)", unit: "kPa" },
+    { id: "fck", label: "Concrete Strength (fck)", unit: "MPa" },
+    { id: "fyk", label: "Steel Strength (fyk)", unit: "MPa" },
   ];
 
   // 2.1 Shear Failure - Punching
   const shearFailurePunchingItems = [
-    { id: "d_punch", label: "d", unit: "mm" },
-    { id: "k_punch", label: "k", unit: "" },
-    { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
-    { id: "As_punch", label: "As", unit: "m²" },
-    { id: "Ap2_punch", label: "Ap", unit: "m²" },
-    { id: "vrd_min_punch", label: "vRd,min", unit: "kPa" },
-    { id: "ved_punch", label: "vEd", unit: "kPa" },
-    { id: "vrd_punch", label: "vRd", unit: "kPa" },
-    { id: "D_punch", label: "D", unit: "mm" },
+    { id: "d_punch", label: "Effective Depth (d)", unit: "mm" },
+    { id: "k_punch", label: "Size Factor (k)", unit: "" },
+    {
+      id: "rho_final",
+      label: "Reinforcement Ratio (ρ)",
+      unit: "",
+      decimals: 4,
+    },
+    { id: "As_punch", label: "Critical-Section Surface Area (As)", unit: "m²" },
+    {
+      id: "Ap2_punch",
+      label: "Critical-Section Cross-Sectional Area (Ap)",
+      unit: "m²",
+    },
+    {
+      id: "vrd_min_punch",
+      label: "Minimum Shear Resistance (vRd,min)",
+      unit: "kPa",
+    },
+    { id: "ved_punch", label: "Design Shear Stress (vEd)", unit: "kPa" },
+    { id: "vrd_punch", label: "Shear Resistance (vRd)", unit: "kPa" },
+    { id: "D_punch", label: "Required Depth (D)", unit: "mm" },
   ];
 
-  // 2.1 Shear Failure - Vertical/Wide Beam
+  // 2.2 Shear Failure - Vertical/Wide Beam
   const shearFailureWideBeamItems = [
-    { id: "d_wide", label: "d", unit: "mm" },
-    { id: "k_wide", label: "k", unit: "" },
-    { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
-    { id: "As_wide", label: "As", unit: "m²" },
-    { id: "Ap2_wide", label: "Ap", unit: "m²" },
-    { id: "vrd_min_wide", label: "vRd,min", unit: "kPa" },
-    { id: "ved_wide", label: "vEd", unit: "kPa" },
-    { id: "vrd_wide", label: "vRd", unit: "kPa" },
-    { id: "D_wide", label: "D", unit: "mm" },
+    { id: "d_wide", label: "Effective Depth (d)", unit: "mm" },
+    { id: "k_wide", label: "Size Factor (k)", unit: "" },
+    {
+      id: "rho_final",
+      label: "Reinforcement Ratio (ρ)",
+      unit: "",
+      decimals: 4,
+    },
+    { id: "As_wide", label: "Critical-Section Surface Area (As)", unit: "m²" },
+    {
+      id: "Ap2_wide",
+      label: "Critical-Section Cross-Sectional Area (Ap)",
+      unit: "m²",
+    },
+    {
+      id: "vrd_min_wide",
+      label: "Minimum Shear Resistance (vRd,min)",
+      unit: "kPa",
+    },
+    { id: "ved_wide", label: "Design Shear Stress (vEd)", unit: "kPa" },
+    { id: "vrd_wide", label: "Shear Resistance (vRd)", unit: "kPa" },
+    { id: "D_wide", label: "Required Depth (D)", unit: "mm" },
   ];
 
-  // 2.2 Bending Moment Failure
+  // 2.3 Bending Moment Failure
   const bendingMomentItems = [
-    { id: "d_final", label: "d", unit: "mm" },
-    { id: "B_final", label: "B", unit: "mm" },
-    { id: "z", label: "z", unit: "mm" },
-    { id: "rho_min", label: "ρmin", unit: "", decimals: 4 },
-    { id: "rho_final", label: "ρ", unit: "", decimals: 4 },
-    { id: "Asmin", label: "As,min", unit: "mm²" },
-    { id: "med", label: "MEd", unit: "kNm" },
-    { id: "mrd", label: "MRd", unit: "kNm" },
-    { id: "As_old", label: "As", unit: "mm²" },
+    { id: "d_final", label: "Effective Depth (d)", unit: "mm" },
+    { id: "B_final", label: "Footing Width (B)", unit: "mm" },
+    { id: "z", label: "Lever Arm (z)", unit: "mm" },
+    {
+      id: "rho_min",
+      label: "Minimum Reinforcement Ratio (ρmin)",
+      unit: "",
+      decimals: 4,
+    },
+    {
+      id: "rho_final",
+      label: "Reinforcement Ratio (ρ)",
+      unit: "",
+      decimals: 4,
+    },
+    { id: "Asmin", label: "Minimum Reinforcement Area (As,min)", unit: "mm²" },
+    { id: "med", label: "Design Moment (MEd)", unit: "kNm" },
+    { id: "mrd", label: "Moment Resistance (MRd)", unit: "kNm" },
+    { id: "As_old", label: "Required Reinforcement Area (As)", unit: "mm²" },
   ];
 
-  // 3. Final Rounded Values
+  // 3. Final Rounded Values (matches Design Summary section)
   const finalValuesItems = [
-    { id: "d", label: "D", unit: "mm" },
-    { id: "b", label: "B", unit: "mm" },
-    { id: "Nxb", label: "N", unit: "" },
-    { id: "Sxb", label: "s", unit: "mm" },
+    { id: "b", label: "Footing Width (B)", unit: "mm" },
+    { id: "l", label: "Footing Length (L)", unit: "mm" },
+    { id: "d", label: "Footing Thickness (D)", unit: "mm" },
+    { id: "Nxb", label: "Number of bars, x-direction, bottom (Nxb)", unit: "" },
+    { id: "Nyb", label: "Number of bars, y-direction, bottom (Nyb)", unit: "" },
+    {
+      id: "Sxb",
+      label: "Spacing between bars, x-direction, bottom (Sxb)",
+      unit: "mm",
+    },
+    {
+      id: "Syb",
+      label: "Spacing between bars, y-direction, bottom (Syb)",
+      unit: "mm",
+    },
   ];
 
   return (
@@ -1200,7 +1261,7 @@ const DesignReport = ({ data, results }) => {
       >
         <div className="space-y-6 mt-4">
           <ParameterTable
-            title="1. Proportioning"
+            title="1. Geotechnical Design"
             items={proportioningItems}
             results={{ ...data.inputs, ...results }}
           />
@@ -1405,7 +1466,7 @@ const ResultsTable = ({ results, title, items }) => {
   );
 };
 
-export const ReportPDF = ({ data, results }) => (
+const ReportPDF = ({ data, results }) => (
   <Document>
     <Page style={stylesPDF.page}>
       <View style={stylesPDF.section}>
@@ -1490,6 +1551,8 @@ export const ReportPDF = ({ data, results }) => (
   </Document>
 );
 
+export default ReportPDF;
+
 
 
 //index.jsx
@@ -1500,7 +1563,7 @@ import { MAIN_RESULTS } from "./constants";
 
 const ResultCard = ({ items, results }) => {
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border border-gray-200 rounded-md overflow-hidden">
       <table className="w-full">
         <thead>
           <tr className="bg-gray-100 border-b border-gray-200">
@@ -1645,6 +1708,7 @@ const Results = ({ data }) => {
 };
 
 export default Results;
+
 
 
 
