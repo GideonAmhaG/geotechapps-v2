@@ -23,21 +23,33 @@ const formatValue = (value, unit, decimals = 2) => {
   return `${numValue.toFixed(decimals)} ${unit}`;
 };
 
-const ParameterTable = ({ title, items, results }) => {
+const ParameterTable = ({ title, subheader, items, results }) => {
   return (
     <div className="mb-6">
-      <h4 className="text-lg font-semibold text-gray-800 mb-2 px-2 py-1 bg-gray-100 rounded">
-        {title}
-      </h4>
-      <div className="overflow-x-auto">
+      {title && (
+        <h4 className={`${styles.cardTitle} !text-[#008080] mb-2`}>{title}</h4>
+      )}
+      <div className="border border-gray-300 rounded-md overflow-hidden">
         <table className="w-full">
+          <thead>
+            <tr className="bg-gray-100 border-b border-gray-300">
+              <th className={`${styles.cardDescription} py-2 px-3 text-left`}>
+                {subheader || ""}
+              </th>
+              <th className={`${styles.cardDescription} py-2 px-3 text-right`}>
+                Results
+              </th>
+            </tr>
+          </thead>
           <tbody className="divide-y divide-gray-200">
             {items.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
-                <td className="py-2 px-3 text-sm text-gray-700 w-2/3">
+                <td className={`${styles.cardDescription} py-2 px-3 w-2/3`}>
                   {item.label}
                 </td>
-                <td className="py-2 px-3 text-sm text-gray-900 text-right font-medium w-1/3">
+                <td
+                  className={`${styles.cardDescription} font-medium py-2 px-3 text-right w-1/3`}
+                >
                   {formatValue(results[item.id], item.unit, item.decimals)}
                 </td>
               </tr>
@@ -52,7 +64,7 @@ const ParameterTable = ({ title, items, results }) => {
 const DesignReport = ({ data, results }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // 1. Geotechnical Design
+  // Geotechnical Design
   const proportioningItems = [
     { id: "D_final", label: "Footing thickness (D)", unit: "mm" },
     { id: "gamma_conc", label: "Concrete Unit Weight (γconc)", unit: "kN/m³" },
@@ -91,7 +103,7 @@ const DesignReport = ({ data, results }) => {
     { id: "qa", label: "Allowable Bearing Capacity (qall)", unit: "kPa" },
   ];
 
-  // 2. Structural Design
+  // Structural Design
   const structuralDesignItems = [
     { id: "p_s", label: "Design Load (P = 1.35Gk + 1.5Qk)", unit: "kN" },
     { id: "sig_s", label: "Design Stress (σ)", unit: "kPa" },
@@ -99,7 +111,7 @@ const DesignReport = ({ data, results }) => {
     { id: "fyk", label: "Steel Strength (fyk)", unit: "MPa" },
   ];
 
-  // 2.1 Shear Failure - Punching
+  // Shear Failure - Punching
   const shearFailurePunchingItems = [
     { id: "d_punch", label: "Effective Depth (d)", unit: "mm" },
     { id: "k_punch", label: "Size Factor (k)", unit: "" },
@@ -129,7 +141,7 @@ const DesignReport = ({ data, results }) => {
     { id: "D_punch", label: "Required Depth (D)", unit: "mm" },
   ];
 
-  // 2.2 Shear Failure - Vertical/Wide Beam
+  // Shear Failure - Vertical/Wide Beam
   const shearFailureWideBeamItems = [
     { id: "d_wide", label: "Effective Depth (d)", unit: "mm" },
     { id: "k_wide", label: "Size Factor (k)", unit: "" },
@@ -155,7 +167,7 @@ const DesignReport = ({ data, results }) => {
     { id: "D_wide", label: "Required Depth (D)", unit: "mm" },
   ];
 
-  // 2.3 Bending Moment Failure
+  // Bending Moment Failure
   const bendingMomentItems = [
     { id: "d_final", label: "Effective Depth (d)", unit: "mm" },
     { id: "B_final", label: "Footing Width (B)", unit: "mm" },
@@ -178,7 +190,7 @@ const DesignReport = ({ data, results }) => {
     { id: "As_old", label: "Required Reinforcement Area (As)", unit: "mm²" },
   ];
 
-  // 3. Final Rounded Values (matches Design Summary section)
+  // Final Rounded Values (matches Design Summary section)
   const finalValuesItems = [
     { id: "b", label: "Footing Width (B)", unit: "mm" },
     { id: "l", label: "Footing Length (L)", unit: "mm" },
@@ -226,42 +238,45 @@ const DesignReport = ({ data, results }) => {
         }`}
         aria-hidden={!isExpanded}
       >
-        <div className="space-y-6 mt-4">
+        <div className="space-y-6 mt-4 px-8">
+          <h3 className={`${styles.cardTitle} !text-[#008080]`}>
+            Geotechnical Design
+          </h3>
           <ParameterTable
-            title="1. Geotechnical Design"
             items={proportioningItems}
             results={{ ...data.inputs, ...results }}
           />
 
+          <h3 className={`${styles.cardTitle} !text-[#008080]`}>
+            Structural Design
+          </h3>
           <ParameterTable
-            title="2. Structural Design"
             items={structuralDesignItems}
             results={{ ...data.inputs, ...results }}
           />
 
           <ParameterTable
-            title="2.1 Shear Failure - Punching"
+            subheader="Shear Failure - Punching"
             items={shearFailurePunchingItems}
             results={results}
           />
 
           <ParameterTable
-            title="2.2 Shear Failure - Vertical/Wide Beam"
+            subheader="Shear Failure - Vertical/Wide Beam"
             items={shearFailureWideBeamItems}
             results={results}
           />
 
           <ParameterTable
-            title="2.3 Bending Moment Failure"
+            subheader="Bending Moment Failure"
             items={bendingMomentItems}
             results={results}
           />
 
-          <ParameterTable
-            title="3. Final Rounded Values"
-            items={finalValuesItems}
-            results={results}
-          />
+          <h3 className={`${styles.cardTitle} !text-[#008080]`}>
+            Final Rounded Values
+          </h3>
+          <ParameterTable items={finalValuesItems} results={results} />
 
           <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
             <PDFDownloadLink
@@ -269,7 +284,7 @@ const DesignReport = ({ data, results }) => {
               fileName={`foundation_design_${
                 new Date().toISOString().split("T")[0]
               }.pdf`}
-              className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center justify-center transition-colors"
+              className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center justify-center transition-colors text-[12px] sm:text-[14px] md:text-[16px]"
             >
               {({ loading }) => (
                 <>
@@ -279,7 +294,7 @@ const DesignReport = ({ data, results }) => {
               )}
             </PDFDownloadLink>
 
-            <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors">
+            <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-[12px] sm:text-[14px] md:text-[16px]">
               Save to Database
             </button>
           </div>
