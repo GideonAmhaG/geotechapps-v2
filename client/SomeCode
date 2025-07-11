@@ -1002,6 +1002,8 @@ const InputParameters = ({ data, updateData, setActiveTab }) => {
 
 export default InputParameters;
 
+
+
 //Results folder (following 4 files)
 //constants.js
 export const MAIN_RESULTS = [
@@ -1114,8 +1116,8 @@ const DesignReport = ({ data, results }) => {
       label: "Service Load (P = [Gk + SWconc + SWfill] + Qk)",
       unit: "kN",
     },
-    { id: "b", label: "Footing Width (B)", unit: "mm" },
-    { id: "l", label: "Footing Length (L)", unit: "mm" },
+    { id: "B_final", label: "Footing Width (B)", unit: "mm" },
+    { id: "L_final", label: "Footing Length (L)", unit: "mm" },
     { id: "area", label: "Footing Area (A)", unit: "m²" },
     { id: "mxp", label: "Moment X (Mx = Mx,Gk + Mx,Qk)", unit: "kNm" },
     { id: "myp", label: "Moment Y (My = My,Gk + My,Qk)", unit: "kNm" },
@@ -1318,9 +1320,11 @@ const DesignReport = ({ data, results }) => {
           <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
             <PDFDownloadLink
               document={<ReportPDF data={data} results={results} />}
-              fileName={`foundation_design_${
-                new Date().toISOString().split("T")[0]
-              }.pdf`}
+              fileName={`foundation_design_${new Date()
+                .toISOString()
+                .replace(/[:.]/g, "-")
+                .replace("T", "_")
+                .slice(0, 19)}.pdf`}
               className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center justify-center transition-colors text-[12px] sm:text-[14px] md:text-[16px]"
             >
               {({ loading }) => (
@@ -1345,11 +1349,28 @@ export default DesignReport;
 
 
 
+
 //DesignReportPDF.jsx
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Font,
+} from "@react-pdf/renderer";
+import InterRegular from "../../../assets/fonts/Inter_18pt-Regular.ttf";
+
+Font.register({
+  family: "Inter",
+  src: InterRegular,
+});
 
 const stylesPDF = StyleSheet.create({
   page: { padding: 30, fontFamily: "Helvetica" },
+  withSymbols: {
+    fontFamily: "Inter",
+  },
   header: {
     fontSize: 18,
     marginBottom: 20,
@@ -1393,20 +1414,6 @@ const stylesPDF = StyleSheet.create({
   },
 });
 
-// Helper function to properly display special characters
-const formatSymbol = (symbol) => {
-  switch (symbol) {
-    case "γ":
-      return "γ";
-    case "ρ":
-      return "ρ";
-    case "σ":
-      return "σ";
-    default:
-      return symbol;
-  }
-};
-
 const formatValue = (value, unit, decimals = 2) => {
   if (value === undefined || value === null) return "N/A";
   const numValue = typeof value === "number" ? value : parseFloat(value);
@@ -1433,7 +1440,6 @@ const ParameterTable = ({
     <View style={stylesPDF.section}>
       {title && <Text style={stylesPDF.sectionTitle}>{title}</Text>}
 
-      {/* Table header row */}
       <View style={stylesPDF.row}>
         {subheader ? (
           <Text style={stylesPDF.subSectionHeader}>{subheader}</Text>
@@ -1454,10 +1460,7 @@ const ParameterTable = ({
       {items.map((item) => (
         <View key={item.id} style={stylesPDF.row}>
           <Text style={stylesPDF.label}>
-            {item.label
-              .replace(/γ/g, "γ")
-              .replace(/ρ/g, "ρ")
-              .replace(/σ/g, "σ")}
+            {typeof item.label === "string" ? item.label : item.label}
           </Text>
           <Text style={stylesPDF.value}>
             {formatValue(data[item.id], item.unit, item.decimals)}
@@ -1471,164 +1474,6 @@ const ParameterTable = ({
 const ReportPDF = ({ data, results }) => {
   // Combine inputs and results for display
   const allData = { ...data.inputs, ...results };
-
-  // Input Parameters items - matches the order from InputParameters.jsx with proper symbols
-  const inputParametersItems = [
-    // Loads
-    { id: "DL", label: "Permanent Load (Gₖ)", unit: "kN" },
-    { id: "LL", label: "Variable Load (Qₖ)", unit: "kN" },
-    { id: "mxp", label: "Moment X Permanent (Mₓ,Gₖ)", unit: "kNm" },
-    { id: "mxv", label: "Moment X Variable (Mₓ,Qₖ)", unit: "kNm" },
-    { id: "myp", label: "Moment Y Permanent (Mᵧ,Gₖ)", unit: "kNm" },
-    { id: "myv", label: "Moment Y Variable (Mᵧ,Qₖ)", unit: "kNm" },
-
-    // Geometry
-    { id: "colx", label: "Column Width X (b)", unit: "mm" },
-    { id: "coly", label: "Column Width Y (h)", unit: "mm" },
-
-    // Soil Properties
-    { id: "Df", label: "Foundation Depth (Df)", unit: "mm" },
-    { id: "CU", label: "Undrained Cohesion (Cu)", unit: "kPa" },
-    { id: "gamma", label: "Soil Unit Weight (γ)", unit: "kN/m³" },
-
-    // Material Properties
-    { id: "fck", label: "Concrete Strength (fck)", unit: "MPa" },
-    { id: "fyk", label: "Steel Strength (fyk)", unit: "MPa" },
-    { id: "bar", label: "Rebar Diameter (Ø)", unit: "mm" },
-    { id: "covr", label: "Concrete Cover (c)", unit: "mm" },
-  ];
-
-  // Geotechnical Design items
-  const proportioningItems = [
-    { id: "D_final", label: "Footing thickness (D)", unit: "mm" },
-    { id: "gamma_conc", label: "Concrete Unit Weight (γconc)", unit: "kN/m³" },
-    { id: "SW_conc", label: "Self weight of footing (SWconc)", unit: "kN" },
-    { id: "SW_fill", label: "Self weight of fill (SWfill)", unit: "kN" },
-    { id: "DL", label: "Permanent Load (Gₖ)", unit: "kN" },
-    { id: "LL", label: "Variable Load (Qₖ)", unit: "kN" },
-    {
-      id: "p_p",
-      label: "Service Load (P = [Gₖ + SWconc + SWfill] + Qₖ)",
-      unit: "kN",
-    },
-    { id: "b", label: "Footing Width (B)", unit: "mm" },
-    { id: "l", label: "Footing Length (L)", unit: "mm" },
-    { id: "area", label: "Footing Area (A)", unit: "m²" },
-    { id: "mxp", label: "Moment X (Mₓ = Mₓ,Gₖ + Mₓ,Qₖ)", unit: "kNm" },
-    { id: "myp", label: "Moment Y (Mᵧ = Mᵧ,Gₖ + Mᵧ,Qₖ)", unit: "kNm" },
-    { id: "ex", label: "Eccentricity X (eₓ)", unit: "mm", decimals: 4 },
-    { id: "ey", label: "Eccentricity Y (eᵧ)", unit: "mm", decimals: 4 },
-    { id: "qu", label: "Ultimate Bearing Capacity (qu)", unit: "kPa" },
-    { id: "fs", label: "Factor of Safety (FS)", unit: "" },
-    { id: "sig_p", label: "Maximum Stress (σmax)", unit: "kPa" },
-    { id: "qa", label: "Allowable Bearing Capacity (qall)", unit: "kPa" },
-  ];
-
-  // Structural Design items
-  const structuralDesignItems = [
-    { id: "p_s", label: "Design Load (P = 1.35Gₖ + 1.5Qₖ)", unit: "kN" },
-    { id: "sig_s", label: "Design Stress (σ)", unit: "kPa" },
-    { id: "fck", label: "Concrete Strength (fck)", unit: "MPa" },
-    { id: "fyk", label: "Steel Strength (fyk)", unit: "MPa" },
-  ];
-
-  // Shear Failure - Punching items
-  const shearFailurePunchingItems = [
-    { id: "d_punch", label: "Effective Depth (d)", unit: "mm" },
-    { id: "k_punch", label: "Size Factor (k)", unit: "" },
-    {
-      id: "rho_final",
-      label: "Reinforcement Ratio (ρ)",
-      unit: "",
-      decimals: 4,
-    },
-    {
-      id: "As_punch",
-      label: "Critical-Section Surface Area (Acs)",
-      unit: "m²",
-    },
-    {
-      id: "Ap2_punch",
-      label: "Critical-Section Cross-Sectional Area (Acc)",
-      unit: "m²",
-    },
-    {
-      id: "vrd_min_punch",
-      label: "Minimum Shear Resistance (vRd,min)",
-      unit: "kPa",
-    },
-    { id: "ved_punch", label: "Design Shear Stress (vEd)", unit: "kPa" },
-    { id: "vrd_punch", label: "Shear Resistance (vRd)", unit: "kPa" },
-    { id: "D_punch", label: "Required Depth (D)", unit: "mm" },
-  ];
-
-  // Shear Failure - Wide Beam items
-  const shearFailureWideBeamItems = [
-    { id: "d_wide", label: "Effective Depth (d)", unit: "mm" },
-    { id: "k_wide", label: "Size Factor (k)", unit: "" },
-    {
-      id: "rho_final",
-      label: "Reinforcement Ratio (ρ)",
-      unit: "",
-      decimals: 4,
-    },
-    { id: "As_wide", label: "Critical-Section Surface Area (Acs)", unit: "m²" },
-    {
-      id: "Ap2_wide",
-      label: "Critical-Section Cross-Sectional Area (Acc)",
-      unit: "m²",
-    },
-    {
-      id: "vrd_min_wide",
-      label: "Minimum Shear Resistance (vRd,min)",
-      unit: "kPa",
-    },
-    { id: "ved_wide", label: "Design Shear Stress (vEd)", unit: "kPa" },
-    { id: "vrd_wide", label: "Shear Resistance (vRd)", unit: "kPa" },
-    { id: "D_wide", label: "Required Depth (D)", unit: "mm" },
-  ];
-
-  // Bending Moment Failure items
-  const bendingMomentItems = [
-    { id: "d_final", label: "Effective Depth (d)", unit: "mm" },
-    { id: "B_final", label: "Footing Width (B)", unit: "mm" },
-    { id: "z", label: "Lever Arm (z)", unit: "mm" },
-    {
-      id: "rho_min",
-      label: "Minimum Reinforcement Ratio (ρmin)",
-      unit: "",
-      decimals: 4,
-    },
-    {
-      id: "rho_final",
-      label: "Reinforcement Ratio (ρ)",
-      unit: "",
-      decimals: 4,
-    },
-    { id: "Asmin", label: "Minimum Reinforcement Area (As,min)", unit: "mm²" },
-    { id: "med", label: "Design Moment (MEd)", unit: "kNm" },
-    { id: "mrd", label: "Moment Resistance (MRd)", unit: "kNm" },
-    { id: "As_old", label: "Required Reinforcement Area (As)", unit: "mm²" },
-  ];
-
-  // Final Rounded Values items
-  const finalValuesItems = [
-    { id: "b", label: "Footing Width (B)", unit: "mm" },
-    { id: "l", label: "Footing Length (L)", unit: "mm" },
-    { id: "d", label: "Footing Thickness (D)", unit: "mm" },
-    { id: "Nxb", label: "Number of bars, x-direction, bottom (Nxb)", unit: "" },
-    { id: "Nyb", label: "Number of bars, y-direction, bottom (Nyb)", unit: "" },
-    {
-      id: "Sxb",
-      label: "Spacing between bars, x-direction, bottom (Sxb)",
-      unit: "mm",
-    },
-    {
-      id: "Syb",
-      label: "Spacing between bars, y-direction, bottom (Syb)",
-      unit: "mm",
-    },
-  ];
 
   // Get display names for types
   const getFoundationTypeName = (type) => {
@@ -1659,6 +1504,236 @@ const ReportPDF = ({ data, results }) => {
     return types[type] || type;
   };
 
+  // Project Information items with pre-formatted values
+  const projectInfoItems = [
+    {
+      id: "foundationType",
+      label: "Foundation Type",
+      value: getFoundationTypeName(data.foundationType),
+      unit: "",
+    },
+    {
+      id: "soilType",
+      label: "Soil Type",
+      value: getSoilTypeName(data.soilType),
+      unit: "",
+    },
+    {
+      id: "loadType",
+      label: "Load Type",
+      value: getLoadTypeName(data.loadType),
+      unit: "",
+    },
+  ];
+
+  // Input Parameters items
+  const inputParametersItems = [
+    // Loads
+    { id: "DL", label: "Permanent Load (Gk)", unit: "kN" },
+    { id: "LL", label: "Variable Load (Qk)", unit: "kN" },
+    { id: "mxp", label: "Moment X Permanent (Mx,Gk)", unit: "kNm" },
+    { id: "mxv", label: "Moment X Variable (Mx,Qk)", unit: "kNm" },
+    { id: "myp", label: "Moment Y Permanent (My,Gk)", unit: "kNm" },
+    { id: "myv", label: "Moment Y Variable (My,Qk)", unit: "kNm" },
+
+    // Geometry
+    { id: "colx", label: "Column Width X (b)", unit: "mm" },
+    { id: "coly", label: "Column Width Y (h)", unit: "mm" },
+
+    // Soil Properties
+    { id: "Df", label: "Foundation Depth (Df)", unit: "mm" },
+    { id: "CU", label: "Undrained Cohesion (Cu)", unit: "kPa" },
+    {
+      id: "gamma",
+      label: (
+        <Text>
+          Soil Unit Weight (<Text style={stylesPDF.withSymbols}>γ</Text>)
+        </Text>
+      ),
+      unit: "kN/m³",
+    },
+
+    // Material Properties
+    { id: "fck", label: "Concrete Strength (fck)", unit: "MPa" },
+    { id: "fyk", label: "Steel Strength (fyk)", unit: "MPa" },
+    { id: "bar", label: "Rebar Diameter (Ø)", unit: "mm" },
+    { id: "covr", label: "Concrete Cover (c)", unit: "mm" },
+  ];
+
+  // Geotechnical Design items
+  const proportioningItems = [
+    { id: "D_final", label: "Footing thickness (D)", unit: "mm" },
+    {
+      id: "gamma_conc",
+      label: (
+        <Text>
+          Concrete Unit Weight (<Text style={stylesPDF.withSymbols}>γ</Text>
+          conc)
+        </Text>
+      ),
+      unit: "kN/m³",
+    },
+    { id: "SW_conc", label: "Self weight of footing (SWconc)", unit: "kN" },
+    { id: "SW_fill", label: "Self weight of fill (SWfill)", unit: "kN" },
+    { id: "DL", label: "Permanent Load (Gk)", unit: "kN" },
+    { id: "LL", label: "Variable Load (Qk)", unit: "kN" },
+    {
+      id: "p_p",
+      label: "Service Load (P = [Gk + SWconc + SWfill] + Qk)",
+      unit: "kN",
+    },
+    { id: "B_final", label: "Footing Width (B)", unit: "mm" },
+    { id: "L_final", label: "Footing Length (L)", unit: "mm" },
+    { id: "area", label: "Footing Area (A)", unit: "m²" },
+    { id: "mxp", label: "Moment X (Mx = Mx,Gk + Mx,Qk)", unit: "kNm" },
+    { id: "myp", label: "Moment Y (My = My,Gk + My,Qk)", unit: "kNm" },
+    { id: "ex", label: "Eccentricity X (ex)", unit: "mm", decimals: 4 },
+    { id: "ey", label: "Eccentricity Y (ey)", unit: "mm", decimals: 4 },
+    { id: "qu", label: "Ultimate Bearing Capacity (qu)", unit: "kPa" },
+    { id: "fs", label: "Factor of Safety (FS)", unit: "" },
+    {
+      id: "sig_p",
+      label: (
+        <Text>
+          Maximum Stress (<Text style={stylesPDF.withSymbols}>σ</Text>max)
+        </Text>
+      ),
+      unit: "kPa",
+    },
+    { id: "qa", label: "Allowable Bearing Capacity (qall)", unit: "kPa" },
+  ];
+
+  // Structural Design items
+  const structuralDesignItems = [
+    { id: "p_s", label: "Design Load (P = 1.35Gk + 1.5Qk)", unit: "kN" },
+    {
+      id: "sig_s",
+      label: (
+        <Text>
+          Design Stress (<Text style={stylesPDF.withSymbols}>σ</Text>)
+        </Text>
+      ),
+      unit: "kPa",
+    },
+    { id: "fck", label: "Concrete Strength (fck)", unit: "MPa" },
+    { id: "fyk", label: "Steel Strength (fyk)", unit: "MPa" },
+  ];
+
+  // Shear Failure - Punching items
+  const shearFailurePunchingItems = [
+    { id: "d_punch", label: "Effective Depth (d)", unit: "mm" },
+    { id: "k_punch", label: "Size Factor (k)", unit: "" },
+    {
+      id: "rho_final",
+      label: (
+        <Text>
+          Reinforcement Ratio (<Text style={stylesPDF.withSymbols}>ρ</Text>)
+        </Text>
+      ),
+      unit: "",
+      decimals: 4,
+    },
+    {
+      id: "As_punch",
+      label: "Critical-Section Surface Area (Acs)",
+      unit: "m²",
+    },
+    {
+      id: "Ap2_punch",
+      label: "Critical-Section Cross-Sectional Area (Acc)",
+      unit: "m²",
+    },
+    {
+      id: "vrd_min_punch",
+      label: "Minimum Shear Resistance (vRd,min)",
+      unit: "kPa",
+    },
+    { id: "ved_punch", label: "Design Shear Stress (vEd)", unit: "kPa" },
+    { id: "vrd_punch", label: "Shear Resistance (vRd)", unit: "kPa" },
+    { id: "D_punch", label: "Required Depth (D)", unit: "mm" },
+  ];
+
+  // Shear Failure - Wide Beam items
+  const shearFailureWideBeamItems = [
+    { id: "d_wide", label: "Effective Depth (d)", unit: "mm" },
+    { id: "k_wide", label: "Size Factor (k)", unit: "" },
+    {
+      id: "rho_final",
+      label: (
+        <Text>
+          Reinforcement Ratio (<Text style={stylesPDF.withSymbols}>ρ</Text>)
+        </Text>
+      ),
+      unit: "",
+      decimals: 4,
+    },
+    { id: "As_wide", label: "Critical-Section Surface Area (Acs)", unit: "m²" },
+    {
+      id: "Ap2_wide",
+      label: "Critical-Section Cross-Sectional Area (Acc)",
+      unit: "m²",
+    },
+    {
+      id: "vrd_min_wide",
+      label: "Minimum Shear Resistance (vRd,min)",
+      unit: "kPa",
+    },
+    { id: "ved_wide", label: "Design Shear Stress (vEd)", unit: "kPa" },
+    { id: "vrd_wide", label: "Shear Resistance (vRd)", unit: "kPa" },
+    { id: "D_wide", label: "Required Depth (D)", unit: "mm" },
+  ];
+
+  // Bending Moment Failure items
+  const bendingMomentItems = [
+    { id: "d_final", label: "Effective Depth (d)", unit: "mm" },
+    { id: "B_final", label: "Footing Width (B)", unit: "mm" },
+    { id: "z", label: "Lever Arm (z)", unit: "mm" },
+    {
+      id: "rho_min",
+      label: (
+        <Text>
+          Minimum Reinforcement Ratio (
+          <Text style={stylesPDF.withSymbols}>ρ</Text>min)
+        </Text>
+      ),
+      unit: "",
+      decimals: 4,
+    },
+    {
+      id: "rho_final",
+      label: (
+        <Text>
+          Reinforcement Ratio (<Text style={stylesPDF.withSymbols}>ρ</Text>)
+        </Text>
+      ),
+      unit: "",
+      decimals: 4,
+    },
+    { id: "Asmin", label: "Minimum Reinforcement Area (As,min)", unit: "mm²" },
+    { id: "med", label: "Design Moment (MEd)", unit: "kNm" },
+    { id: "mrd", label: "Moment Resistance (MRd)", unit: "kNm" },
+    { id: "As_old", label: "Required Reinforcement Area (As)", unit: "mm²" },
+  ];
+
+  // Final Rounded Values items
+  const finalValuesItems = [
+    { id: "b", label: "Footing Width (B)", unit: "mm" },
+    { id: "l", label: "Footing Length (L)", unit: "mm" },
+    { id: "d", label: "Footing Thickness (D)", unit: "mm" },
+    { id: "Nxb", label: "Number of bars, x-direction, bottom (Nxb)", unit: "" },
+    { id: "Nyb", label: "Number of bars, y-direction, bottom (Nyb)", unit: "" },
+    {
+      id: "Sxb",
+      label: "Spacing between bars, x-direction, bottom (Sxb)",
+      unit: "mm",
+    },
+    {
+      id: "Syb",
+      label: "Spacing between bars, y-direction, bottom (Syb)",
+      unit: "mm",
+    },
+  ];
+
   return (
     <Document>
       <Page style={stylesPDF.page}>
@@ -1670,20 +1745,20 @@ const ReportPDF = ({ data, results }) => {
 
           <View style={stylesPDF.divider} />
 
-          {/* Project Information */}
-          <ParameterTable
-            title="Project Information"
-            items={[
-              { id: "foundationType", label: "Foundation Type", unit: "" },
-              { id: "soilType", label: "Soil Type", unit: "" },
-              { id: "loadType", label: "Load Type", unit: "" },
-            ]}
-            data={{
-              foundationType: getFoundationTypeName(data.foundationType),
-              soilType: getSoilTypeName(data.soilType),
-              loadType: getLoadTypeName(data.loadType),
-            }}
-          />
+          {/* Project Information - Fixed section */}
+          <View style={stylesPDF.section}>
+            <Text style={stylesPDF.sectionTitle}>Project Information</Text>
+            <View style={stylesPDF.row}>
+              <Text style={stylesPDF.subSectionHeader}></Text>
+              <Text style={stylesPDF.tableHeaderText}>Type</Text>
+            </View>
+            {projectInfoItems.map((item) => (
+              <View key={item.id} style={stylesPDF.row}>
+                <Text style={stylesPDF.label}>{item.label}</Text>
+                <Text style={stylesPDF.value}>{item.value}</Text>
+              </View>
+            ))}
+          </View>
 
           <View style={stylesPDF.divider} />
 
@@ -1755,6 +1830,8 @@ export default ReportPDF;
 
 
 
+
+
 //index.jsx
 import { useState, useEffect, useRef } from "react";
 import { styles } from "../../../styles";
@@ -1812,6 +1889,7 @@ const Results = ({ data }) => {
         D_wide: rawResults.D_wide * 1000,
         D_punch: rawResults.D_punch * 1000,
         B_final: rawResults.B_final * 1000,
+        L_final: rawResults.B_final * 1000,
         D_final: rawResults.D_final * 1000,
         d_final: rawResults.d_final * 1000,
         d_wide: rawResults.d_wide * 1000,
@@ -1908,9 +1986,6 @@ const Results = ({ data }) => {
 };
 
 export default Results;
-
-
-
 
 
 

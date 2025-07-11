@@ -54,6 +54,7 @@ const Results = ({ data }) => {
         D_wide: rawResults.D_wide * 1000,
         D_punch: rawResults.D_punch * 1000,
         B_final: rawResults.B_final * 1000,
+        L_final: rawResults.B_final * 1000,
         D_final: rawResults.D_final * 1000,
         d_final: rawResults.d_final * 1000,
         d_wide: rawResults.d_wide * 1000,

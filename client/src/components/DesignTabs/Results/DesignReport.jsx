@@ -77,8 +77,8 @@ const DesignReport = ({ data, results }) => {
       label: "Service Load (P = [Gk + SWconc + SWfill] + Qk)",
       unit: "kN",
     },
-    { id: "b", label: "Footing Width (B)", unit: "mm" },
-    { id: "l", label: "Footing Length (L)", unit: "mm" },
+    { id: "B_final", label: "Footing Width (B)", unit: "mm" },
+    { id: "L_final", label: "Footing Length (L)", unit: "mm" },
     { id: "area", label: "Footing Area (A)", unit: "m²" },
     { id: "mxp", label: "Moment X (Mx = Mx,Gk + Mx,Qk)", unit: "kNm" },
     { id: "myp", label: "Moment Y (My = My,Gk + My,Qk)", unit: "kNm" },
@@ -281,9 +281,11 @@ const DesignReport = ({ data, results }) => {
           <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
             <PDFDownloadLink
               document={<ReportPDF data={data} results={results} />}
-              fileName={`foundation_design_${
-                new Date().toISOString().split("T")[0]
-              }.pdf`}
+              fileName={`foundation_design_${new Date()
+                .toISOString()
+                .replace(/[:.]/g, "-")
+                .replace("T", "_")
+                .slice(0, 19)}.pdf`}
               className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center justify-center transition-colors text-[12px] sm:text-[14px] md:text-[16px]"
             >
               {({ loading }) => (
