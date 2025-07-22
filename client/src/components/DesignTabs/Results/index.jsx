@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { styles } from "../../../styles";
 import DesignReport from "./DesignReport";
 import { MAIN_RESULTS } from "./constants";
@@ -38,34 +38,9 @@ const ResultCard = ({ items, results }) => {
   );
 };
 
-const Results = ({ data }) => {
-  const [rawResults, setRawResults] = useState(null);
+const Results = ({ data, updateData }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const reportRef = useRef();
-
-  const convertedResults = rawResults
-    ? {
-        ...rawResults,
-        b: rawResults.b * 1000,
-        l: rawResults.b * 1000,
-        d: rawResults.d * 1000,
-        area: rawResults.B_final * rawResults.B_final,
-        D_wide: rawResults.D_wide * 1000,
-        D_punch: rawResults.D_punch * 1000,
-        B_final: rawResults.B_final * 1000,
-        L_final: rawResults.B_final * 1000,
-        D_final: rawResults.D_final * 1000,
-        d_final: rawResults.d_final * 1000,
-        d_wide: rawResults.d_wide * 1000,
-        d_punch: rawResults.d_punch * 1000,
-        z: rawResults.z * 1000,
-        Nxb: rawResults.N,
-        Nyb: rawResults.N,
-        Sxb: rawResults.s,
-        Syb: rawResults.s,
-      }
-    : null;
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -89,16 +64,17 @@ const Results = ({ data }) => {
         }
 
         const responseData = await response.json();
-        setRawResults(responseData.data);
+        updateData("results", responseData.data);
       } catch (err) {
         setError(err.message);
+        updateData("results", null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchResults();
-  }, [data]);
+  }, [data, updateData]);
 
   if (loading) {
     return (
@@ -119,7 +95,7 @@ const Results = ({ data }) => {
     );
   }
 
-  if (!convertedResults) {
+  if (!data.results) {
     return (
       <div className="max-w-md mx-auto p-6">
         <h2 className={`${styles.sectionTitleText} mb-4`}>No Results</h2>
@@ -142,10 +118,10 @@ const Results = ({ data }) => {
           Design Summary
         </h3>
         <div className="w-full border-t border-gray-200 mb-4" />
-        <ResultCard items={MAIN_RESULTS} results={convertedResults} />
+        <ResultCard items={MAIN_RESULTS} results={data.results} />
       </div>
 
-      <DesignReport data={data} results={convertedResults} />
+      <DesignReport data={data} results={data.results} />
     </div>
   );
 };

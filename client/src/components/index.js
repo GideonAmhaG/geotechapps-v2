@@ -18,3 +18,5 @@ export { default as SelectionSummary } from './DesignTabs/SelectionSummary';
 export { default as TabButton } from './shared/TabButton';
 export { default as GuidanceSection } from './shared/GuidanceSection';
 export { default as SelectionBox } from './shared/SelectionBox';
+
+export { default as FoundationDiagram } from './diagrams/FoundationDiagram.jsx';

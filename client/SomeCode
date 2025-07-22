@@ -8,6 +8,7 @@ import {
   InputParameters,
   Results,
   SelectionSummary,
+  FoundationDiagram,
 } from "../components";
 
 function Design() {
@@ -137,17 +138,22 @@ function Design() {
       </div>
 
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
-        <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
-          <div className="p-4">
-            <span className="text-gray-400 block">Interactive Diagram</span>
+        {activeTab === 4 && designData.results ? (
+          <FoundationDiagram results={designData.results} />
+        ) : (
+          <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
+            <div className="p-4">
+              <span className="text-gray-400 block">Interactive Diagram</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
 export default Design;
+
 
 
 
@@ -529,44 +535,6 @@ function GuidanceSection({ title, items, tip }) {
 
 export default GuidanceSection;
 
-
-//style.js
-const styles = {  
-    paddingX: "sm:px-16 px-6",
-    paddingY: "sm:py-16 py-6",
-    padding: "sm:px-16 px-6 sm:py-16 py-10",
-    
-    heroHeadText:
-      "font-black text-white lg:text-[80px] sm:text-[60px] xs:text-[50px] text-[40px] lg:leading-[98px] mt-2",
-    heroSubText:
-      "text-[#dfd9ff] font-medium lg:text-[30px] sm:text-[26px] xs:text-[20px] text-[16px] lg:leading-[40px]",
-    
-    sectionHeadText:
-      "text-black font-bold md:text-[40px] sm:text-[30px] xs:text-[20px] text-[20px]",
-    sectionSubText:
-      "sm:text-[18px] text-[14px] text-secondary uppercase tracking-wider mt-4",
-    sectionTitleText:
-      "font-semibold text-black md:text-[24px] sm:text-[20px] xs:text-[18px] text-[16px]",
-    sectionBodyText:
-      "text-gray-700 sm:text-[16px] text-[14px] leading-relaxed",  
-    sectionCardText:
-      "text-gray-700 sm:text-[14px] text-[12px] leading-relaxed",  
-    sectionGridThree:
-      "grid grid-cols-1 md:grid-cols-3 gap-8 mt-12", 
-    sectionGridFour:
-      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16",  
-    sectionContainer:
-      "max-w-6.5xl mx-auto text-center",
-    sectionCard:
-      "bg-white p-6 rounded-lg shadow-md",
-    sectionNumberBadge:
-      "w-10 h-10 text-md sm:w-12 sm:h-12 sm:text-lg bg-[#145da0] text-white rounded-full mx-auto flex items-center justify-center font-bold mb-4",
-    cardTitle: "font-semibold text-gray-800 md:text-[18px] sm:text-[16px] text-[14px]",
-    cardDescription: "text-gray-600 sm:text-[14px] text-[12px] mt-1",
-    cardUseCase: "text-[#145da0] font-medium sm:text-[12px] text-[10px] mt-2",
-  };
-  
-  export { styles };
 
 
 //inputparamets folder (following 3 files)
@@ -1057,10 +1025,10 @@ export const GEOTECHNICAL_ITEMS = [
   { id: 'B_final', label: 'Footing Width (B)', unit: 'mm' },
   { id: 'L_final', label: 'Footing Length (L)', unit: 'mm' },
   { id: 'area', label: 'Footing Area (A)', unit: 'm²' },
-  { id: 'mxp', label: 'Moment X (Mx = Mx,Gk + Mx,Qk)', unit: 'kNm' },
-  { id: 'myp', label: 'Moment Y (My = My,Gk + My,Qk)', unit: 'kNm' },
-  { id: 'ex', label: 'Eccentricity X (ex)', unit: 'mm', decimals: 4 },
-  { id: 'ey', label: 'Eccentricity Y (ey)', unit: 'mm', decimals: 4 },
+  { id: 'mx', label: 'Moment X (Mx = Mx,Gk + Mx,Qk)', unit: 'kNm' },
+  { id: 'my', label: 'Moment Y (My = My,Gk + My,Qk)', unit: 'kNm' },
+  { id: 'ex', label: 'Eccentricity X (ex)', unit: 'mm', decimals: 2 },
+  { id: 'ey', label: 'Eccentricity Y (ey)', unit: 'mm', decimals: 2 },
   { id: 'CU', label: 'Undrained Cohesion (Cu)', unit: 'kPa' },
   { id: 'gamma', label: 'Soil Unit Weight (γ)', unit: 'kN/m³', symbol: 'γ' },
   { id: 'Df', label: 'Foundation Depth (Df)', unit: 'mm' },
@@ -1611,7 +1579,7 @@ export default ReportPDF;
 
 
 //index.jsx
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { styles } from "../../../styles";
 import DesignReport from "./DesignReport";
 import { MAIN_RESULTS } from "./constants";
@@ -1651,34 +1619,9 @@ const ResultCard = ({ items, results }) => {
   );
 };
 
-const Results = ({ data }) => {
-  const [rawResults, setRawResults] = useState(null);
+const Results = ({ data, updateData }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const reportRef = useRef();
-
-  const convertedResults = rawResults
-    ? {
-        ...rawResults,
-        b: rawResults.b * 1000,
-        l: rawResults.b * 1000,
-        d: rawResults.d * 1000,
-        area: rawResults.B_final * rawResults.B_final,
-        D_wide: rawResults.D_wide * 1000,
-        D_punch: rawResults.D_punch * 1000,
-        B_final: rawResults.B_final * 1000,
-        L_final: rawResults.B_final * 1000,
-        D_final: rawResults.D_final * 1000,
-        d_final: rawResults.d_final * 1000,
-        d_wide: rawResults.d_wide * 1000,
-        d_punch: rawResults.d_punch * 1000,
-        z: rawResults.z * 1000,
-        Nxb: rawResults.N,
-        Nyb: rawResults.N,
-        Sxb: rawResults.s,
-        Syb: rawResults.s,
-      }
-    : null;
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -1702,16 +1645,17 @@ const Results = ({ data }) => {
         }
 
         const responseData = await response.json();
-        setRawResults(responseData.data);
+        updateData("results", responseData.data);
       } catch (err) {
         setError(err.message);
+        updateData("results", null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchResults();
-  }, [data]);
+  }, [data, updateData]);
 
   if (loading) {
     return (
@@ -1732,7 +1676,7 @@ const Results = ({ data }) => {
     );
   }
 
-  if (!convertedResults) {
+  if (!data.results) {
     return (
       <div className="max-w-md mx-auto p-6">
         <h2 className={`${styles.sectionTitleText} mb-4`}>No Results</h2>
@@ -1755,16 +1699,15 @@ const Results = ({ data }) => {
           Design Summary
         </h3>
         <div className="w-full border-t border-gray-200 mb-4" />
-        <ResultCard items={MAIN_RESULTS} results={convertedResults} />
+        <ResultCard items={MAIN_RESULTS} results={data.results} />
       </div>
 
-      <DesignReport data={data} results={convertedResults} />
+      <DesignReport data={data} results={data.results} />
     </div>
   );
 };
 
 export default Results;
-
 
 
 
@@ -1789,3 +1732,45 @@ export { default as SelectionSummary } from './DesignTabs/SelectionSummary';
 export { default as TabButton } from './shared/TabButton';
 export { default as GuidanceSection } from './shared/GuidanceSection';
 export { default as SelectionBox } from './shared/SelectionBox';
+
+export { default as FoundationDiagram } from './diagrams/FoundationDiagram.jsx';
+
+
+
+//style.js
+const styles = {  
+    paddingX: "sm:px-16 px-6",
+    paddingY: "sm:py-16 py-6",
+    padding: "sm:px-16 px-6 sm:py-16 py-10",
+    
+    heroHeadText:
+      "font-black text-white lg:text-[80px] sm:text-[60px] xs:text-[50px] text-[40px] lg:leading-[98px] mt-2",
+    heroSubText:
+      "text-[#dfd9ff] font-medium lg:text-[30px] sm:text-[26px] xs:text-[20px] text-[16px] lg:leading-[40px]",
+    
+    sectionHeadText:
+      "text-black font-bold md:text-[40px] sm:text-[30px] xs:text-[20px] text-[20px]",
+    sectionSubText:
+      "sm:text-[18px] text-[14px] text-secondary uppercase tracking-wider mt-4",
+    sectionTitleText:
+      "font-semibold text-black md:text-[24px] sm:text-[20px] xs:text-[18px] text-[16px]",
+    sectionBodyText:
+      "text-gray-700 sm:text-[16px] text-[14px] leading-relaxed",  
+    sectionCardText:
+      "text-gray-700 sm:text-[14px] text-[12px] leading-relaxed",  
+    sectionGridThree:
+      "grid grid-cols-1 md:grid-cols-3 gap-8 mt-12", 
+    sectionGridFour:
+      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16",  
+    sectionContainer:
+      "max-w-6.5xl mx-auto text-center",
+    sectionCard:
+      "bg-white p-6 rounded-lg shadow-md",
+    sectionNumberBadge:
+      "w-10 h-10 text-md sm:w-12 sm:h-12 sm:text-lg bg-[#145da0] text-white rounded-full mx-auto flex items-center justify-center font-bold mb-4",
+    cardTitle: "font-semibold text-gray-800 md:text-[18px] sm:text-[16px] text-[14px]",
+    cardDescription: "text-gray-600 sm:text-[14px] text-[12px] mt-1",
+    cardUseCase: "text-[#145da0] font-medium sm:text-[12px] text-[10px] mt-2",
+  };
+  
+  export { styles };

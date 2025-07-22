@@ -7,6 +7,7 @@ import {
   InputParameters,
   Results,
   SelectionSummary,
+  FoundationDiagram,
 } from "../components";
 
 function Design() {
@@ -136,11 +137,15 @@ function Design() {
       </div>
 
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
-        <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
-          <div className="p-4">
-            <span className="text-gray-400 block">Interactive Diagram</span>
+        {activeTab === 4 && designData.results ? (
+          <FoundationDiagram results={designData.results} />
+        ) : (
+          <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
+            <div className="p-4">
+              <span className="text-gray-400 block">Interactive Diagram</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
