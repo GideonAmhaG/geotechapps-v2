@@ -10,6 +10,10 @@ import {
   FoundationDiagram,
 } from "../components";
 
+function isEqual(obj1, obj2) {
+  return JSON.stringify(obj1) === JSON.stringify(obj2);
+}
+
 function Design() {
   const [activeTab, setActiveTab] = useState(0);
   const [designData, setDesignData] = useState({
@@ -29,7 +33,12 @@ function Design() {
   ];
 
   const updateDesignData = (key, value) => {
-    setDesignData((prev) => ({ ...prev, [key]: value }));
+    setDesignData((prev) => {
+      if (key === "results" && isEqual(prev.results, value)) {
+        return prev;
+      }
+      return { ...prev, [key]: value };
+    });
   };
 
   const ActiveComponent = tabs[activeTab].component;
@@ -138,7 +147,9 @@ function Design() {
 
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
         {activeTab === 4 && designData.results ? (
-          <FoundationDiagram results={designData.results} />
+          <FoundationDiagram
+            results={{ ...designData.inputs, ...designData.results }}
+          />
         ) : (
           <div className="h-full w-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
             <div className="p-4">

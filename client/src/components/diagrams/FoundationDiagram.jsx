@@ -4,26 +4,29 @@ const FoundationDiagram = ({ results }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    if (!results || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    canvas.width = 600;
+    canvas.height = 800;
+  }, []);
+
+  useEffect(() => {
+    if (!results) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Set fixed dimensions for the canvas
-    canvas.width = 600;
-    canvas.height = 800;
-
-    // Extract values from results (already converted to mm)
-    const b = results.b / 1000; // Convert back to meters for calculations
+    const b = results.b / 1000;
     const d = results.d / 1000;
     const N = results.N;
-    const s = results.s / 1000;
-    const bar = results.bar / 1000;
+    const s = results.s;
+    const bar = results.bar;
     const col = results.colx / 1000;
     const coly = results.coly / 1000;
-    const cov = results.covr / 1000;
+    const cov = parseInt(results.covr);
 
-    // Drawing constants
     const xCor = 100;
     const yCor = 15;
     const topCov = 75;
@@ -42,7 +45,6 @@ const FoundationDiagram = ({ results }) => {
     const y1Scale = 0.75;
     const vsScale = 0.2;
     const vsScaleBar = 0.6;
-    const dimWidth = 20;
     const offset1 = 5;
     const offset2 = 20;
     const offset3 = 20;
@@ -52,8 +54,6 @@ const FoundationDiagram = ({ results }) => {
     const offSet7 = 4;
     const barOff = 4;
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1.3;
 
@@ -143,6 +143,7 @@ const FoundationDiagram = ({ results }) => {
     const vertSpacBars = 15;
     const xBSrt = xCor + x * 0.5 - xCol * 0.5 + colBarOff;
     const yBSrt = yCor + y1 + vertSpace + 5;
+
     for (let i = 0; i < numLns; i++) {
       const yPosition = yBSrt + i * vertSpacBars;
       ctx.moveTo(xBSrt, yPosition);
@@ -207,28 +208,30 @@ const FoundationDiagram = ({ results }) => {
     ctx.lineWidth = 0.5;
     ctx.stroke();
 
-    // Draw dots for reinforcement
+    // Draw reinforcement dots
     const numDots = N;
     const xCStart = xCor + offset1 + 4;
     const xCEnd = xCor + x - offset1 - 4;
     const width = xCEnd - xCStart - dotRadius * 2 + offset5;
     const yC = yCor + y1 + vertSpace + colHeight + y2 - barOff - offSet7;
     const spacing = width / (numDots - 1);
+
     for (let i = 0; i < numDots; i++) {
-      let x = xCStart + spacing * i;
-      if (i === numDots - 1) x = xCEnd;
+      let xPos = xCStart + spacing * i;
+      if (i === numDots - 1) xPos = xCEnd;
       ctx.beginPath();
-      ctx.arc(x, yC, dotRadius, 0, 2 * Math.PI);
+      ctx.arc(xPos, yC, dotRadius, 0, 2 * Math.PI);
       ctx.fillStyle = "black";
       ctx.fill();
       ctx.closePath();
     }
 
-    // Draw arrows and dimensions
+    // Draw dimension lines and arrows
     const arrOff1 = 35;
     const arrOff2 = 8;
     const arrOff3 = 15 * x * 0.009;
-    const data = [
+
+    const dimensionLines = [
       {
         startX: xCor + x + arrOff1,
         startY: yCor,
@@ -308,6 +311,7 @@ const FoundationDiagram = ({ results }) => {
       const offsetY1 = headWidth * Math.sin(angle + Math.PI / 2);
       const offsetX2 = headWidth * Math.cos(angle - Math.PI / 2);
       const offsetY2 = headWidth * Math.sin(angle - Math.PI / 2);
+
       ctx.beginPath();
       ctx.moveTo(endX, endY);
       ctx.lineTo(arrowX1 + offsetX1, arrowY1 + offsetY1);
@@ -329,14 +333,13 @@ const FoundationDiagram = ({ results }) => {
       drawArrowhead(ctx, endX, endY, startX, startY, arrowHeadSize);
     }
 
-    for (const lineData of data) {
-      drawDimensionLine(ctx, lineData);
-    }
+    dimensionLines.forEach((lineData) => drawDimensionLine(ctx, lineData));
 
     // Draw text labels
     const scaleFont = 1.4;
     let barFontScale = 1.4;
     let offset4 = 40;
+
     if (b < 2.3) {
       barFontScale = barFontScale < x * 0.01 ? barFontScale : x * 0.01;
       offset4 = x * 0.27;
@@ -359,6 +362,8 @@ const FoundationDiagram = ({ results }) => {
     const txtOff3 = 8;
     const txtOff4 = 12;
     const txtOff5 = 20;
+
+    // Draw all text labels
     drawText(
       d * 1000,
       xCor + x + txtOff1,
@@ -409,18 +414,23 @@ const FoundationDiagram = ({ results }) => {
       0
     );
     drawText(
-      Math.round(
-        (b * 0.5 - col * 0.5) * 1000,
-        xCor + x * 0.21,
-        yCor + y1 + vertSpace + arrOff3 - txtOff3,
-        fontSize * scaleFont,
-        0
-      )
+      Math.round((b * 0.5 - col * 0.5) * 1000),
+      xCor + x * 0.21,
+      yCor + y1 + vertSpace + arrOff3 - txtOff3,
+      fontSize * scaleFont,
+      0
     );
     drawText(
       Math.round((b * 0.5 - col * 0.5) * 1000),
       xCor + x * 0.79,
       yCor + y1 + vertSpace + arrOff3 - txtOff3,
+      fontSize * scaleFont,
+      0
+    );
+    drawText(
+      Math.round(col * 1000),
+      xCor + x * 0.5,
+      yCor + y1 + vertSpace - arrOff2 - txtOff4,
       fontSize * scaleFont,
       0
     );
@@ -499,8 +509,17 @@ const FoundationDiagram = ({ results }) => {
   }, [results]);
 
   return (
-    <div className="p-4">
-      <canvas ref={canvasRef} className="border border-gray-300 rounded-md" />
+    <div className="p-4 w-full h-full overflow-auto">
+      <canvas
+        ref={canvasRef}
+        className="bg-white border border-gray-200 shadow-sm"
+        style={{
+          width: "100%",
+          height: "auto",
+          maxWidth: "600px",
+          maxHeight: "800px",
+        }}
+      />
     </div>
   );
 };
