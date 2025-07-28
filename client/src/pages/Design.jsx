@@ -7,7 +7,7 @@ import {
   InputParameters,
   Results,
   SelectionSummary,
-  FoundationDiagram,
+  ResultsDiagram,
 } from "../components";
 
 function isEqual(obj1, obj2) {
@@ -147,7 +147,7 @@ function Design() {
 
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
         {activeTab === 4 && designData.results ? (
-          <FoundationDiagram
+          <ResultsDiagram
             results={{ ...designData.inputs, ...designData.results }}
           />
         ) : (

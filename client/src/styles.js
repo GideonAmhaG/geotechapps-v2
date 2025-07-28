@@ -31,6 +31,8 @@ const styles = {
   cardTitle: "font-semibold text-gray-800 md:text-[18px] sm:text-[16px] text-[14px]",
   cardDescription: "text-gray-600 sm:text-[14px] text-[12px] mt-1",
   cardUseCase: "text-[#145da0] font-medium sm:text-[12px] text-[10px] mt-2",
+  diagramTitle: "lg:text-[30px] sm:text-[26px] xs:text-[20px] text-[16px]",
+  diagramSubtitle: "lg:text-[26px] sm:text-[20px] xs:text-[16px] text-[12px] ",
 };
 
 export { styles };

@@ -8,7 +8,7 @@ import {
   InputParameters,
   Results,
   SelectionSummary,
-  FoundationDiagram,
+  ResultsDiagram,
 } from "../components";
 
 function isEqual(obj1, obj2) {
@@ -148,7 +148,7 @@ function Design() {
 
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
         {activeTab === 4 && designData.results ? (
-          <FoundationDiagram
+          <ResultsDiagram
             results={{ ...designData.inputs, ...designData.results }}
           />
         ) : (
@@ -164,6 +164,7 @@ function Design() {
 }
 
 export default Design;
+
 
 
 
@@ -1721,15 +1722,32 @@ const Results = ({ data, updateData }) => {
 
 export default Results;
 
-//FoundationDiagram.jsx
-import { useEffect, useRef } from "react";
+//ResultsDiagram.jsx
+import { useEffect, useRef, useState } from "react";
+import { FiDownload } from "react-icons/fi";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import DiagramHeader from "./DiagramHeader";
+import DrawingPDF from "./DrawingPDF";
 
 const DIAGRAM_ASPECT_RATIO = 3 / 4;
 const MAX_DIAGRAM_WIDTH = 1200;
 const MAX_DIAGRAM_HEIGHT = MAX_DIAGRAM_WIDTH / DIAGRAM_ASPECT_RATIO;
 
-const FoundationDiagram = ({ results }) => {
+const ResultsDiagram = ({ results }) => {
   const canvasRef = useRef(null);
+  const [imageData, setImageData] = useState(null);
+
+  // Function to capture canvas as image
+  const captureCanvasImage = () => {
+    if (canvasRef.current) {
+      try {
+        const dataUrl = canvasRef.current.toDataURL("image/png");
+        setImageData(dataUrl);
+      } catch (error) {
+        console.error("Error capturing canvas image:", error);
+      }
+    }
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1753,7 +1771,20 @@ const FoundationDiagram = ({ results }) => {
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
+    // Clear the canvas completely before redrawing
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Reset all canvas state properties to defaults
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.strokeStyle = "black";
+    ctx.fillStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "butt";
+    ctx.lineJoin = "miter";
+    ctx.miterLimit = 10;
 
     const b = results.b / 1000;
     const d = results.d / 1000;
@@ -1805,7 +1836,9 @@ const FoundationDiagram = ({ results }) => {
     const totalHeight = y1 + vertSpace + colHeight + y2;
 
     const xCor = (canvas.width - totalWidth) / 2;
-    const yCor = (canvas.height - totalHeight) / 2;
+    const yCorDiv =
+      b < 2 ? 6 : b < 3 ? 5.3 : b < 4 ? 4.6 : b < 5 ? 3.9 : b < 6 ? 3.2 : 2.5;
+    const yCor = (canvas.height - totalHeight) / yCorDiv;
 
     const dotRadius = mul * 0.03;
     const offSet7 = 4;
@@ -1815,6 +1848,7 @@ const FoundationDiagram = ({ results }) => {
     ctx.lineWidth = 1.3;
 
     // plan view
+    ctx.beginPath();
     ctx.rect(xCor, yCor, x, y1);
     ctx.fillStyle = "#999999";
     ctx.fillRect(
@@ -1835,10 +1869,12 @@ const FoundationDiagram = ({ results }) => {
     ctx.lineTo(xCor + x, yCor + y1 + vertSpace + colHeight);
     ctx.lineTo(xCor + x * 0.5 + xCol * 0.5, yCor + y1 + vertSpace + colHeight);
     ctx.lineTo(xCor + x * 0.5 + xCol * 0.5, yCor + y1 + vertSpace);
+    ctx.stroke();
 
     // col bar
     const colBarOff = 4;
     const cOBot = 1.5;
+    ctx.beginPath();
     ctx.moveTo(xCor + x * 0.5 - xCol * 0.5 + colBarOff, yCor + y1 + vertSpace);
     ctx.lineTo(
       xCor + x * 0.5 - xCol * 0.5 + colBarOff,
@@ -1889,7 +1925,9 @@ const FoundationDiagram = ({ results }) => {
         dotRadius -
         cOBot
     );
+    ctx.stroke();
 
+    // Column horizontal lines
     const numLns = Math.floor(b) + 2;
     const lineLen =
       xCor +
@@ -1901,14 +1939,17 @@ const FoundationDiagram = ({ results }) => {
     const xBSrt = xCor + x * 0.5 - xCol * 0.5 + colBarOff;
     const yBSrt = yCor + y1 + vertSpace + 5;
 
+    ctx.beginPath();
     for (let i = 0; i < numLns; i++) {
       const yPosition = yBSrt + i * vertSpacBars;
       ctx.moveTo(xBSrt, yPosition);
       ctx.lineTo(xBSrt + lineLen, yPosition);
     }
+    ctx.stroke();
 
     // plan view bar and centerline
     // vert rebar
+    ctx.beginPath();
     ctx.moveTo(xCor + x * xScale - curScaled, yCor + offset1);
     ctx.lineTo(xCor + x * xScale, yCor + offset1);
     ctx.lineTo(xCor + x * xScale, yCor + y1 - offset1);
@@ -1917,8 +1958,10 @@ const FoundationDiagram = ({ results }) => {
     ctx.lineTo(xCor + x + horzSpace, yCor + offset1);
     ctx.lineTo(xCor + x + horzSpace, yCor + y1 - offset1);
     ctx.lineTo(xCor + x + horzSpace - curScaled, yCor + y1 - offset1);
+    ctx.stroke();
 
     // horz rebar
+    ctx.beginPath();
     ctx.moveTo(xCor + offset1, yCor + y1 * y1Scale - curScaled);
     ctx.lineTo(xCor + offset1, yCor + y1 * y1Scale);
     ctx.lineTo(xCor + x - offset1, yCor + y1 * y1Scale);
@@ -1930,8 +1973,10 @@ const FoundationDiagram = ({ results }) => {
       xCor + x - offset1,
       yCor + y1 + vertSpace * vsScaleBar - curScaled
     );
+    ctx.stroke();
 
     // section view bar
+    ctx.beginPath();
     ctx.moveTo(
       xCor + offset1,
       yCor + y1 + vertSpace + colHeight + y2 - barOff - curScaled
@@ -2263,28 +2308,118 @@ const FoundationDiagram = ({ results }) => {
       fontSize * scaleFont,
       0
     );
+
+    // After drawing is complete, capture the canvas as an image
+    captureCanvasImage();
   }, [results]);
 
   return (
     <div className="p-4 w-full h-full overflow-auto">
-      <canvas
-        ref={canvasRef}
-        className="bg-white border border-gray-200 shadow-sm"
-        style={{
-          width: "100%",
-          height: "auto",
-          aspectRatio: DIAGRAM_ASPECT_RATIO,
-          maxWidth: `${MAX_DIAGRAM_WIDTH}px`,
-          maxHeight: `${MAX_DIAGRAM_HEIGHT}px`,
-        }}
-      />
+      <div className="bg-white border border-gray-200 shadow-sm">
+        <DiagramHeader
+          title="Engineering Drawing"
+          subtitle="Units - Millimeters (mm)"
+        />
+        <canvas
+          ref={canvasRef}
+          className="w-full"
+          style={{
+            height: "auto",
+            aspectRatio: DIAGRAM_ASPECT_RATIO,
+            maxWidth: `${MAX_DIAGRAM_WIDTH}px`,
+            maxHeight: `${MAX_DIAGRAM_HEIGHT}px`,
+          }}
+        />
+        <div className="flex justify-end gap-4 p-4 border-t border-gray-200">
+          {imageData && (
+            <PDFDownloadLink
+              document={<DrawingPDF imageData={imageData} />}
+              fileName={`foundation_drawing_${new Date()
+                .toISOString()
+                .replace(/[:.]/g, "-")
+                .replace("T", "_")
+                .slice(0, 19)}.pdf`}
+              className="px-4 py-2 bg-[#145da0] text-white rounded-md hover:bg-[#0e4a7c] flex items-center justify-center transition-colors text-[12px] sm:text-[14px] md:text-[16px]"
+            >
+              {({ loading }) => (
+                <>
+                  <FiDownload className="mr-2" />
+                  {loading ? "Preparing PDF..." : "Download PDF"}
+                </>
+              )}
+            </PDFDownloadLink>
+          )}
+          <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-[12px] sm:text-[14px] md:text-[16px]">
+            Save to Database
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default FoundationDiagram;
+export default ResultsDiagram;
 
 
+//DiagramHeader.jsx
+import { styles } from "../../styles";
+
+const DiagramHeader = ({ title, subtitle }) => {
+  return (
+    <div className="p-6">
+      <h2 className={`${styles.sectionTitleText}`}>{title}</h2>
+      {subtitle && (
+        <p className={`${styles.sectionBodyText} text-gray-600 mt-1`}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default DiagramHeader;
+
+
+
+//DiagramPdf.jsx
+import { Document, Page, View, Image } from "@react-pdf/renderer";
+
+const DrawingPDF = ({ imageData }) => {
+  return (
+    <Document>
+      <Page
+        size="A4"
+        orientation="landscape"
+        style={{
+          padding: 20,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            src={imageData}
+            style={{
+              maxWidth: "100%",
+              maxHeight: "90%",
+              objectFit: "contain",
+            }}
+          />
+        </View>
+      </Page>
+    </Document>
+  );
+};
+
+export default DrawingPDF;
 
 
 
