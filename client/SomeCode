@@ -2318,7 +2318,7 @@ const ResultsDiagram = ({ results }) => {
       <div className="bg-white border border-gray-200 shadow-sm">
         <DiagramHeader
           title="Engineering Drawing"
-          subtitle="Units - Millimeters (mm)"
+          subtitle="UNITS: MILLIMETERS (mm)"
         />
         <canvas
           ref={canvasRef}
@@ -2330,7 +2330,7 @@ const ResultsDiagram = ({ results }) => {
             maxHeight: `${MAX_DIAGRAM_HEIGHT}px`,
           }}
         />
-        <div className="flex justify-end gap-4 p-4 border-t border-gray-200">
+        <div className="flex justify-end gap-4 p-4">
           {imageData && (
             <PDFDownloadLink
               document={<DrawingPDF imageData={imageData} />}
@@ -2361,6 +2361,7 @@ const ResultsDiagram = ({ results }) => {
 export default ResultsDiagram;
 
 
+
 //DiagramHeader.jsx
 import { styles } from "../../styles";
 
@@ -2381,8 +2382,8 @@ export default DiagramHeader;
 
 
 
-//DiagramPdf.jsx
-import { Document, Page, View, Image } from "@react-pdf/renderer";
+//DrawingPdf.jsx
+import { Document, Page, View, Image, Text } from "@react-pdf/renderer";
 
 const DrawingPDF = ({ imageData }) => {
   return (
@@ -2393,8 +2394,10 @@ const DrawingPDF = ({ imageData }) => {
         style={{
           padding: 20,
           display: "flex",
-          justifyContent: "center",
+          flexDirection: "column",
+          justifyContent: "space-between",
           alignItems: "center",
+          height: "100%",
         }}
       >
         <View
@@ -2403,16 +2406,32 @@ const DrawingPDF = ({ imageData }) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexGrow: 1,
           }}
         >
           <Image
             src={imageData}
             style={{
-              maxWidth: "100%",
-              maxHeight: "90%",
+              maxWidth: "1500px",
+              maxHeight: "100%",
               objectFit: "contain",
             }}
           />
+        </View>
+        <View
+          style={{
+            border: "1pt solid #ccc",
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+            backgroundColor: "#eee",
+            borderRadius: 2,
+            alignSelf: "flex-end",
+            marginTop: 10,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: "bold", color: "#555" }}>
+            UNITS: MILLIMETERS (mm)
+          </Text>
         </View>
       </Page>
     </Document>
@@ -2420,6 +2439,7 @@ const DrawingPDF = ({ imageData }) => {
 };
 
 export default DrawingPDF;
+
 
 
 

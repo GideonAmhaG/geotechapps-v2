@@ -593,7 +593,7 @@ const ResultsDiagram = ({ results }) => {
       <div className="bg-white border border-gray-200 shadow-sm">
         <DiagramHeader
           title="Engineering Drawing"
-          subtitle="Units - Millimeters (mm)"
+          subtitle="UNITS: MILLIMETERS (mm)"
         />
         <canvas
           ref={canvasRef}
