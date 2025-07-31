@@ -605,7 +605,7 @@ const ResultsDiagram = ({ results }) => {
             maxHeight: `${MAX_DIAGRAM_HEIGHT}px`,
           }}
         />
-        <div className="flex justify-end gap-4 p-4 border-t border-gray-200">
+        <div className="flex justify-end gap-4 p-4">
           {imageData && (
             <PDFDownloadLink
               document={<DrawingPDF imageData={imageData} />}
