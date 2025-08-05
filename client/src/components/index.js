@@ -20,3 +20,4 @@ export { default as GuidanceSection } from './shared/GuidanceSection';
 export { default as SelectionBox } from './shared/SelectionBox';
 
 export { default as ResultsDiagram } from './diagrams/ResultsDiagram.jsx';
+export { default as InputsDiagram } from './diagrams/InputsDiagram.jsx';

@@ -1,3 +1,4 @@
+// components/Design.jsx
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import {
@@ -8,6 +9,7 @@ import {
   Results,
   SelectionSummary,
   ResultsDiagram,
+  InputsDiagram,
 } from "../components";
 
 function isEqual(obj1, obj2) {
@@ -146,7 +148,9 @@ function Design() {
       </div>
 
       <div className="w-full lg:w-1/2 bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200 overflow-y-auto h-[50vh] lg:h-auto">
-        {activeTab === 4 && designData.results ? (
+        {activeTab === 3 ? (
+          <InputsDiagram />
+        ) : activeTab === 4 && designData.results ? (
           <ResultsDiagram
             results={{ ...designData.inputs, ...designData.results }}
           />
